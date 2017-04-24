@@ -1,28 +1,13 @@
-/* Colours from:
-  - "Cyber Monday": http://www.colourlovers.com/palette/1031661/Cyber_Monday
-  - "Cyber Slut":   http://www.colourlovers.com/palette/975036/Cyber_Slut
- */
-
 body {
-  background: url("lain.jpg");
   height: 100%;
-  font-family: monospace;
   margin: 0;
   padding: 10em 0 0 0;
   font-size: 16px;
-  color: white;
   box-sizing: border-box;
-}
-
-a, a:active, a:link, a:hover, a:visited {
-  color: white;
 }
 
 div.box {
   width: 760px;
-  background-color: #1E1A1C;
-  border: 1px solid #764C61;
-  box-shadow: 0 0 50px #F0546A;
   margin: 0 auto;
   padding: 1em;
 }
@@ -33,18 +18,8 @@ div.controls {
   padding: 0;
 }
 
-select, audio, hr {
-  border: 1px solid #764C61;
-}
-
 hr {
-  background-color: 1px solid #764C61;
   margin: 1em 0;
-}
-
-select {
-  background-color: #3A2530;
-  color: white;
 }
 
 audio {
@@ -55,11 +30,9 @@ audio {
 div.alert {
     font-weight: bold;
     text-align: center;
-    color: #B83602;
 }
 
 .plain {
-    color: white;
     font-weight: normal;
 }
 
