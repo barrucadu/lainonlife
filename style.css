@@ -58,6 +58,11 @@ div.alert {
     color: #B83602;
 }
 
+.plain {
+    color: white;
+    font-weight: normal;
+}
+
 dl {
   display: flex;
   flex-wrap: wrap;
