@@ -51,9 +51,9 @@ function change_channel(e) {
 
     // Use either the ogg or mp3 stream, depending on what the current one is.
     if(audio.currentSrc.endsWith("ogg")) {
-        audio.currentSrc = "/radio/" + channel + ".ogg";
+        audio.src = "/radio/" + channel + ".ogg";
     } else {
-        audio.currentSrc = "/radio/" + channel + ".mp3";
+        audio.src = "/radio/" + channel + ".mp3";
     }
 
     // Load the new audio stream.
