@@ -1,5 +1,5 @@
 // The initial channel
-var channel = "random";
+var channel = "everything";
 
 function check_status() {
     let httpRequest = new XMLHttpRequest();

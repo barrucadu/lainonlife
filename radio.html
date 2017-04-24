@@ -8,20 +8,20 @@
     <div class="box">
       <div class="controls">
         <audio controls preload="none" id="audio">
-          <source src="/radio/random.ogg" type="audio/ogg"/>
-          <source src="/radio/random.mp3" type="audio/mpeg"/>
+          <source src="/radio/everything.ogg" type="audio/ogg"/>
+          <source src="/radio/everything.mp3" type="audio/mpeg"/>
           <em>Your browser lacks support for OGG Vorbis files. Please open the M3U file or XSPF file in a multimedia player.</em>
         </audio>
 
         <label for="channel">channel:</label>
         <select id="channel" onchange="change_channel(this)">
-          <option value="random">random</option>
+          <option value="everything">everything</option>
         </select>
 
         [
-        <a id="ogglink" href="/radio/random.ogg.m3u">ogg</a>
+        <a id="ogglink" href="/radio/everything.ogg.m3u">ogg</a>
         /
-        <a id="mp3link" href="/radio/random.mp3.m3u">mp3</a>
+        <a id="mp3link" href="/radio/everything.mp3.m3u">mp3</a>
         ]
       </div>
 
