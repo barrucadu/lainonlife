@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>lainon.life radio</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <script defer src="/radio.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="box">
+      <div class="controls">
+        <audio controls preload="none" id="audio">
+          <source src="/radio/random.ogg" type="audio/ogg"/>
+          <source src="/radio/random.mp3" type="audio/mpeg"/>
+          <em>Your browser lacks support for OGG Vorbis files. Please open the M3U file or XSPF file in a multimedia player.</em>
+        </audio>
+
+        <label for="channel">channel:</label>
+        <select id="channel" onchange="change_channel(this)">
+          <option value="random">random</option>
+        </select>
+
+        [
+        <a id="ogglink" href="/radio/random.ogg.m3u">ogg</a>
+        /
+        <a id="mp3link" href="/radio/random.mp3.m3u">mp3</a>
+        ]
+      </div>
+
+      <hr/>
+
+      <dl>
+        <dt>Now Playing:</dt>
+        <dd id="nowplaying"></dd>
+        <dt>Current Listeners:</dt>
+        <dd id="listeners"></dd>
+      </dl>
+
+      <div id="noscript" class="alert">
+        Enable Javascript for the &quot;Now Playing&quot;, &quot;Current Listeners&quot;, and &quot;channel&quot; features to work.
+      </div>
+    </div>
+  </body>
+</html>
