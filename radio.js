@@ -10,6 +10,7 @@ function check_status() {
             let listenersPeak = 0;
             let artist = "";
             let title = "";
+            let description = "";
 
             // Find the stats for the appropriate output.
             for(id in response.icestats.source) {
@@ -28,13 +29,18 @@ function check_status() {
                 // the ogg stream.
                 if(source.server_name == channel + " (ogg)") {
                     artist = source.artist;
-                    title = source.title;
+                    title  = source.title;
+                    description = source.server_description;
                 }
             }
 
             // Update the stats on the page.
             document.getElementById("nowplaying").innerText = artist + " - " + title;
             document.getElementById("listeners").innerText  = listeners + " (peak: " + listenersPeak + ")";
+
+            // Update the channel description, in case it's changed.
+            document.getElementById("description1").innerText = description;
+            document.getElementById("description2").innerText = description;
         };
     };
 
@@ -71,6 +77,9 @@ function change_channel(e) {
     // Update the status.
     check_status();
 }
+
+// Show the marquee
+document.getElementById("withscript").style.display = "block";
 
 // Hide the javascript warning.
 document.getElementById("noscript").style.display = "none";

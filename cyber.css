@@ -32,10 +32,15 @@ select {
   color: white;
 }
 
-div.alert {
+.alert {
     color: #B83602;
 }
 
 .plain {
     color: white;
+}
+
+.info {
+    color: #46C0AB;
+    text-shadow: 0 0 5px #46C0AB;
 }
