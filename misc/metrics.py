@@ -25,20 +25,10 @@ def snapshot_icecast():
     return channels
 
 
-def get_up_rate(secs=5):
-    """Get the current upload speed in B/s. Blocks for the duration.
+def get_upload():
+    """Get the current upload, in bytes, since last boot."""
 
-    Keyword arguments:
-    secs -- number of seconds to gather data for (default: 5)
-    """
-
-    then = time.time()
-    up0  = psutil.net_io_counters(pernic=False)[0]
-    time.sleep(secs)
-    now = time.time()
-    up1 = psutil.net_io_counters(pernic=False)[0]
-
-    return (up1 - up0) / (now - then)
+    return psutil.net_io_counters(pernic=False)[0]
 
 
 def get_format_listeners(snapshot, fmt):
@@ -71,8 +61,8 @@ if __name__ == "__main__":
     now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     snapshot = snapshot_icecast()
     metrics = [
-        {"measurement": "upload_rate", "time": now, "fields": {
-            "value": get_up_rate()
+        {"measurement": "upload_bytes", "time": now, "fields": {
+            "total": get_upload()
         }},
         {"measurement": "format_listeners", "time": now, "fields": {
             "ogg": get_format_listeners(snapshot, "ogg"),
