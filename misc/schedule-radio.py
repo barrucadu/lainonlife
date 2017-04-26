@@ -144,4 +144,5 @@ if __name__ == "__main__":
         print("Could not connect to MPD.")
         exit(2)
 
+    client.update()
     schedule_radio(client)
