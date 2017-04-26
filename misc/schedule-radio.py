@@ -126,7 +126,8 @@ def schedule_radio(client, target_dur=4*60*60):
 
     # Delete up to the current track
     status = client.status()
-    client.delete((0,int(status["song"])))
+    if "song" in status:
+        client.delete((0,int(status["song"])))
 
 
 if __name__ == "__main__":
