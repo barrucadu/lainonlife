@@ -19,12 +19,18 @@ div.controls {
 }
 
 hr {
-  margin: 1em 0;
+  margin: 1rem 0;
 }
 
 audio {
   width: 100%;
-  margin-bottom: 3px;
+  margin-bottom: 1rem;
+}
+
+select {
+  font-size: 0.9rem;
+  padding: 0;
+  margin: 0;
 }
 
 div.alert {

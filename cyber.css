@@ -28,8 +28,9 @@ hr {
 }
 
 select {
-  background-color: #3A2530;
+  background-color: #1E1A1C;
   color: white;
+  font-family: monospace;
 }
 
 .alert {

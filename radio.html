@@ -21,19 +21,16 @@
           <em>Your browser lacks support for OGG Vorbis files. Please open the M3U file or XSPF file in a multimedia player.</em>
         </audio>
 
-        <label for="channel">channel:</label>
+        [ channel:
         <select id="channel" onchange="change_channel(this)">
           <option value="everything">everything</option>
           <option value="cyberia">cyberia</option>
           <option value="swing">swing</option>
         </select>
-
-        [
-        <a id="ogglink" href="/radio/everything.ogg.m3u">ogg</a>
-        /
-        <a id="mp3link" href="/radio/everything.mp3.m3u">mp3</a>
         ]
-        [ <a id="fileslink" href="/file-list/everything.html">files</a> ]
+
+        [ m3u: <a id="ogglink" href="/radio/everything.ogg.m3u">ogg</a> / <a id="mp3link" href="/radio/everything.mp3.m3u">mp3</a> ]
+        [ files: <a id="fileslink" href="/file-list/everything.html">list</a> ]
       </div>
 
       <hr/>
