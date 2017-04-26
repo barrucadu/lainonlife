@@ -96,3 +96,7 @@ footer {
   0% { left: 0; }
   100% { left: -100%; }
 }
+
+.withscript {
+    display: none;
+}

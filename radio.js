@@ -81,11 +81,11 @@ function change_channel(e) {
     check_status();
 }
 
-// Show the marquee
-document.getElementById("withscript").style.display = "block";
-
-// Hide the javascript warning.
-document.getElementById("noscript").style.display = "none";
+// Show and hide things
+let show = document.getElementsByClassName("withscript");
+let hide = document.getElementsByClassName("noscript");
+for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV") ? "block" : "inline"; }
+for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
 
 // Get the initial status and set a timer to regularly update it.
 check_status();

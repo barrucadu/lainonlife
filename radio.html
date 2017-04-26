@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="box">
-      <div class="marquee info" id="withscript" style="display:none">
+      <div class="marquee info withscript">
         <div>
           <span id="description1"></span>
           <span id="description2"></span>
@@ -22,7 +22,8 @@
         </audio>
 
         [ channel:
-        <select id="channel" onchange="change_channel(this)">
+        <span class="noscript">everything</span>
+        <select class="withscript" id="channel" onchange="change_channel(this)">
           <option value="everything">everything</option>
           <option value="cyberia">cyberia</option>
           <option value="swing">swing</option>
@@ -35,17 +36,17 @@
 
       <hr/>
 
-      <dl>
-        <dt>Now Playing:</dt>
-        <dd id="nowplaying"></dd>
-        <dt>Current Listeners:</dt>
-        <dd id="listeners"></dd>
-      </dl>
+      <div class="withscript">
+        <dl>
+          <dt>Now Playing:</dt>
+          <dd id="nowplaying"></dd>
+          <dt>Current Listeners:</dt>
+          <dd id="listeners"></dd>
+        </dl>
+      </div>
 
-      <div id="noscript" class="alert">
-        <hr/>
-
-        <p>Enable Javascript for the &quot;Now Playing&quot;, &quot;Current Listeners&quot;, and &quot;channel&quot; features to work.</p>
+      <div class="alert noscript">
+        <p>Enable Javascript for the channel features to work.</p>
 
         <p class="plain">Or don't, I'm not your mom.</p>
       </div>
