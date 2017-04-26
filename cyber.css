@@ -45,3 +45,7 @@ select {
     color: #46C0AB;
     text-shadow: 0 0 5px #46C0AB;
 }
+
+.inlineheading {
+    color: #F0546A;
+}
