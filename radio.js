@@ -71,8 +71,8 @@ function change_channel(e) {
     }
 
     // Update the stream links.
-    document.getElementById("ogglink").src = "/radio/" + channel + ".ogg";
-    document.getElementById("mp3link").src = "/radio/" + channel + ".mp3";
+    document.getElementById("ogglink").href = "/radio/" + channel + ".ogg.m3u";
+    document.getElementById("mp3link").href = "/radio/" + channel + ".mp3.m3u";
 
     // Update the status.
     check_status();
