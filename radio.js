@@ -74,6 +74,9 @@ function change_channel(e) {
     document.getElementById("ogglink").href = "/radio/" + channel + ".ogg.m3u";
     document.getElementById("mp3link").href = "/radio/" + channel + ".mp3.m3u";
 
+    // Update the file list link.
+    document.getElementById("fileslink").href = "/file-list/" + channel + ".html";
+
     // Update the status.
     check_status();
 }
