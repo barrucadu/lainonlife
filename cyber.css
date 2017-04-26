@@ -13,7 +13,7 @@ a, a:active, a:link, a:hover, a:visited {
   color: white;
 }
 
-div.box {
+.box, footer {
   background-color: #1E1A1C;
   border: 1px solid #764C61;
   box-shadow: 0 0 50px #F0546A;
