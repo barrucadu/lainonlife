@@ -2,10 +2,15 @@
 
 # Backend services.
 
-from flask import Flask
-import sys
+from flask import Flask, send_file
+import os, random, sys
 
 app = Flask(__name__)
+
+@app.route("/background")
+def background():
+    fname = random.choice(os.listdir("/srv/http/backgrounds/"))
+    return send_file("/srv/http/backgrounds/{}".format(fname), cache_timeout = 0)
 
 if __name__ == "__main__":
     try:
