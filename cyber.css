@@ -4,7 +4,7 @@
  */
 
 body {
-  background: url("/script/background") center center / cover no-repeat fixed;
+  background: url("/background") center center / cover no-repeat fixed;
   font-family: monospace;
   color: white;
 }
