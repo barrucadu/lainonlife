@@ -70,6 +70,8 @@ if __name__ == "__main__":
         }},
         {"measurement": "channel_listeners", "time": now, "fields": {
             "everything": get_channel_listeners(snapshot, "everything"),
+            "cyberia":    get_channel_listeners(snapshot, "cyberia"),
+            "swing":      get_channel_listeners(snapshot, "swing"),
         }}
     ]
 
