@@ -25,6 +25,18 @@ def snapshot_icecast():
     return channels
 
 
+def get_format_list(snapshot):
+    """Return the list of formats in a snapshot."""
+
+    return {stream["format"] for stream in snapshot}
+
+
+def get_channel_list(snapshot):
+    """Return the list of channels in a snapshot."""
+
+    return {stream["channel"] for stream in snapshot}
+
+
 def get_upload():
     """Get the current upload, in bytes, since last boot."""
 
@@ -34,21 +46,13 @@ def get_upload():
 def get_format_listeners(snapshot, fmt):
     """Get the number of listeners on a specific format, across all channels."""
 
-    listeners = 0
-    for stream in snapshot:
-        if stream["format"] == fmt:
-            listeners += stream["listeners"]
-    return listeners
+    return sum([stream["listeners"] for stream in snapshot if stream["format"] == fmt])
 
 
 def get_channel_listeners(snapshot, channel):
     """Get the number of listeners on a specific channel, across all formats."""
 
-    listeners = 0
-    for stream in snapshot:
-        if stream["channel"] == channel:
-            listeners += stream["listeners"]
-    return listeners
+    return sum([stream["listeners"] for stream in snapshot if stream["channel"] == channel])
 
 
 if __name__ == "__main__":
@@ -58,20 +62,19 @@ if __name__ == "__main__":
     client.create_database("lainon.life")
 
     # Gather the metrics
-    now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    now      = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     snapshot = snapshot_icecast()
-    metrics = [
+    formats  = get_format_list(snapshot)
+    channels = get_channel_list(snapshot)
+    metrics  = [
         {"measurement": "upload_bytes", "time": now, "fields": {
             "total": get_upload()
         }},
         {"measurement": "format_listeners", "time": now, "fields": {
-            "ogg": get_format_listeners(snapshot, "ogg"),
-            "mp3": get_format_listeners(snapshot, "mp3")
+            fmt: get_format_listeners(snapshot, fmt) for fmt in formats
         }},
         {"measurement": "channel_listeners", "time": now, "fields": {
-            "everything": get_channel_listeners(snapshot, "everything"),
-            "cyberia":    get_channel_listeners(snapshot, "cyberia"),
-            "swing":      get_channel_listeners(snapshot, "swing"),
+            ch: get_channel_listeners(snapshot, ch) for ch in channels
         }}
     ]
 
