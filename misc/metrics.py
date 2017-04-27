@@ -4,10 +4,7 @@
 
 from datetime import datetime
 from influxdb import InfluxDBClient
-import json
-import psutil
-import time
-import urllib
+import json, os, psutil, time, urllib
 
 def snapshot_icecast():
     """Return a snapshot of the icecast listener status."""
@@ -37,10 +34,18 @@ def get_channel_list(snapshot):
     return {stream["channel"] for stream in snapshot}
 
 
-def get_upload():
+def get_upload_download():
     """Get the current upload, in bytes, since last boot."""
 
-    return psutil.net_io_counters(pernic=False)[0]
+    psinfo = psutil.net_io_counters(pernic=False)
+    return psinfo[0], psinfo[1]
+
+
+def get_disk_used():
+    """Get the disk usage, in bytes."""
+
+    statinfo = os.statvfs("/")
+    return statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)
 
 
 def get_format_listeners(snapshot, fmt):
@@ -66,9 +71,14 @@ if __name__ == "__main__":
     snapshot = snapshot_icecast()
     formats  = get_format_list(snapshot)
     channels = get_channel_list(snapshot)
+    up, down = get_upload_download()
     metrics  = [
-        {"measurement": "upload_bytes", "time": now, "fields": {
-            "total": get_upload()
+        {"measurement": "network", "time": now, "fields": {
+            "upload":   up,
+            "download": down
+        }},
+        {"measurement": "disk", "time": now, "fields": {
+            "used": get_disk_used(),
         }},
         {"measurement": "format_listeners", "time": now, "fields": {
             fmt: get_format_listeners(snapshot, fmt) for fmt in formats
