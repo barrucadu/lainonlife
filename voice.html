@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>lainon.life radio voice-overs</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" type="text/css" href="/cyber.css">
+  </head>
+  <body>
+    <div class="box">
+      <h1>Do you want to hear <strong>your voice</strong> on the radio?</h1>
+
+      <p>There are three types of voice-over we like on the radio:</p>
+
+      <dl>
+        <dt>Transitions</dt>
+        <dd>Play roughly every four hours.<br>
+        <audio controls preload="none" id="audio">
+          <source src="/transition.mp3" type="audio/mpeg"/>
+          <em>Your browser lacks support for MPEG files. Sucks to be you.</em>
+        </audio>
+        </dd>
+        <dt>Album intros</dt>
+        <dd>Play before an album. <br> Example: &quot;Next up, the Neotokyo soundtrack.&quot;</dd>
+        <dt>Track intros</dt>
+        <dd>Play before a track. <br> Example: &quot;The next track is Skull, by GosT.&quot;</dd>
+      </dl>
+
+      <p>It doesn't have to be your voice, it can be distorted or synthesised, or whatever.
+        A transition could even be a soundbite from something.</p>
+      <p>Between 15 and 30 seconds is a good length.</p>
+
+      <hr/>
+
+      <form action="/upload/voice" method="post" enctype="multipart/form-data">
+        <fieldset>
+          <ol>
+            <li>
+              <label for="file">File</label>
+              <input type="file" id="file" name="file" accept="audio/*">
+            </li>
+            <li>
+              <label for="url">Or URL</label>
+              <input type="url" id="url" name="url">
+            </li>
+            <li>
+              <input type="submit" value="Make me into a radio star!">
+            </li>
+          </ol>
+        </fieldset>
+      </form>
+
+      <p>Here's an <a href="/file-list/everything-albums.html">album list</a> and a <a href="/file-list/everything.html">file list</a>.</p>
+    </div>
+  </body>
+</html>

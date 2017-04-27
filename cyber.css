@@ -19,7 +19,7 @@ a, a:active, a:link, a:hover, a:visited {
   box-shadow: 0 0 50px #F0546A;
 }
 
-select, audio, hr {
+select, input, audio, hr {
   border: 1px solid #764C61;
 }
 
@@ -27,23 +27,31 @@ hr {
   background-color: 1px solid #764C61;
 }
 
-select {
+select, input {
   background-color: #1E1A1C;
   color: white;
   font-family: monospace;
+  background-color: #000;
 }
 
 .alert {
-    color: #B83602;
+  color: #B83602;
 }
 
 .plain {
-    color: white;
+  color: white;
 }
 
-.info {
-    color: #46C0AB;
-    text-shadow: 0 0 5px #46C0AB;
+h1, .info {
+  color: #46C0AB;
+  text-shadow: 0 0 5px #46C0AB;
+}
+
+input[type=button], input[type=submit] {
+  color: #46C0AB;
+  box-shadow: 0 0 5px #46C0AB;
+  border-color: #153B3E;
+  background-color: #153B3E;
 }
 
 .inlineheading {

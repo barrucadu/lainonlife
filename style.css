@@ -27,19 +27,48 @@ audio {
   margin-bottom: 1rem;
 }
 
-select {
+select, input {
   font-size: 0.9rem;
   padding: 0;
   margin: 0;
 }
 
+input {
+  padding: 0.3rem;
+}
+
 div.alert {
-    font-weight: bold;
-    text-align: center;
+  font-weight: bold;
+  text-align: center;
 }
 
 .plain {
-    font-weight: normal;
+  font-weight: normal;
+}
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+fieldset ol, fieldset li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+fieldset li {
+  margin-bottom: 0.5rem;
+}
+
+label {
+  display: block;
+  float: left;
+}
+
+input[type=file], input[type=url] {
+  width: 70%;
 }
 
 dl {
@@ -49,7 +78,7 @@ dl {
   padding: 0;
 }
 
-dt {
+dt, label {
   width: 30%;
   font-weight: bold;
 }
@@ -69,9 +98,14 @@ footer {
   text-align: center;
 }
 
+h1 {
+  padding-top: 0;
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
 .marquee {
   height: 25px;
-
   overflow: hidden;
   position: relative;
 }
@@ -98,5 +132,5 @@ footer {
 }
 
 .withscript {
-    display: none;
+  display: none;
 }
