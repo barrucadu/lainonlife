@@ -41,6 +41,12 @@ def get_upload_download():
     return psinfo[0], psinfo[1]
 
 
+def get_cpu_percents():
+    """Get the percentage usage of every cpu."""
+
+    return psutil.cpu_percent(percpu=True)
+
+
 def get_disk_used():
     """Get the disk usage, in bytes."""
 
@@ -67,6 +73,7 @@ def gather_metrics(now):
     formats  = get_format_list(snapshot)
     channels = get_channel_list(snapshot)
     up, down = get_upload_download()
+    cpus     = get_cpu_percents()
 
     return [
         {"measurement": "network", "time": now, "fields": {
@@ -75,6 +82,9 @@ def gather_metrics(now):
         }},
         {"measurement": "disk", "time": now, "fields": {
             "used": get_disk_used(),
+        }},
+        {"measurement": "cpu", "time": now, "fields": {
+            "core{}".format(n): percent for n, percent in enumerate(cpus)
         }},
         {"measurement": "format_listeners", "time": now, "fields": {
             fmt: get_format_listeners(snapshot, fmt) for fmt in formats
