@@ -113,10 +113,11 @@ def schedule_radio(client, target_dur=3*60*60):
     for t in tracks:
         client.add(t)
 
-    # Delete up to the current track
+    # Delete up to the current track, minus 10 tracks (for the web
+    # playlist)
     status = client.status()
     if "song" in status:
-        client.delete((0,int(status["song"])))
+        client.delete((0, max(0, int(status["song"]) - 10)))
 
 
 if __name__ == "__main__":

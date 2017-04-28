@@ -7,7 +7,7 @@ body {
 }
 
 div.box {
-  width: 760px;
+  width: 960px;
   margin: 0 auto;
   padding: 1em;
 }
@@ -24,7 +24,7 @@ hr {
 
 audio {
   width: 100%;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 
 select, input {
@@ -88,49 +88,85 @@ dd {
   width: 70%;
 }
 
-footer {
+header, footer {
+  text-align: center;
+  width: 100%;
+}
+
+body > footer {
   position: absolute;
   bottom: 0%;
   width: 100%;
   margin: 0 0 1em 0;
   padding: 0.5em;
   box-sizing: border-box;
-  text-align: center;
+}
+
+h1, h2 {
+  margin: 0;
+  padding: 0;
 }
 
 h1 {
-  padding-top: 0;
-  margin-top: 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
-.marquee {
-  height: 25px;
-  overflow: hidden;
-  position: relative;
-}
-
-.marquee div {
-  display: block;
-  width: 200%;
-  height: 30px;
-
-  position: absolute;
-  overflow: hidden;
-
-  animation: marquee 10s linear infinite;
-}
-
-.marquee span {
-  float: left;
-  width: 50%;
-}
-
-@keyframes marquee {
-  0% { left: 0; }
-  100% { left: -100%; }
+h2 {
+  font-size: 0.8rem;
 }
 
 .withscript {
   display: none;
+}
+
+table {
+  box-sizing: border-box;
+}
+
+.flex {
+  display: flex !important;
+  flex-flow: row wrap;
+}
+
+.col {
+  flex: 1 0 auto;
+  width: 45%;
+}
+
+.left {
+  margin-right: 2%;
+}
+
+.right {
+  margin-left: 2%;
+}
+
+#queue_body td {
+  text-align: right;
+}
+
+.playbox header {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+#queue {
+  margin-right: 0;
+}
+
+.playbox footer {
+  margin-top: 0.5rem;
+  font-size: 0.8em;
+}
+
+thead {
+  font-size: 1.2em;
+}
+
+table {
+    width: 100%;
+}
+
+table .dur {
+  width: 10em;
 }

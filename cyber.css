@@ -13,7 +13,7 @@ a, a:active, a:link, a:hover, a:visited {
   color: white;
 }
 
-.box, footer {
+.box, body > footer {
   background-color: #1E1A1C;
   border: 1px solid #764C61;
   box-shadow: 0 0 50px #F0546A;
@@ -28,10 +28,9 @@ hr {
 }
 
 select, input {
-  background-color: #1E1A1C;
   color: white;
   font-family: monospace;
-  background-color: #000;
+  background-color: #1B1719;
 }
 
 .alert {
@@ -42,9 +41,16 @@ select, input {
   color: white;
 }
 
-h1, .info {
+h1 {
   color: #46C0AB;
   text-shadow: 0 0 5px #46C0AB;
+  font-weight: normal;
+}
+
+h2, strong {
+  color: #F0546A;
+  text-shadow: 0 0 5px #F0546A;
+  font-weight: normal;
 }
 
 input[type=button], input[type=submit] {
@@ -55,5 +61,11 @@ input[type=button], input[type=submit] {
 }
 
 .inlineheading {
-    color: #F0546A;
+  color: #F0546A;
+}
+
+#lastplayed, #queue {
+  background-color: #1B1719;
+  border: 10px solid #1B1719;
+  border-radius: 5px;
 }
