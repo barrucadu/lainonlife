@@ -46,6 +46,15 @@ def get_disk_used():
     return statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)
 
 
+def get_memory_used():
+    """Get the RAM and swap usage, in bytes."""
+
+    vminfo = psutil.virtual_memory()
+    swinfo = psutil.swap_memory()
+
+    return vminfo[3], vminfo[7], vminfo[8], swinfo[1]
+
+
 def get_format_listeners(snapshot, fmt):
     """Get the number of listeners on a specific format, across all channels."""
 
@@ -64,6 +73,7 @@ def gather_metrics(now):
     snapshot, formats, channels = snapshot_icecast()
     up, down = get_upload_download()
     cpus = get_cpu_percents()
+    vmused, vmbuf, vmcache, swused = get_memory_used()
 
     return [
         {"measurement": "network", "time": now, "fields": {
@@ -75,6 +85,13 @@ def gather_metrics(now):
         }},
         {"measurement": "cpu", "time": now, "fields": {
             "core{}".format(n): percent for n, percent in enumerate(cpus)
+        }},
+        {"measurement": "memory", "time": now, "fields": {
+            "vm_used":    vmused,
+            "vm_used_no_buffers_cache": vmused - vmbuf - vmcache,
+            "vm_buffers": vmbuf,
+            "vm_cached":  vmcache,
+            "swap_used":  swused
         }},
         {"measurement": "format_listeners", "time": now, "fields": {
             fmt: get_format_listeners(snapshot, fmt) for fmt in formats
