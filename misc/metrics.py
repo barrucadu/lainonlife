@@ -60,19 +60,15 @@ def get_channel_listeners(snapshot, channel):
     return sum([stream["listeners"] for stream in snapshot if stream["channel"] == channel])
 
 
-if __name__ == "__main__":
-    client = InfluxDBClient()
+def gather_metrics(now):
+    """Gather metrics to send to InfluxDB."""
 
-    # Ensure the database exists
-    client.create_database("lainon.life")
-
-    # Gather the metrics
-    now      = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     snapshot = snapshot_icecast()
     formats  = get_format_list(snapshot)
     channels = get_channel_list(snapshot)
     up, down = get_upload_download()
-    metrics  = [
+
+    return [
         {"measurement": "network", "time": now, "fields": {
             "upload":   up,
             "download": down
@@ -88,5 +84,19 @@ if __name__ == "__main__":
         }}
     ]
 
-    # Write the metrics
-    client.write_points(metrics, database="lainon.life")
+
+if __name__ == "__main__":
+    client = InfluxDBClient()
+
+    # Ensure the database exists
+    client.create_database("lainon.life")
+
+    # We do this all in the same process to avoid the overhead of
+    # launching a python interpreter every 30s, which appears to mess
+    # with psutil's reporting of CPU usage.
+    while True:
+        now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        print("Sending report for {}".format(now))
+        metrics = gather_metrics(now)
+        client.write_points(metrics, database="lainon.life")
+        time.sleep(30)
