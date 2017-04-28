@@ -37,7 +37,7 @@ def get_channel_list(snapshot):
 def get_upload_download():
     """Get the current upload, in bytes, since last boot."""
 
-    psinfo = psutil.net_io_counters(pernic=False)
+    psinfo = psutil.net_io_counters(pernic=True)["eno1"]
     return psinfo[0], psinfo[1]
 
 
