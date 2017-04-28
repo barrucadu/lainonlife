@@ -6,6 +6,7 @@
 body {
   background: url("/background") center center / cover no-repeat fixed;
   font-family: monospace;
+  font-size: 16px;
   color: white;
 }
 
@@ -30,6 +31,7 @@ hr {
 select, input {
   color: white;
   font-family: monospace;
+  font-size: 0.9rem;
   background-color: #1B1719;
 }
 
@@ -44,7 +46,12 @@ select, input {
 h1 {
   color: #46C0AB;
   text-shadow: 0 0 5px #46C0AB;
+  font-size: 1.3rem;
   font-weight: normal;
+}
+
+h2 {
+  font-size: 0.8rem;
 }
 
 h2, strong {
@@ -60,6 +67,10 @@ input[type=button], input[type=submit] {
   background-color: #153B3E;
 }
 
+thead {
+  font-size: 1.2em;
+}
+
 .inlineheading {
   color: #F0546A;
 }
@@ -68,4 +79,12 @@ input[type=button], input[type=submit] {
   background-color: #1B1719;
   border: 10px solid #1B1719;
   border-radius: 5px;
+}
+
+.playbox header {
+  font-weight: bold;
+}
+
+.playbox footer {
+  font-size: 0.8em;
 }

@@ -2,7 +2,6 @@ body {
   height: 100%;
   margin: 0;
   padding: 10em 0 0 0;
-  font-size: 16px;
   box-sizing: border-box;
 }
 
@@ -28,7 +27,6 @@ audio {
 }
 
 select, input {
-  font-size: 0.9rem;
   padding: 0;
   margin: 0;
 }
@@ -37,7 +35,7 @@ input {
   padding: 0.3rem;
 }
 
-div.alert {
+.alert {
   font-weight: bold;
   text-align: center;
 }
@@ -107,14 +105,6 @@ h1, h2 {
   padding: 0;
 }
 
-h1 {
-  font-size: 1.3rem;
-}
-
-h2 {
-  font-size: 0.8rem;
-}
-
 .withscript {
   display: none;
 }
@@ -146,7 +136,6 @@ table {
 }
 
 .playbox header {
-  font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
@@ -156,15 +145,10 @@ table {
 
 .playbox footer {
   margin-top: 0.5rem;
-  font-size: 0.8em;
-}
-
-thead {
-  font-size: 1.2em;
 }
 
 table {
-    width: 100%;
+  width: 100%;
 }
 
 table .dur {
