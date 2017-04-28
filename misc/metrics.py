@@ -12,26 +12,18 @@ def snapshot_icecast():
     f = urllib.request.urlopen("http://localhost:8000/status-json.xsl")
     stats = json.loads(f.read().decode("utf8"))
 
-    channels = []
+    snapshot = []
     for src in stats["icestats"]["source"]:
-        channels.append({
+        snapshot.append({
             "channel": src["server_name"][:-6],
             "format": src["server_name"][-4:][:-1],
             "listeners": src["listeners"]
         })
-    return channels
 
+    formats  = {stream["format"]  for stream in snapshot}
+    channels = {stream["channel"] for stream in snapshot}
 
-def get_format_list(snapshot):
-    """Return the list of formats in a snapshot."""
-
-    return {stream["format"] for stream in snapshot}
-
-
-def get_channel_list(snapshot):
-    """Return the list of channels in a snapshot."""
-
-    return {stream["channel"] for stream in snapshot}
+    return snapshot, formats, channels
 
 
 def get_upload_download():
@@ -69,11 +61,9 @@ def get_channel_listeners(snapshot, channel):
 def gather_metrics(now):
     """Gather metrics to send to InfluxDB."""
 
-    snapshot = snapshot_icecast()
-    formats  = get_format_list(snapshot)
-    channels = get_channel_list(snapshot)
+    snapshot, formats, channels = snapshot_icecast()
     up, down = get_upload_download()
-    cpus     = get_cpu_percents()
+    cpus = get_cpu_percents()
 
     return [
         {"measurement": "network", "time": now, "fields": {
