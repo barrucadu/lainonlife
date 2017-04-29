@@ -9,7 +9,7 @@ import json, os, random, sys, time
 app = Flask(__name__)
 
 
-def random_file_from(dname, cont):
+def random_file_from(dname, cont=None):
     """Serve a random file from a directory."""
 
     files = [f for f in os.listdir(dname) if not f.startswith('.')]
@@ -17,8 +17,10 @@ def random_file_from(dname, cont):
         return send_file("/srv/http/404.html"), 404
 
     fname = random.choice(files)
-    return cont(fname)
+    if not cont:
+        return send_file(os.path.join(dname, fname), cache_timeout = 0)
 
+    return cont(fname)
 
 
 def playlist_for(port, beforeNum=5, afterNum=5):
@@ -51,7 +53,7 @@ def playlist_for(port, beforeNum=5, afterNum=5):
 @app.route("/background", methods=["GET"])
 def background():
     bgdir = "/srv/http/backgrounds"
-    return random_file_from(bgdir, lambda fname: send_file(os.path.join(bgdir, fname), cache_timeout = 0))
+    return random_file_from(bgdir)
 
 
 @app.route("/transition.mp3", methods=["GET"])
