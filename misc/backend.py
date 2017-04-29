@@ -9,7 +9,7 @@ import json, os, random, sys, time
 app = Flask(__name__)
 
 
-def random_file_from(dname):
+def random_file_from(dname, cont):
     """Serve a random file from a directory."""
 
     files = [f for f in os.listdir(dname) if not f.startswith('.')]
@@ -17,7 +17,7 @@ def random_file_from(dname):
         return send_file("/srv/http/404.html"), 404
 
     fname = random.choice(files)
-    return send_file(os.path.join(dname, fname), cache_timeout = 0)
+    return cont(fname)
 
 
 
@@ -50,7 +50,8 @@ def playlist_for(port, beforeNum=5, afterNum=5):
 
 @app.route("/background", methods=["GET"])
 def background():
-    return random_file_from("/srv/http/backgrounds")
+    bgdir = "/srv/http/backgrounds"
+    return random_file_from(bgdir, lambda fname: send_file(os.path.join(bgdir, fname), cache_timeout = 0))
 
 
 @app.route("/transition.mp3", methods=["GET"])
@@ -88,6 +89,26 @@ def playlist(channel):
         return playlist_for(6602)
 
     return send_file("/srv/http/404.html"), 404
+
+
+@app.route("/webm.html", methods=["GET"])
+def webm():
+    tpl= '''
+<html>
+  <head>
+    <title>webm</title>
+    <link rel="stylesheet" type="text/css" href="/webm.css">
+  </head>
+  <body>
+    <a href="/webms/{0}">
+      <video autoplay loop src="/webms/{0}">
+        Your browser does not support HTML5 video.
+      </video>
+    </a>
+  </body>
+</html>
+        '''
+    return random_file_from("/srv/http/webms", lambda webm: tpl.format(webm))
 
 
 @app.errorhandler(404)
