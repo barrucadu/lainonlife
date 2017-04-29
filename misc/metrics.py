@@ -26,7 +26,7 @@ def snapshot_icecast():
     return snapshot, formats, channels
 
 
-def icecast_metrics_list():
+def icecast_metrics_list(now):
     """Return a list of icecast metrics, or the empty list if it fails."""
 
     try:
@@ -105,7 +105,7 @@ def memory_metrics():
 def gather_metrics(now):
     """Gather metrics to send to InfluxDB."""
 
-    metrics = icecast_metrics_list()
+    metrics = icecast_metrics_list(now)
     metrics.extend([
         {"measurement": "network", "time": now, "fields": network_metrics()},
         {"measurement": "disk",    "time": now, "fields": disk_metrics()},
