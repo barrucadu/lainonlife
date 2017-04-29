@@ -4,7 +4,7 @@
 
 from datetime import datetime
 from influxdb import InfluxDBClient
-import json, os, psutil, time, urllib
+import json, os, psutil, time, subprocess, urllib
 
 def snapshot_icecast():
     """Return a snapshot of the icecast listener status."""
@@ -64,8 +64,27 @@ def cpu_metrics():
 def disk_metrics():
     """Get the disk usage, in bytes."""
 
+    def add_usage(ms, dus, dname):
+        try:
+            for i, val in enumerate(dus):
+                if val.decode("utf-8") == dname:
+                    ms[dname] = int(dus[i-1])
+        except:
+            pass
+
+    # Overall disk usage
     statinfo = os.statvfs("/")
-    return {"used": statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)}
+    metrics = {"used": statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)}
+
+    # Per-directory disk usage
+    dirs = ["/home", "/nix", "/srv", "/tmp", "/var"]
+    argv = ["du", "-s", "-b"]
+    argv.extend(dirs) # why doesn't python have an expression variant of this!?
+    dus = subprocess.check_output(argv).split()
+    for dname in dirs:
+        add_usage(metrics, dus, dname)
+
+    return metrics
 
 
 def memory_metrics():
