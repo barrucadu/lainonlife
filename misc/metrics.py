@@ -26,88 +26,72 @@ def snapshot_icecast():
     return snapshot, formats, channels
 
 
-def get_upload_download():
+def icecast_metrics_list():
+    """Return a list of icecast metrics, or the empty list if it fails."""
+
+    try:
+        snapshot, formats, channels = snapshot_icecast()
+    except:
+        return []
+
+    return [
+        {"measurement": "format_listeners", "time": now, "fields": {
+            fmt: sum([stream["listeners"] for stream in snapshot if stream["format"] == fmt]) for fmt in formats
+        }},
+        {"measurement": "channel_listeners", "time": now, "fields": {
+            ch: sum([stream["listeners"] for stream in snapshot if stream["channel"] == ch]) for ch in channels
+        }}
+    ]
+
+
+def network_metrics():
     """Get the current upload, in bytes, since last boot."""
 
     psinfo = psutil.net_io_counters(pernic=True)["eno1"]
-    return psinfo[0], psinfo[1]
+    return {
+        "up":   psinfo[0],
+        "down": psinfo[1]
+    }
 
 
-def get_cpu_percents():
+def cpu_metrics():
     """Get the percentage usage of every cpu."""
 
-    return psutil.cpu_percent(percpu=True)
+    cpus = psutil.cpu_percent(percpu=True)
+    return {"core{}".format(n): percent for n, percent in enumerate(cpus)}
 
 
-def get_disk_used():
+def disk_metrics():
     """Get the disk usage, in bytes."""
 
     statinfo = os.statvfs("/")
-    return statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)
+    return {"used": statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)}
 
 
-def get_memory_used():
+def memory_metrics():
     """Get the RAM and swap usage, in bytes."""
 
     vminfo = psutil.virtual_memory()
     swinfo = psutil.swap_memory()
 
-    return vminfo[3], vminfo[7], vminfo[8], swinfo[1]
-
-
-def get_format_listeners(snapshot, fmt):
-    """Get the number of listeners on a specific format, across all channels."""
-
-    return sum([stream["listeners"] for stream in snapshot if stream["format"] == fmt])
-
-
-def get_channel_listeners(snapshot, channel):
-    """Get the number of listeners on a specific channel, across all formats."""
-
-    return sum([stream["listeners"] for stream in snapshot if stream["channel"] == channel])
+    return {
+        "vm_used":    vminfo[3],
+        "vm_buffers": vminfo[7],
+        "vm_cached":  vminfo[8],
+        "swap_used":  swinfo[1],
+        "vm_used_no_buffers_cache": vminfo[3] - vminfo[7] - vminfo[8]
+    }
 
 
 def gather_metrics(now):
     """Gather metrics to send to InfluxDB."""
 
-    # Getting the icecast metrics may fail, as it sometimes produces
-    # invalid json.
-    try:
-        snapshot, formats, channels = snapshot_icecast()
-        metrics = [
-            {"measurement": "format_listeners", "time": now, "fields": {
-                fmt: get_format_listeners(snapshot, fmt) for fmt in formats
-            }},
-            {"measurement": "channel_listeners", "time": now, "fields": {
-                ch: get_channel_listeners(snapshot, ch) for ch in channels
-            }}
-        ]
-    except:
-        metrics = []
-
-    # The system metrics (shouldn't crash!)
-    up, down = get_upload_download()
-    cpus = get_cpu_percents()
-    vmused, vmbuf, vmcache, swused = get_memory_used()
-
+    metrics = icecast_metrics_list()
     metrics.extend([
-        {"measurement": "network", "time": now, "fields": {
-            "upload":   up,
-            "download": down
-        }},
-        {"measurement": "disk", "time": now, "fields": {
-            "used": get_disk_used(),
-        }},
-        {"measurement": "cpu", "time": now, "fields": {
-            "core{}".format(n): percent for n, percent in enumerate(cpus)
-        }},
-        {"measurement": "memory", "time": now, "fields": {
-            "vm_used":    vmused,
-            "vm_used_no_buffers_cache": vmused - vmbuf - vmcache,
-            "vm_buffers": vmbuf,
-            "vm_cached":  vmcache,
-            "swap_used":  swused
-        }}
+        {"measurement": "network", "time": now, "fields": network_metrics()},
+        {"measurement": "disk",    "time": now, "fields": disk_metrics()},
+        {"measurement": "cpu",     "time": now, "fields": cpu_metrics()},
+        {"measurement": "memory",  "time": now, "fields": memory_metrics()}
     ])
 
     return metrics
