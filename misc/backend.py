@@ -94,9 +94,11 @@ def playlist(channel):
 @app.route("/webm.html", methods=["GET"])
 def webm():
     tpl= '''
+<!DOCTYPE html>
 <html>
   <head>
     <title>webm</title>
+    <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/webm.css">
   </head>
   <body>
