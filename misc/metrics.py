@@ -47,10 +47,10 @@ def icecast_metrics_list():
 def network_metrics():
     """Get the current upload, in bytes, since last boot."""
 
-    psinfo = psutil.net_io_counters(pernic=True)["eno1"]
+    psinfo = psutil.net_io_counters(pernic=True)
+
     return {
-        "up":   psinfo[0],
-        "down": psinfo[1]
+        "{}_{}".format(iface, way): ifinfo[n] for iface, ifinfo in psinfo.items() for way, n in {"up": 0, "down": 1}.items()
     }
 
 
