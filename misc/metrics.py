@@ -70,12 +70,27 @@ def get_channel_listeners(snapshot, channel):
 def gather_metrics(now):
     """Gather metrics to send to InfluxDB."""
 
-    snapshot, formats, channels = snapshot_icecast()
+    # Getting the icecast metrics may fail, as it sometimes produces
+    # invalid json.
+    try:
+        snapshot, formats, channels = snapshot_icecast()
+        metrics = [
+            {"measurement": "format_listeners", "time": now, "fields": {
+                fmt: get_format_listeners(snapshot, fmt) for fmt in formats
+            }},
+            {"measurement": "channel_listeners", "time": now, "fields": {
+                ch: get_channel_listeners(snapshot, ch) for ch in channels
+            }}
+        ]
+    except:
+        metrics = []
+
+    # The system metrics (shouldn't crash!)
     up, down = get_upload_download()
     cpus = get_cpu_percents()
     vmused, vmbuf, vmcache, swused = get_memory_used()
 
-    return [
+    metrics.extend([
         {"measurement": "network", "time": now, "fields": {
             "upload":   up,
             "download": down
@@ -92,14 +107,10 @@ def gather_metrics(now):
             "vm_buffers": vmbuf,
             "vm_cached":  vmcache,
             "swap_used":  swused
-        }},
-        {"measurement": "format_listeners", "time": now, "fields": {
-            fmt: get_format_listeners(snapshot, fmt) for fmt in formats
-        }},
-        {"measurement": "channel_listeners", "time": now, "fields": {
-            ch: get_channel_listeners(snapshot, ch) for ch in channels
         }}
-    ]
+    ])
+
+    return metrics
 
 
 if __name__ == "__main__":
