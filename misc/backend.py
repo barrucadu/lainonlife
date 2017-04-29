@@ -12,8 +12,13 @@ app = Flask(__name__)
 def random_file_from(dname):
     """Serve a random file from a directory."""
 
-    fname = random.choice(os.listdir(dname))
+    files = [f for f in os.listdir(dname) if not f.startswith('.')]
+    if not files:
+        return send_file("/srv/http/404.html"), 404
+
+    fname = random.choice(files)
     return send_file(os.path.join(dname, fname), cache_timeout = 0)
+
 
 
 def playlist_for(port, beforeNum=5, afterNum=5):
