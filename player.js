@@ -1,26 +1,12 @@
 const LainPlayer = (() => {
-    const playerHTML = "<a id='play-toggle' onclick='LainPlayer.play()'><i class='fa fa-play' aria-hidden='true'></i></a><i id=volume-button class='fa fa-volume-up' aria-hidden='true' onclick='LainPlayer.toggleMute()'></i><input type='range' value=0.51 min=0 max=1  step=0.01 oninput='LainPlayer.changeVolume(this.value)'/>"
     const audioContext = new window.AudioContext();
     const audioTag = document.getElementById("audio");
     let muted = false;
     let volume = 0.51;
     audioTag.volume =  volume;
 
-    function replacePlayer() {
-        const oldPlayer = audioTag;
-        const newPlayer = document.createElement("div")
-        newPlayer.setAttribute("id", "lainplayer");
-        newPlayer.innerHTML = playerHTML;
-        // hide old player and add the new one
-        oldPlayer.setAttribute("style", "display:none;");
-        oldPlayer.after(newPlayer);
-
-    }
-
-    function cangeSource(source) {
-        console.log("fug");
+    function changeSource(source) {
         const paused = audioTag.paused;
-        console.log(paused)
         // Use either the ogg or mp3 stream, depending on what the current one is.
         if(audioTag.currentSrc.endsWith("ogg")) {
             audioTag.src = "/radio/" + source + ".ogg";
@@ -40,10 +26,12 @@ const LainPlayer = (() => {
     function updatePlayButton() {
         const button = document.getElementById("play-toggle");
         if(audioTag.paused) {
-            button.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
+            button.classList.remove('fa-pause');
+            button.classList.add('fa-play');
             button.setAttribute("onclick", "LainPlayer.play()");
         } else {
-            button.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
+            button.classList.remove('fa-play');
+            button.classList.add('fa-pause');
             button.setAttribute("onclick", "LainPlayer.pause()");
         }
     }
@@ -81,10 +69,9 @@ const LainPlayer = (() => {
     }
 
     return {
-        init: () => replacePlayer(),
         play: () => { audioTag.play(); updatePlayButton(); },
         pause: () => { audioTag.pause(); updatePlayButton(); },
-        changeChannel: (channel) => cangeSource(channel),
+        changeChannel: (channel) => changeSource(channel),
         changeVolume: (value) => {
             audioTag.volume = value;
             volume = value;
