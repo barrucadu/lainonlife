@@ -154,3 +154,35 @@ table {
 table .dur {
   width: 10em;
 }
+
+#lainplayer {
+    width: 312px;
+    margin: 0 auto;
+}
+
+#lainplayer i {
+    font-size: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#lainplayer input[type=range] {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#lainplayer #volume-button {
+    width: 46px;
+}
+
+#lainplayer #play-toggle {
+    width: 42px;
+}
+
+#play-toggle:hover {
+    cursor:pointer;
+}
+
+#volume-button:hover {
+    cursor:pointer;
+}

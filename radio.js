@@ -126,26 +126,9 @@ function check_playlist() {
 }
 
 function change_channel(e) {
-    let audio  = document.getElementById("audio");
-    let paused = audio.paused;
-
-    // Update the channel
     channel = e.value;
 
-    // Use either the ogg or mp3 stream, depending on what the current one is.
-    if(audio.currentSrc.endsWith("ogg")) {
-        audio.src = "/radio/" + channel + ".ogg";
-    } else {
-        audio.src = "/radio/" + channel + ".mp3";
-    }
-
-    // Load the new audio stream.
-    audio.load();
-
-    // Start playing, if it was before.
-    if(!paused) {
-        audio.play();
-    }
+    LainPlayer.changeChannel(channel);
 
     // Update the stream links.
     document.getElementById("ogglink").href = "/radio/" + channel + ".ogg.m3u";
@@ -159,19 +142,24 @@ function change_channel(e) {
     check_playlist();
 }
 
-// Show and hide things
-let show = document.getElementsByClassName("withscript");
-let hide = document.getElementsByClassName("noscript");
-for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV" || show[i].tagName == "HEADER") ? "block" : "inline"; }
-for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
+window.onload = () => {
+    // Show and hide things
+    let show = document.getElementsByClassName("withscript");
+    let hide = document.getElementsByClassName("noscript");
+    for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV" || show[i].tagName == "HEADER") ? "block" : "inline"; }
+    for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
 
-// Populate the channel list.
-populate_channel_list();
+    // Initialize custom audio player
+    LainPlayer.init();
 
-// Get the initial status and set a timer to regularly update it.
-check_status();
-setInterval(check_status, 15000);
+    // Populate the channel list.
+    populate_channel_list();
 
-// Get the initial playlist and set a timer to regularly update it.
-check_playlist();
-setInterval(check_playlist, 15000);
+    // Get the initial status and set a timer to regularly update it.
+    check_status();
+    setInterval(check_status, 15000);
+
+    // Get the initial playlist and set a timer to regularly update it.
+    check_playlist();
+    setInterval(check_playlist, 15000);
+}
