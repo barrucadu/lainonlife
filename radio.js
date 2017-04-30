@@ -149,9 +149,6 @@ window.onload = () => {
     for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV" || show[i].tagName == "HEADER") ? "block" : "inline"; }
     for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
 
-    // Initialize custom audio player
-    LainPlayer.init();
-
     // Populate the channel list.
     populate_channel_list();
 
