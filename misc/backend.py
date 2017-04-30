@@ -44,6 +44,7 @@ def playlist_for(port, beforeNum=5, afterNum=5):
         "after":   list(map(sanitise, songsIn(song+1, song+afterNum+1))),
         "elapsed": status["elapsed"]
     }
+    pinfo["before"].reverse()
 
     resp = make_response(json.dumps(pinfo), 200)
     resp.headers["Content-Type"] = "application/json"
