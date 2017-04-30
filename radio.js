@@ -122,6 +122,11 @@ function check_playlist() {
             until = add_track_to_tbody(new_queue, response.after[i], until, false);
         }
         swap_tbody("queue_body", new_queue);
+
+        LainPlayer.updateProgress({
+            length: response.current.time,
+            elapsed: response.elapsed
+        });
     });
 }
 

@@ -156,7 +156,7 @@ table .dur {
 }
 
 #lainplayer {
-    width: 335px;
+    width: 600px;
     margin: 0 auto;
 }
 
@@ -185,4 +185,15 @@ table .dur {
 
 #volume-button:hover {
     cursor:pointer;
+}
+
+#lainplayer progress[value] {
+  width: 250px;
+  height: 12.8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#time-label{
+    text-align:center;
 }

@@ -57,15 +57,38 @@ const LainPlayer = (() => {
     function toggleMute() {
         if (!muted) {
             audioTag.volume = 0;
-            document.getElementById("lainplayer").children[2].value = 0;
+            document.getElementById("volume-slider").value = 0;
             muted = true;
             updateVolumeButton();
         } else {
             audioTag.volume = volume;
-            document.getElementById("lainplayer").children[2].value = volume;
+            document.getElementById("volume-slider").value = volume;
             muted = false;
             updateVolumeButton();
         }
+    }
+
+    function updateProgress(prgs) {
+        // expects an object as the parameter that looks like this:
+        //      {length: value, elapsed: value}
+
+        function getCurrentTime(time) {
+             const min = Math.floor(time / 60);
+             const sec = Math.round(time - min * 60);
+
+             if (sec < 10) {
+                 sec = "0" + sec;
+             }
+
+             return `${min}:${sec}`;
+        }
+
+        const bar  = document.getElementById('track-progress');
+        const timeLabel = document.getElementById('time-label');
+        const progress = Math.round(prgs.elapsed/prgs.length*100);
+        timeLabel.innerText = getCurrentTime(prgs.elapsed);
+        bar.value = progress;
+        bar.innerText = `${progress}%`;
     }
 
     return {
@@ -79,5 +102,6 @@ const LainPlayer = (() => {
             updateVolumeButton();
         },
         toggleMute: () => toggleMute(),
+        updateProgress: (progressObject) => updateProgress(progressObject),
     }
 })();
