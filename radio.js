@@ -1,5 +1,7 @@
 // The initial channel
 var channel = "everything";
+let playlistPoll;
+let statusPoll;
 
 function ajax_with_json(url, func) {
     let httpRequest = new XMLHttpRequest();
@@ -132,7 +134,6 @@ function check_playlist() {
 
 function change_channel(e) {
     channel = e.value;
-
     LainPlayer.changeChannel(channel);
 
     // Update the stream links.
@@ -142,9 +143,17 @@ function change_channel(e) {
     // Update the file list link.
     document.getElementById("fileslink").href = "/file-list/" + channel + ".html";
 
+    // clear the running Intervals
+    // this is needed for the smooth progressbar update to be in sync
+    clearInterval(statusPoll);
+    clearInterval(playlistPoll);
+
     // Update the status and playlist.
+    // and reset the Intervals
     check_status();
+    statusPoll = setInterval(check_status, 15000);
     check_playlist();
+    playlistPoll = setInterval(check_playlist, 15000);
 }
 
 window.onload = () => {
@@ -159,9 +168,9 @@ window.onload = () => {
 
     // Get the initial status and set a timer to regularly update it.
     check_status();
-    setInterval(check_status, 15000);
+    statusPoll = setInterval(check_status, 15000);
 
     // Get the initial playlist and set a timer to regularly update it.
     check_playlist();
-    setInterval(check_playlist, 15000);
+    playlistPoll = setInterval(check_playlist, 15000);
 }
