@@ -93,20 +93,14 @@ const LainPlayer = (() => {
 
         // smooth progressbar update
         clearInterval(updateInterval);
-        let counter = 0;
         let currentTimeInSeconds = prgs.elapsed;
 
         updateInterval = setInterval(() => {
-            counter++;
             currentTimeInSeconds++;
             const newProgress = Math.round(currentTimeInSeconds/prgs.length*100);
             bar.value = newProgress;
             bar.innerText = `${newProgress}%`;
             timeLabel.innerText = getCurrentTime(currentTimeInSeconds);
-
-            if (counter > 15) {
-                clearInterval(updateInterval);
-            }
 
         }, 1000);
     }
