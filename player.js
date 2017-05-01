@@ -74,7 +74,7 @@ const LainPlayer = (() => {
 
         function getCurrentTime(time) {
              const min = Math.floor(time / 60);
-             const sec = Math.round(time - min * 60);
+             let sec = Math.round(time - min * 60);
 
              if (sec < 10) {
                  sec = "0" + sec;
