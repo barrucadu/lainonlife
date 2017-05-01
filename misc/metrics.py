@@ -1,15 +1,34 @@
 #!/usr/bin/env python3
 
-# Radio and server metrics, for pretty graphs at https://lainon.life/graphs/.
+"""Radio and server metrics, for pretty graphs at https://lainon.life/graphs/.
+
+Usage:
+  metrics.py [--icecast-host=HOST] [--icecast-port=PORT] [--influxdb-host=HOST] [--influxdb-port=PORT] [--influxdb-user=USER] [--influxdb-pass=PASS] [--influxdb-name=NAME]
+  metrics.py (-h | --help)
+
+Options:
+  --icecast-host=HOST   Hostname of the Icecast HTTP server [default: localhost]
+  --icecast-port=PORT   Port of the Icecast HTTP server     [default: 8000]
+
+  --influxdb-host=HOST  Hostname of the InfluxDB API server [default: localhost]
+  --influxdb-port=PORT  Port of the InfluxDB API server     [default: 8086]
+  --influxdb-user=USER  Username of the InfluxDB API server [default: root]
+  --influxdb-pass=PASS  Password of the InfluxDB API server [default: root]
+  --influxdb-name=NAME  Name of the InfluxDB database       [default: lainon.life]
+
+  -h --help             Show this text
+"""
 
 from datetime import datetime
+from docopt import docopt
 from influxdb import InfluxDBClient
 import json, os, psutil, time, subprocess, urllib
 
-def snapshot_icecast():
+
+def snapshot_icecast(host, port):
     """Return a snapshot of the icecast listener status."""
 
-    f = urllib.request.urlopen("http://localhost:8000/status-json.xsl")
+    f = urllib.request.urlopen("http://{}:{}/status-json.xsl".format(host, port))
     stats = json.loads(f.read().decode("utf8"))
 
     snapshot = []
@@ -26,11 +45,11 @@ def snapshot_icecast():
     return snapshot, formats, channels
 
 
-def icecast_metrics_list(now):
+def icecast_metrics_list(now, host, port):
     """Return a list of icecast metrics, or the empty list if it fails."""
 
     try:
-        snapshot, formats, channels = snapshot_icecast()
+        snapshot, formats, channels = snapshot_icecast(host, port)
     except:
         return []
 
@@ -102,10 +121,10 @@ def memory_metrics():
     }
 
 
-def gather_metrics(now):
+def gather_metrics(now, icecastHost, icecastPort):
     """Gather metrics to send to InfluxDB."""
 
-    metrics = icecast_metrics_list(now)
+    metrics = icecast_metrics_list(now, icecastHost, icecastPort)
     metrics.extend([
         {"measurement": "network", "time": now, "fields": network_metrics()},
         {"measurement": "disk",    "time": now, "fields": disk_metrics()},
@@ -117,10 +136,28 @@ def gather_metrics(now):
 
 
 if __name__ == "__main__":
-    client = InfluxDBClient()
+    args = docopt(__doc__)
+
+    try:
+        try:
+            args["--icecast-port"] = int(args["--icecast-port"])
+        except:
+            raise Exception("--icecast-port must be an integer")
+        try:
+            args["--influxdb-port"] = int(args["--influxdb-port"])
+        except:
+            raise Exception("--influxdb-port must be an integer")
+    except Exception as e:
+        print(e.args[0])
+        exit(1)
+
+    client = InfluxDBClient(host=args["--influxdb-host"],
+                            port=args["--influxdb-port"],
+                            username=args["--influxdb-user"],
+                            password=args["--influxdb-pass"])
 
     # Ensure the database exists
-    client.create_database("lainon.life")
+    client.create_database(args["--influxdb-name"])
 
     # We do this all in the same process to avoid the overhead of
     # launching a python interpreter every 30s, which appears to mess
@@ -128,6 +165,6 @@ if __name__ == "__main__":
     while True:
         now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         print("Sending report for {}".format(now))
-        metrics = gather_metrics(now)
-        client.write_points(metrics, database="lainon.life")
+        metrics = gather_metrics(now, args["--icecast-host"], args["--icecast-port"])
+        client.write_points(metrics, database=args["--influxdb-name"])
         time.sleep(30)

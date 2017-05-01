@@ -1,12 +1,38 @@
 #!/usr/bin/env python3
 
-# Backend services.
+"""Backend Services.
 
+Usage:
+  backend.py [--http-dir=PATH] [--music-dir=PATH] [--mpd-host=HOST] PORT
+  backend.py (-h | --help)
+
+Options:
+  --http-dir=PATH   Path of the web files   [default: /srv/http]
+  --music-dir=PATH  Path of the music files [default: /srv/radio/music]
+  --mpd-host=HOST   Hostname of MPD         [default: localhost]
+  -h --help         Show this text
+
+"""
+
+from docopt import docopt
 from flask import Flask, make_response, request, send_file
 from mpd import MPDClient
-import json, os, random, sys, time
+import json, os, random, time
 
-app = Flask(__name__)
+app  = Flask(__name__)
+args = docopt(__doc__)
+
+
+def in_http_dir(path):
+    """Return a path in the HTTP directory."""
+
+    return os.path.join(args["--http-dir"], path)
+
+
+def in_music_dir(path):
+    """Return a path in the msuic directory."""
+
+    return os.path.join(args["--music-dir"], path)
 
 
 def random_file_from(dname, cont=None):
@@ -14,7 +40,7 @@ def random_file_from(dname, cont=None):
 
     files = [f for f in os.listdir(dname) if not f.startswith('.')]
     if not files:
-        return send_file("/srv/http/404.html"), 404
+        return send_file(in_http_dir("404.html")), 404
 
     fname = random.choice(files)
     if not cont:
@@ -28,9 +54,9 @@ def playlist_for(port, beforeNum=5, afterNum=5):
 
     try:
         client = MPDClient()
-        client.connect("localhost", port)
+        client.connect(args["--mpd-host"], port)
     except:
-        return "This should not have happened.", 500
+        return "Could not connect to MPD.", 500
 
     status = client.status()
     song   = int(status["song"])
@@ -53,13 +79,12 @@ def playlist_for(port, beforeNum=5, afterNum=5):
 
 @app.route("/background", methods=["GET"])
 def background():
-    bgdir = "/srv/http/backgrounds"
-    return random_file_from(bgdir)
+    return random_file_from(in_http_dir("backgrounds"))
 
 
 @app.route("/transition.mp3", methods=["GET"])
 def transition():
-    return random_file_from("/srv/radio/music/transitions")
+    return random_file_from(in_music_dir("transitions"))
 
 
 @app.route("/upload/voice", methods=["POST"])
@@ -69,15 +94,15 @@ def upload_voice():
     if "file" in request.files:
         f = request.files["file"]
         if f and f.filename:
-            f.save(os.path.join("/srv/http/upload", fname + "-file"))
+            f.save(os.path.join(in_http_dir("upload"), fname + "-file"))
 
     if "url" in request.form:
         u = request.form["url"]
         if u:
-            with open(os.path.join("/srv/http/upload", fname + "-url"), "w") as f:
+            with open(os.path.join(in_http_dir("upload"), fname + "-url"), "w") as f:
                 f.write(u)
 
-    return send_file("/srv/http/thankyou.html")
+    return send_file(in_http_dir("thankyou.html"))
 
 
 @app.route("/playlist/<channel>.json", methods=["GET"])
@@ -91,7 +116,7 @@ def playlist(channel):
     elif channel == "swing":
         return playlist_for(6602)
 
-    return send_file("/srv/http/404.html"), 404
+    return send_file(in_http_dir("404.html")), 404
 
 
 @app.route("/webm.html", methods=["GET"])
@@ -113,19 +138,32 @@ def webm():
   </body>
 </html>
         '''
-    return random_file_from("/srv/http/webms", lambda webm: tpl.format(webm[:-5], webm))
+    return random_file_from(in_http_dir("webms"), lambda webm: tpl.format(webm[:-5], webm))
 
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return send_file("/srv/http/404.html")
+    return send_file(in_http_dir("404.html"))
 
 
 if __name__ == "__main__":
     try:
-        port = int(sys.argv[1])
-    except:
-        print("USAGE: backend.py <port number>")
+        try:
+            args["PORT"] = int(args["PORT"])
+        except:
+            raise Exception("PORT must be an integer between 1 and 65535")
+        if args["PORT"] < 1 or args["PORT"] > 65535:
+            raise Exception("PORT must be an integer between 1 and 65535")
+        if not os.path.isdir(args["--http-dir"]):
+            raise Exception("--http-dir must be a directory")
+        if not os.path.isdir(args["--music-dir"]):
+            raise Exception("--music-dir must be a directory")
+    except Exception as e:
+        print(e.args[0])
         exit(1)
 
-    app.run(port=port)
+    try:
+        app.run(port=args["PORT"])
+    except:
+        print("could not bind to port")
+        exit(2)
