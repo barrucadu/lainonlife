@@ -1,5 +1,7 @@
 // The initial channel
 var channel = "everything";
+let playlistPoll;
+let statusPoll;
 
 function ajax_with_json(url, func) {
     let httpRequest = new XMLHttpRequest();
@@ -122,30 +124,17 @@ function check_playlist() {
             until = add_track_to_tbody(new_queue, response.after[i], until, false);
         }
         swap_tbody("queue_body", new_queue);
+
+        LainPlayer.updateProgress({
+            length: response.current.time,
+            elapsed: response.elapsed
+        });
     });
 }
 
 function change_channel(e) {
-    let audio  = document.getElementById("audio");
-    let paused = audio.paused;
-
-    // Update the channel
     channel = e.value;
-
-    // Use either the ogg or mp3 stream, depending on what the current one is.
-    if(audio.currentSrc.endsWith("ogg")) {
-        audio.src = "/radio/" + channel + ".ogg";
-    } else {
-        audio.src = "/radio/" + channel + ".mp3";
-    }
-
-    // Load the new audio stream.
-    audio.load();
-
-    // Start playing, if it was before.
-    if(!paused) {
-        audio.play();
-    }
+    LainPlayer.changeChannel(channel);
 
     // Update the stream links.
     document.getElementById("ogglink").href = "/radio/" + channel + ".ogg.m3u";
@@ -154,24 +143,34 @@ function change_channel(e) {
     // Update the file list link.
     document.getElementById("fileslink").href = "/file-list/" + channel + ".html";
 
+    // clear the running Intervals
+    // this is needed for the smooth progressbar update to be in sync
+    clearInterval(statusPoll);
+    clearInterval(playlistPoll);
+
     // Update the status and playlist.
+    // and reset the Intervals
     check_status();
+    statusPoll = setInterval(check_status, 15000);
     check_playlist();
+    playlistPoll = setInterval(check_playlist, 15000);
 }
 
-// Show and hide things
-let show = document.getElementsByClassName("withscript");
-let hide = document.getElementsByClassName("noscript");
-for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV" || show[i].tagName == "HEADER") ? "block" : "inline"; }
-for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
+window.onload = () => {
+    // Show and hide things
+    let show = document.getElementsByClassName("withscript");
+    let hide = document.getElementsByClassName("noscript");
+    for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV" || show[i].tagName == "HEADER") ? "block" : "inline"; }
+    for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
 
-// Populate the channel list.
-populate_channel_list();
+    // Populate the channel list.
+    populate_channel_list();
 
-// Get the initial status and set a timer to regularly update it.
-check_status();
-setInterval(check_status, 15000);
+    // Get the initial status and set a timer to regularly update it.
+    check_status();
+    statusPoll = setInterval(check_status, 15000);
 
-// Get the initial playlist and set a timer to regularly update it.
-check_playlist();
-setInterval(check_playlist, 15000);
+    // Get the initial playlist and set a timer to regularly update it.
+    check_playlist();
+    playlistPoll = setInterval(check_playlist, 15000);
+}
