@@ -1,9 +1,7 @@
 const LainPlayer = (() => {
     const audioContext = new window.AudioContext();
     const audioTag = document.getElementById("audio");
-    let muted = false;
-    let volume = 0.51;
-    audioTag.volume =  volume;
+    audioTag.volume = 0.51;
     let updateInterval;
 
     function changeSource(source) {
@@ -29,12 +27,19 @@ const LainPlayer = (() => {
         if(audioTag.paused) {
             button.classList.remove('fa-pause');
             button.classList.add('fa-play');
-            button.setAttribute("onclick", "LainPlayer.play()");
         } else {
             button.classList.remove('fa-play');
             button.classList.add('fa-pause');
-            button.setAttribute("onclick", "LainPlayer.pause()");
         }
+    }
+
+    function togglePlay() {
+        if(audioTag.paused) {
+            audioTag.play();
+        } else {
+            audioTag.pause();
+        }
+        updatePlayButton();
     }
 
     function updateVolumeButton() {
@@ -55,23 +60,23 @@ const LainPlayer = (() => {
         }
     }
 
-    function toggleMute() {
-        if (!muted) {
-            audioTag.volume = 0;
-            document.getElementById("volume-slider").value = 0;
-            muted = true;
-            updateVolumeButton();
+    function cycleVolume() {
+        if (audioTag.volume < 0.51) {
+            audioTag.volume = 0.51;
+        } else if (audioTag.volume < 1) {
+            audioTag.volume = 1;
         } else {
-            audioTag.volume = volume;
-            document.getElementById("volume-slider").value = volume;
-            muted = false;
-            updateVolumeButton();
+            audioTag.volume = 0;
         }
+        updateVolumeButton();
     }
 
     function updateProgress(prgs) {
         // expects an object as the parameter that looks like this:
         //      {length: value, elapsed: value}
+
+        const bar       = document.getElementById('track-progress');
+        const timeLabel = document.getElementById('time-label');
 
         function getCurrentTime(time) {
              const min = Math.floor(time / 60);
@@ -84,12 +89,14 @@ const LainPlayer = (() => {
              return `${min}:${sec}`;
         }
 
-        const bar  = document.getElementById('track-progress');
-        const timeLabel = document.getElementById('time-label');
-        const progress = Math.round(prgs.elapsed/prgs.length*100);
-        timeLabel.innerText = getCurrentTime(prgs.elapsed);
-        bar.value = progress;
-        bar.innerText = `${progress}%`;
+        function setProgressTo(elapsed) {
+            let realElapsed = Math.min(elapsed, prgs.length)
+            let progress    = Math.round(realElapsed/prgs.length*100);
+            timeLabel.innerText = `${getCurrentTime(realElapsed)} / ${getCurrentTime(prgs.length)}`;
+            bar.style.width = `${progress}%`;
+        }
+
+        setProgressTo(prgs.elapsed);
 
         // smooth progressbar update
         clearInterval(updateInterval);
@@ -97,25 +104,14 @@ const LainPlayer = (() => {
 
         updateInterval = setInterval(() => {
             currentTimeInSeconds++;
-            const newProgress = Math.round(currentTimeInSeconds/prgs.length*100);
-            bar.value = newProgress;
-            bar.innerText = `${newProgress}%`;
-            timeLabel.innerText = getCurrentTime(currentTimeInSeconds);
-
+            setProgressTo(currentTimeInSeconds);
         }, 1000);
     }
 
     return {
-        play: () => { audioTag.play(); updatePlayButton(); },
-        pause: () => { audioTag.pause(); updatePlayButton(); },
+        togglePlay: () => togglePlay(),
         changeChannel: (channel) => changeSource(channel),
-        changeVolume: (value) => {
-            audioTag.volume = value;
-            volume = value;
-            muted = !(value > 0);
-            updateVolumeButton();
-        },
-        toggleMute: () => toggleMute(),
+        cycleVolume: () => cycleVolume(),
         updateProgress: (progressObject) => updateProgress(progressObject),
     }
 })();

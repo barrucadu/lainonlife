@@ -160,7 +160,15 @@ window.onload = () => {
     // Show and hide things
     let show = document.getElementsByClassName("withscript");
     let hide = document.getElementsByClassName("noscript");
-    for(let i = 0; i < show.length; i++) { show[i].style.display = (show[i].tagName == "DIV" || show[i].tagName == "HEADER") ? "block" : "inline"; }
+    for(let i = 0; i < show.length; i++) {
+        if(show[i].tagName == "DIV" || show[i].tagName == "HEADER") {
+            show[i].style.display = "block";
+        } else if(show[i].tagName == "TD") {
+            show[i].style.display = "table-cell";
+        } else {
+            show[i].style.display = "inline";
+        }
+    }
     for(let i = 0; i < hide.length; i++) { hide[i].style.display = "none"; }
 
     // Populate the channel list.
