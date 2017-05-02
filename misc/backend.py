@@ -87,8 +87,8 @@ def transition():
     return random_file_from(in_music_dir("transitions"))
 
 
-@app.route("/upload/voice", methods=["POST"])
-def upload_voice():
+@app.route("/upload/bump", methods=["POST"])
+def upload_bump():
     fname = str(time.time())
 
     if "file" in request.files:
