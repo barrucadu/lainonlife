@@ -14,7 +14,7 @@ Options:
 """
 
 from docopt import docopt
-from flask import Flask, make_response, request, send_file
+from flask import Flask, make_response, redirect, request, send_file
 from mpd import MPDClient
 import json, os, random, time
 
@@ -127,6 +127,14 @@ def webm():
 </html>
         '''
     return random_file_from(in_http_dir("webms"), lambda webm: tpl.format(webm[:-5], webm))
+
+
+@app.route("/radio.html")
+def redirect_radio():
+    # This is in here so that I didn't need to edit the nginx config
+    # and restart it, kicking everyone off the stream.  A downside of
+    # proxying Icecast through nginx...
+    return redirect("/")
 
 
 @app.errorhandler(404)
