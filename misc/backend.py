@@ -3,12 +3,11 @@
 """Backend Services.
 
 Usage:
-  backend.py [--http-dir=PATH] [--music-dir=PATH] [--mpd-host=HOST] PORT
+  backend.py [--http-dir=PATH] [--mpd-host=HOST] PORT
   backend.py (-h | --help)
 
 Options:
   --http-dir=PATH   Path of the web files   [default: /srv/http]
-  --music-dir=PATH  Path of the music files [default: /srv/radio/music]
   --mpd-host=HOST   Hostname of MPD         [default: localhost]
   -h --help         Show this text
 
@@ -27,12 +26,6 @@ def in_http_dir(path):
     """Return a path in the HTTP directory."""
 
     return os.path.join(args["--http-dir"], path)
-
-
-def in_music_dir(path):
-    """Return a path in the msuic directory."""
-
-    return os.path.join(args["--music-dir"], path)
 
 
 def random_file_from(dname, cont=None):
@@ -80,11 +73,6 @@ def playlist_for(port, beforeNum=5, afterNum=5):
 @app.route("/background", methods=["GET"])
 def background():
     return random_file_from(in_http_dir("backgrounds"))
-
-
-@app.route("/transition.mp3", methods=["GET"])
-def transition():
-    return random_file_from(in_music_dir("transitions"))
 
 
 @app.route("/upload/bump", methods=["POST"])
@@ -156,8 +144,6 @@ if __name__ == "__main__":
             raise Exception("PORT must be an integer between 1 and 65535")
         if not os.path.isdir(args["--http-dir"]):
             raise Exception("--http-dir must be a directory")
-        if not os.path.isdir(args["--music-dir"]):
-            raise Exception("--music-dir must be a directory")
     except Exception as e:
         print(e.args[0])
         exit(1)
