@@ -20,7 +20,7 @@ a, a:active, a:link, a:hover, a:visited {
   box-shadow: 0 0 50px #F0546A;
 }
 
-select, input, audio, hr {
+select, input, audio, hr, textarea {
   border: 1px solid #764C61;
 }
 
@@ -28,7 +28,7 @@ hr {
   background-color: 1px solid #764C61;
 }
 
-select, input {
+select, input, textarea {
   color: white;
   font-family: monospace;
   font-size: 0.9rem;
@@ -99,11 +99,4 @@ thead {
 
 #track-progress {
     background: #46C0AB;
-}
-
-/* fixes for firefox */
-@-moz-document url-prefix() {
-    #lainplayer input[type=range] {
-      margin-bottom: 0px;
-    }
 }

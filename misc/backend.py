@@ -70,6 +70,25 @@ def playlist_for(port, beforeNum=5, afterNum=5):
     return resp
 
 
+def save_file(fp, suffix="file"):
+    """Save a file to the uploads directory."""
+
+    fname = str(time.time())
+    if fp and fp.filename:
+        fp.save(os.path.join(in_http_dir("upload"), "{}-{}".format(fname, suffix)))
+
+
+def save_form(fm, suffix="form"):
+    """Save a form to the uploads directory."""
+
+    fname = str(time.time())
+    if fm:
+        with open(os.path.join(in_http_dir("upload"), "{}-{}".format(fname, suffix)), "w") as f:
+            for k, v in fm.items():
+                if v:
+                    f.write("{}: {}\n".format(k, v))
+
+
 @app.route("/background", methods=["GET"])
 def background():
     return random_file_from(in_http_dir("backgrounds"))
@@ -77,18 +96,19 @@ def background():
 
 @app.route("/upload/bump", methods=["POST"])
 def upload_bump():
-    fname = str(time.time())
-
     if "file" in request.files:
-        f = request.files["file"]
-        if f and f.filename:
-            f.save(os.path.join(in_http_dir("upload"), fname + "-file"))
+        save_file(request.files["file"])
 
     if "url" in request.form:
-        u = request.form["url"]
-        if u:
-            with open(os.path.join(in_http_dir("upload"), fname + "-url"), "w") as f:
-                f.write(u)
+        save_form({"url": request.form["url"]}, suffix="url")
+
+    return send_file(in_http_dir("thankyou.html"))
+
+
+@app.route("/upload/request", methods=["POST"])
+def upload_request():
+    if "artist" in request.form and "album" in request.form:
+        save_form({t: request.form[t] for t in ["artist", "album", "url", "notes"] if t in request.form}, suffix="request")
 
     return send_file(in_http_dir("thankyou.html"))
 

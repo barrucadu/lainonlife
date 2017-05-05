@@ -25,12 +25,13 @@ audio {
   margin: 1rem 0;
 }
 
-select, input {
+select, input, textarea {
+  box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-input {
+input, textarea {
   padding: 0.3rem;
 }
 
@@ -64,7 +65,7 @@ label {
   float: left;
 }
 
-input[type=file], input[type=url] {
+input[type=file], input[type=url], input[type=text], textarea {
   width: 70%;
 }
 

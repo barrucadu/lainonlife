@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>lainon.life music requests</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" type="text/css" href="/cyber.css">
+  </head>
+  <body>
+    <div class="box">
+      <form action="/upload/request" method="post">
+        <fieldset>
+          <ol>
+            <li>
+              <label for="file">Artist</label>
+              <input type="text" id="artist" name="artist" required>
+            </li>
+            <li>
+              <label for="album">Album or Song</label>
+              <input type="text" id="album" name="album" required>
+            </li>
+            <li>
+              <label for="url">URL</label>
+              <input type="url" id="url" name="url">
+            </li>
+            <li>
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes"></textarea>
+            </li>
+            <li>
+              <input type="submit" value="Request it!">
+            </li>
+          </ol>
+        </fieldset>
+      </form>
+    </div>
+  </body>
+</html>
