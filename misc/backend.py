@@ -123,6 +123,8 @@ def playlist(channel):
         return playlist_for(6601)
     elif channel == "swing":
         return playlist_for(6602)
+    elif channel == "cafe":
+        return playlist_for(6603)
 
     return send_file(in_http_dir("404.html")), 404
 
