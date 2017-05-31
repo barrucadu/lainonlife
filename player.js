@@ -85,6 +85,11 @@ const LainPlayer = (() => {
              if (sec < 10) {
                  sec = "0" + sec;
              }
+            
+             if (sec = 60) {
+                 sec = "00";
+                 min = min + 1;
+             }
 
              return `${min}:${sec}`;
         }
