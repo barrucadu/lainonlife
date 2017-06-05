@@ -26,6 +26,16 @@
               <input type="text" id="album" name="album" required>
             </li>
             <li>
+              <label for="channel">Channel <span class="alert">*</span></label>
+              <!-- this is a hard-coded channel list so the page works for non-javascript people -->
+              <select name="channel" id="channel">
+                <option value="cafe">cafe</option>
+                <option value="cyberia">cyberia</option>
+                <option value="swing">swing</option>
+                <option value="misc">misc</option>
+              </select>
+            </li>
+            <li>
               <label for="url">URL</label>
               <input type="url" id="url" name="url">
             </li>
