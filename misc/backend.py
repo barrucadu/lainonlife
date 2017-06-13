@@ -21,6 +21,13 @@ import json, os, random, time
 app  = Flask(__name__)
 args = docopt(__doc__)
 
+# List of channels, populated with MPD client instances as playlists
+# are requested.
+channels = {"everything": {"port": 6600, "client": None},
+            "cyberia":    {"port": 6601, "client": None},
+            "swing":      {"port": 6602, "client": None},
+            "cafe":       {"port": 6603, "client": None}}
+
 
 def in_http_dir(path):
     """Return a path in the HTTP directory."""
@@ -42,15 +49,10 @@ def random_file_from(dname, cont=None):
     return cont(fname)
 
 
-def playlist_for(port, beforeNum=5, afterNum=5):
+def playlist_for(channel, beforeNum=5, afterNum=5):
     """Return the playlist of the given MPD instance, as JSON."""
 
-    try:
-        client = MPDClient()
-        client.connect(args["--mpd-host"], port)
-    except:
-        return "Could not connect to MPD.", 500
-
+    client = channels[channel]["client"]
     status = client.status()
     song   = int(status["song"])
     pllen  = int(status["playlistlength"])
@@ -115,16 +117,19 @@ def upload_request():
 
 @app.route("/playlist/<channel>.json", methods=["GET"])
 def playlist(channel):
-    # TODO: have some way of figuring this out automatically.  Check
-    # systemd unit names?  Feels hacky...
-    if channel == "everything":
-        return playlist_for(6600)
-    elif channel == "cyberia":
-        return playlist_for(6601)
-    elif channel == "swing":
-        return playlist_for(6602)
-    elif channel == "cafe":
-        return playlist_for(6603)
+    global channels
+
+    if channel in channels:
+        try:
+            channels[channel]["client"].ping()
+        except:
+            try:
+                channels[channel]["client"] = MPDClient()
+                channels[channel]["client"].connect(args["--mpd-host"], channels[channel]["port"])
+                channels[channel]["client"].ping()
+            except:
+                return "Could not connect to MPD.", 500
+        return playlist_for(channel)
 
     return send_file(in_http_dir("404.html")), 404
 
