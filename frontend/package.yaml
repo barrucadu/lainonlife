@@ -1,0 +1,7 @@
+executables:
+  frontend:
+    main: Main.hs
+    dependencies:
+      - base
+      - hakyll
+      - language-javascript
