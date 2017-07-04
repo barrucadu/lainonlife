@@ -1,0 +1,10 @@
+// lines that start with "//" are ignored
+// the other ones should list from monday through sunday what the scheduled events are
+// if you leave a line blank that's fine, it'll be replaced with "None"
+// this is just a sample..
+
+
+
+00:00 - 04:20 puss's anime extravaganza
+
+10:00 - 11:00 celt radio comeback show

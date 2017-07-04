@@ -1,0 +1,30 @@
+{% import 'info_macros.html' as info_macros %}
+
+<style type="text/css">
+{% include "styles.css" %}
+</style>
+
+<head>
+  <title>dj page</title>
+</head>
+
+<body>
+    <div id="stream_info">
+    {% if livestream_info['active'] %}
+        {% if livestream_info['current_dj'] == current_user.id %} you're streaming !! <br> <a href="/dj/stop_streaming">stop streaming</a>
+        {% else %}
+            {{ livestream_info['current_dj'] }} is streaming right now
+        {% endif %}
+    {% else %} no one is streaming right now <br> <a href="/dj/start_streaming">start streaming</a>
+    {% endif %}
+    <br> <br> <a href="/dj/logout">logout</a> <a href="/dj/password_change_form">change password</a>
+    {% if current_user.id == 'admin' %} <br> <br> <a href="/admin">admin panel</a> {% endif %}
+    </div>
+    <div id="dj_info">
+        your dj info <a href="/dj/edit_dj_info">(edit)</a>
+        {{ info_macros.dj_info(dj_info_dict, dj_info_names, True) }}
+        <p>stream description (optional) <br>
+            <textarea disabled id="stream_desc" name="stream_desc">{{ current_desc }}</textarea>
+        </p>
+    </div>
+</body>

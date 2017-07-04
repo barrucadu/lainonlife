@@ -1,0 +1,41 @@
+<head>
+  <title>admin page</title>
+</head>
+
+<body>
+  <div id="userlist">
+    <table>
+      <tr>
+        <th>user</th>
+        <th>(❌ = b&amp;)</th> 
+      </tr>
+        {% for username, ban_status in all_users %}
+            <tr>
+               <th> {{ username }} </th>
+                {% if ban_status %}
+                   <td> <a href="/admin/unban/{{ username }}">❌</a></td>
+                {% else %}
+                   <td> <a href="/admin/ban/{{ username }}">🔨</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+  </div>
+  <div id="add_user">
+  <form action="" method=post class="form-horizontal">
+      <h2>add user </h2>
+     <div class="control-group">
+         <div class="controls">
+           <input type="text" id="username" name="username" class="input-xlarge"
+             placeholder="username" required>
+         </div>
+     </div>
+    
+     <div class="control-group">
+         <div class="controls">
+           <button type="submit" class="btn btn-success">create</button>
+         </div>
+     </div>
+   </form>
+  </div>
+</body>
