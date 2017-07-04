@@ -73,7 +73,7 @@ const LainPlayer = (() => {
 
     function updateProgress(prgs) {
         // expects an object as the parameter that looks like this:
-        //      {length: value, elapsed: value}
+        //      {length: value, elapsed: value, live: boolean value}
 
         const bar       = document.getElementById('track-progress');
         const timeLabel = document.getElementById('time-label');
@@ -96,7 +96,14 @@ const LainPlayer = (() => {
             bar.style.width = `${progress}%`;
         }
 
-        setProgressTo(prgs.elapsed);
+        function setLiveProgressTo(elapsed) {
+            timeLabel.innerText = `${getCurrentTime(elapsed)} / ??:??`;
+            bar.style.width = `0%`;
+        }
+
+        var progressFun = (prgs.live) ? setLiveProgressTo : setProgressTo;
+        
+        progressFun(prgs.elapsed);
 
         // smooth progressbar update
         clearInterval(updateInterval);
@@ -104,7 +111,7 @@ const LainPlayer = (() => {
 
         updateInterval = setInterval(() => {
             currentTimeInSeconds++;
-            setProgressTo(currentTimeInSeconds);
+            progressFun(currentTimeInSeconds);
         }, 1000);
     }
 
