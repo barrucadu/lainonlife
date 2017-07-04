@@ -195,3 +195,70 @@ table .dur {
 #time-label{
   text-align:center;
 }
+
+/* schedule additions */
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.75);
+  transition: opacity 200ms;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.overlay .cancel_popup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 75px auto;
+  padding: 20px;
+  background: #1E1A1C;
+  border: 1px solid #764C61;
+  width: 660px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.popup .content {
+  max-height: 500px;
+  overflow: auto;
+}
+.popup p {
+  margin: 0 0 1em;
+}
+.popup p:last-child {
+  margin: 0;
+}
+
+.popup .content > table {
+  border-collapse: collapse;
+}
+.popup .content > table td, .popup .content >  table th {
+  border: 0px;
+  border-right: 1px solid #764C61;
+  padding-left: 10px;
+}
+
+.popup .content > table tr td:last-child,
+.popup .content > table tr th:last-child {
+  border-right: 0;
+}
+
+/* fake queue */
+
+#dj_pic {
+  width: 95%;
+}
