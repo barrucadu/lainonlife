@@ -1,0 +1,21 @@
+#stream_info {
+    float: left;
+    width: 40%;
+
+}
+
+#dj_info {
+    margin-left: 40%;
+}
+
+#dj_info > p > * {
+    width: 100%;
+}
+
+#dj_info_edit > p > * {
+    width: 40%;
+}
+
+#stream_desc {
+    height: 75px;
+}

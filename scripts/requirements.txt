@@ -1,0 +1,5 @@
+docopt >= 0.6.2
+Flask >= 0.12.0
+python-mpd2 >= 0.5.5
+flask-login
+tinydb
