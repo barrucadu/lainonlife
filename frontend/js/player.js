@@ -6,14 +6,9 @@ const LainPlayer = (() => {
 
     function changeSource(source) {
         const paused = audioTag.paused;
-        // Use either the ogg or mp3 stream, depending on what the current one is.
-        if(audioTag.currentSrc.endsWith("ogg")) {
-            audioTag.src = "/radio/" + source + ".ogg";
-        } else {
-            audioTag.src = "/radio/" + source + ".mp3";
-        }
 
         // Load the new audio stream.
+        audioTag.src = "/radio/" + source + ".mp3";
         audioTag.load();
 
         // Start playing, if it was before.
