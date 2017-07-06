@@ -34,24 +34,29 @@ def snapshot_icecast(host, port):
     snapshot = []
     for src in stats["icestats"]["source"]:
         snapshot.append({
-            "channel": src["server_name"].replace(" (mpd)", ""),
+            "channel": src["server_name"][:-6],
+            "format": src["server_name"][-4:][:-1],
             "listeners": src["listeners"]
         })
 
+    formats  = {stream["format"]  for stream in snapshot}
     channels = {stream["channel"] for stream in snapshot}
 
-    return snapshot, channels
+    return snapshot, formats, channels
 
 
 def icecast_metrics_list(now, host, port):
     """Return a list of icecast metrics, or the empty list if it fails."""
 
     try:
-        snapshot, channels = snapshot_icecast(host, port)
+        snapshot, formats, channels = snapshot_icecast(host, port)
     except:
         return []
 
     return [
+        {"measurement": "format_listeners", "time": now, "fields": {
+            fmt: sum([stream["listeners"] for stream in snapshot if stream["format"] == fmt]) for fmt in formats
+        }},
         {"measurement": "channel_listeners", "time": now, "fields": {
             ch: sum([stream["listeners"] for stream in snapshot if stream["channel"] == ch]) for ch in channels
         }}
