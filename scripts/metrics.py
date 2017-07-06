@@ -33,11 +33,12 @@ def snapshot_icecast(host, port):
 
     snapshot = []
     for src in stats["icestats"]["source"]:
-        snapshot.append({
-            "channel": src["server_name"][:-6],
-            "format": src["server_name"][-4:][:-1],
-            "listeners": src["listeners"]
-        })
+        if "server_name" in src and "listeners" in src:
+            snapshot.append({
+                "channel": src["server_name"][:-6].replace("[mpd] ", ""),
+                "format": src["server_name"][-4:][:-1],
+                "listeners": src["listeners"]
+            })
 
     formats  = {stream["format"]  for stream in snapshot}
     channels = {stream["channel"] for stream in snapshot}

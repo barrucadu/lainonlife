@@ -22,9 +22,9 @@ function populate_channel_list() {
         let channels = [];
         for(id in response.icestats.source) {
             let source = response.icestats.source[id];
-            let sname = source.server_name.substr(0, source.server_name.length - 6);
-            if(source.server_name.endsWith(" (ogg)") && sname != "everything") {
-                channels.push(sname);
+            let sname = source.server_name;
+            if(sname !== undefined && sname.startsWith("[mpd] ") && sname.endsWith(" (ogg)") && sname.substr(6, sname.length-12) != "everything") {
+                channels.push(sname.substr(6, sname.length-12));
             }
         }
 
@@ -53,7 +53,8 @@ function check_status() {
             // Assume that the listeners of the ogg and mp3 streams
             // are disjoint and just add them.  Bigger numbers are
             // better, right?
-            if(source.server_name.startsWith(channel + " (")) {
+            let sname = source.server_name.substr(0, source.server_name - 6);
+            if(sname == channel || sname == "[mpd] " + channel) {
                 listeners     += source.listeners;
                 listenersPeak += source.listener_peak;
                 description    = source.server_description;
