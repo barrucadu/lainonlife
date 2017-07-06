@@ -23,8 +23,9 @@ player_js: true
       <tr>
         <td>
           <audio controls preload="none" id="audio" class="noscript">
+            <source src="/radio/everything.ogg" type="audio/ogg"/>
             <source src="/radio/everything.mp3" type="audio/mpeg"/>
-            <em>Your browser lacks support for MP3 files. Please open the M3U file or XSPF file in a multimedia player.</em>
+            <em>Your browser lacks support for OGG Vorbis files. Please open the M3U file or XSPF file in a multimedia player.</em>
           </audio>
           <div class="progressbar withscript">
             <div id="track-progress"></div>
@@ -43,8 +44,8 @@ player_js: true
     </select>
     ]
 
-    [ <a id="mp3link" href="/radio/everything.mp3.m3u">mp3.m3u</a> ]
-    [ <a id="fileslink" href="/file-list/everything.html">file list</a> ]
+    [ <span class="inlineheading">m3u:</span>   <a id="ogglink" href="/radio/everything.ogg.m3u">ogg</a> / <a id="mp3link" href="/radio/everything.mp3.m3u">mp3</a> ]
+    [ <span class="inlineheading">files:</span> <a id="fileslink" href="/file-list/everything.html">list</a> ]
   </div>
 
   <hr/>

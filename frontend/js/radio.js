@@ -22,9 +22,9 @@ function populate_channel_list() {
         let channels = [];
         for(id in response.icestats.source) {
             let source = response.icestats.source[id];
-            let sname  = source.server_name;
-            if(sname !== undefined && sname.endsWith("(mpd)") && sname != "everything (mpd)") {
-                channels.push(sname.substr(0, sname.length - 6));
+            let sname = source.server_name.substr(0, source.server_name.length - 6);
+            if(source.server_name.endsWith(" (ogg)") && sname != "everything") {
+                channels.push(sname);
             }
         }
 
@@ -49,10 +49,14 @@ function check_status() {
         // Find the stats for the appropriate output.
         for(id in response.icestats.source) {
             let source = response.icestats.source[id];
-            if(source.server_name == channel) {
-                listeners     = source.listeners;
-                listenersPeak = source.listener_peak;
-                description   = source.server_description;
+
+            // Assume that the listeners of the ogg and mp3 streams
+            // are disjoint and just add them.  Bigger numbers are
+            // better, right?
+            if(source.server_name.startsWith(channel + " (")) {
+                listeners     += source.listeners;
+                listenersPeak += source.listener_peak;
+                description    = source.server_description;
             }
         }
 
@@ -133,6 +137,7 @@ function change_channel(e) {
     LainPlayer.changeChannel(channel);
 
     // Update the stream links.
+    document.getElementById("ogglink").href = "/radio/" + channel + ".ogg.m3u";
     document.getElementById("mp3link").href = "/radio/" + channel + ".mp3.m3u";
 
     // Update the file list link.
