@@ -1,3 +1,7 @@
+<style type="text/css">
+{% include "styles.css" %}
+</style>
+
 <head>
   <title>admin page</title>
 </head>
@@ -7,35 +11,45 @@
     <table>
       <tr>
         <th>user</th>
-        <th>(❌ = b&amp;)</th> 
+        <th>ban status</th> 
+        {% if current_user.id == 'superadmin' %}
+          <th>admin status</th> 
+        {% endif %}
       </tr>
-        {% for username, ban_status in all_users %}
-            <tr>
-               <th> {{ username }} </th>
-                {% if ban_status %}
-                   <td> <a href="/admin/unban/{{ username }}">❌</a></td>
+      {% for username, user_status in all_users %}
+          <tr>
+             <th> {{ username }}{% if user_status[1] %}*{% endif %}</th>
+              {% if user_status[0] %}
+                 <td> <a href="/admin/unban/{{ username }}">re-enable</a></td>
+              {% else %}
+                 <td> <a href="/admin/ban/{{ username }}">disable</a></td>
+              {% endif %}
+              {% if current_user.id == 'superadmin' %}
+                {% if user_status[1] %}
+                   <td> <a href="/admin/demote/{{ username }}">remove admin</a></td>
                 {% else %}
-                   <td> <a href="/admin/ban/{{ username }}">🔨</a></td>
+                   <td> <a href="/admin/promote/{{ username }}">make admin</a></td>
                 {% endif %}
-            </tr>
-        {% endfor %}
+              {% endif %}
+              <td> <a href="/admin/reset_password/{{ username }}">password reset</a></td>
+          </tr>
+      {% endfor %}
     </table>
+    <p>accounts denoted by a * are admins</p>
   </div>
   <div id="add_user">
-  <form action="" method=post class="form-horizontal">
-      <h2>add user </h2>
-     <div class="control-group">
-         <div class="controls">
-           <input type="text" id="username" name="username" class="input-xlarge"
-             placeholder="username" required>
-         </div>
-     </div>
-    
-     <div class="control-group">
-         <div class="controls">
-           <button type="submit" class="btn btn-success">create</button>
-         </div>
-     </div>
+    <h2>add user </h2>
+    <form action="" method=post>
+    <fieldset>
+      <ol>
+        <li>
+          <input type="text" id="username" name="username" placeholder="username" required>
+        </li>
+        <li>
+          <button type="submit">create</button>
+        </li>
+      </ol>
+    </fieldset>
    </form>
   </div>
 </body>

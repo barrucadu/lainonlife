@@ -1,7 +1,6 @@
 #stream_info {
     float: left;
     width: 40%;
-
 }
 
 #dj_info {
@@ -18,4 +17,32 @@
 
 #stream_desc {
     height: 75px;
+}
+
+/* copied from main style.css */
+
+select, input, textarea {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+input, textarea {
+  padding: 0.3rem;
+}
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+fieldset ol, fieldset li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+fieldset li {
+  margin-bottom: 0.5rem;
 }
