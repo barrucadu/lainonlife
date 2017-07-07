@@ -54,11 +54,13 @@ function check_status() {
             // Assume that the listeners of the ogg and mp3 streams
             // are disjoint and just add them.  Bigger numbers are
             // better, right?
-            let sname = source.server_name.substr(0, source.server_name - 6);
-            if(sname == channel || sname == "[mpd] " + channel) {
-                listeners     += source.listeners;
-                listenersPeak += source.listener_peak;
-                description    = source.server_description;
+            if (source.server_name !== undefined){
+                let sname = source.server_name.substr(0, source.server_name - 6);
+                if(sname == channel || sname == "[mpd] " + channel) {
+                    listeners     += source.listeners;
+                    listenersPeak += source.listener_peak;
+                    description    = source.server_description;
+                }                
             }
         }
 
@@ -72,8 +74,7 @@ function check_status() {
 
 function check_playlist() {
     function format_track(track){
-        var to_return = (track.artist) ? (track.artist + " - " + track.title) : track.title;
-        return to_return;
+        return (track.artist) ? (track.artist + " - " + track.title) : track.title;
     }
 
     function add_track_to_tbody(tbody, track, acc, ago) {
@@ -123,7 +124,7 @@ function check_playlist() {
         // check for livestream
         var queue_header = document.getElementById('queue_header');
 
-        if ((response.stream_data !== undefined) && (response.stream_data.live)){
+        if (response.stream_data !== undefined && response.stream_data.live){
 
             queue_header.innerText = 'Current DJ: ' + response.stream_data.dj_name;
 
@@ -197,17 +198,13 @@ function populate_schedule() {
 
         if (response.week_of !== undefined){
             let sched_header = document.createElement("h1");
+            sched_header.id = "sched_header";
             sched_header.innerHTML = "Scheduled Events for the Week of " + response.week_of;
             schedule_div.appendChild(sched_header);
-            schedule_div.appendChild(document.createElement("br"));
         }
-
-
 
         let tbl   = document.createElement("table");
         let tbody = document.createElement("tbody");
-
-        var days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         
         var scheduled_events = [];
         for (var i = 0; i < 7; i++) {
@@ -222,15 +219,17 @@ function populate_schedule() {
             }
         }
 
+        var days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
         for (var i = 0; i < 7; i++) {
             let row = tbody.insertRow(tbody.rows.length);
             let day_cell = row.insertCell(0);
+            day_cell.id = "sched_day";
             day_cell.innerText = days_of_week[i];
-            day_cell.style.width = "20%";
 
             let sched_cell = row.insertCell(1);
+            sched_cell.id = "sched_text";
             sched_cell.innerText = scheduled_events[i];
-            sched_cell.style.width = "75%";
 
             tbody.appendChild(row);
         }
@@ -239,7 +238,8 @@ function populate_schedule() {
         schedule_div.appendChild(tbl);
 
         let explanation = document.createElement("h2");
-        explanation.innerHTML = "<br>All times are in UTC";
+        explanation.id = "sched_explanation"
+        explanation.innerHTML = "All times are in UTC";
         schedule_div.appendChild(explanation);
 
     });

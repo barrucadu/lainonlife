@@ -79,14 +79,20 @@ const LainPlayer = (() => {
         const timeLabel = document.getElementById('time-label');
 
         function getCurrentTime(time) {
-             const min = Math.floor(time / 60);
-             let sec = Math.round(time - min * 60);
+            let prefix = "";
 
-             if (sec < 10) {
-                 sec = "0" + sec;
-             }
+            if (time < 0){
+                time *= -1;
+                prefix = "-"
+            }
+            const min = Math.floor(time / 60);
+            let sec = Math.round(time - min * 60);
 
-             return `${min}:${sec}`;
+            if (sec < 10) {
+                sec = "0" + sec;
+            }
+
+            return `${prefix}${min}:${sec}`;
         }
 
         function setProgressTo(elapsed) {
