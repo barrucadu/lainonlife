@@ -3,12 +3,12 @@
 """Backend Services.
 
 Usage:
-  backend.py [--http-dir=PATH] [--mpd-host=HOST] PORT
+  backend.py [--http-dir=PATH] [--channels=FILE] PORT
   backend.py (-h | --help)
 
 Options:
-  --http-dir=PATH   Path of the web files   [default: /srv/http]
-  --mpd-host=HOST   Hostname of MPD         [default: localhost]
+  --http-dir=PATH   Path of the web files       [default: /srv/http]
+  --channels=FILE   Channel configuration file  [default: channels.json]
   -h --help         Show this text
 
 """
@@ -23,10 +23,7 @@ args = docopt(__doc__)
 
 # List of channels, populated with MPD client instances as playlists
 # are requested.
-channels = {"everything": {"port": 6600, "client": None},
-            "cyberia":    {"port": 6601, "client": None},
-            "swing":      {"port": 6602, "client": None},
-            "cafe":       {"port": 6603, "client": None}}
+channels = {}
 
 
 def in_http_dir(path):
@@ -125,7 +122,7 @@ def playlist(channel):
         except:
             try:
                 channels[channel]["client"] = MPDClient()
-                channels[channel]["client"].connect(args["--mpd-host"], channels[channel]["port"])
+                channels[channel]["client"].connect(channels[channel]["mpdHost"], channels[channel]["mpdPort"])
                 channels[channel]["client"].ping()
             except:
                 return "Could not connect to MPD.", 500
@@ -171,6 +168,17 @@ def page_not_found(error):
 
 if __name__ == "__main__":
     try:
+        try:
+            with open(args["--channels"], "r") as f:
+                channels = json.loads(f.read())
+                for c in channels.keys():
+                    if "mpdHost" in channels[c] and "mpdPort" in channels[c]:
+                        channels[c]["client"] = None
+                    else:
+                        del channels[c]
+        except:
+            raise Exception("--channels must be a channel configuration file")
+
         try:
             args["PORT"] = int(args["PORT"])
         except:
