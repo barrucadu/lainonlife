@@ -80,9 +80,9 @@ def in_http_dir(path):
 
 
 def random_file_from(dname, cont=None):
-    """Serve a random file from a directory."""
+    """Serve a random file from a directory, excluding hidden files and index.html."""
 
-    files = [f for f in os.listdir(dname) if not f.startswith('.')]
+    files = [f for f in os.listdir(dname) if not f.startswith('.') and not f == "index.html"]
     if not files:
         return send_file(in_http_dir("404.html")), 404
 
