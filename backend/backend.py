@@ -135,7 +135,7 @@ def update_livestream_info():
     global channels
 
     # get current track info
-    req_url = "/radio/status-json.xsl"
+    req_url = "http://127.0.0.1:8000/status-json.xsl"
     try:
         req_info = json.loads(make_requests.get(req_url).content.decode('utf-8'))
     except Exception as e:
