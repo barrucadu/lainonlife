@@ -373,8 +373,8 @@ def streaming_page():
         LIVESTREAM_INFO['current_dj'] = current_user.id
         LIVESTREAM_INFO['active'] = True
         LIVESTREAM_INFO['last_played'] = []
-        return 'stream started'
-    return 'someone else is already streaming..'
+        return 'Switched over to stream.'
+    return 'Someone else is already streaming!'
 
 
 @app.route("/dj/stop_streaming")
@@ -384,8 +384,8 @@ def streaming_over_page():
         LIVESTREAM_INFO['active'] = False
         LIVESTREAM_INFO['last_played'] = []
         LIVESTREAM_INFO['current_dj'] = None
-        return 'stream ended'
-    return 'can\'t let you do that'
+        return 'Switchec back to regular programming.'
+    return 'You are not streaming!'
 
 
 @login_manager.user_loader
@@ -432,9 +432,9 @@ def admin_page():
         username = request.form['username']
         new_user = db.make_user(username)
         if new_user is None:
-            return 'error, {} already exists'.format(username)
+            return '{} already exists!'.format(username)
         else:
-            return 'success, {} created, their password is {}'.format(*new_user)
+            return '{} created, with password "{}".'.format(*new_user)
 
 
 @app.route("/dj")
@@ -489,7 +489,7 @@ def change_pass_page():
             if new_pass == double_check:
                 db.change_password(current_user.id, new_pass)
                 logout_user()
-                return 'successfully changed your password, you\'ll need to log back in'
+                return 'Password changed, now log in again.'
         return redirect('/dj/password_change_form')
 
 
@@ -500,14 +500,14 @@ def ban_user(username=None):
         return redirect("/")
     if username is not None:
         if username == current_user.id:
-            return 'you shouldn\'t ban yourself'
+            return 'Don\'t ban yourself.'
         check_user = db.DJUser.get(username)
         if check_user.is_admin:
-            return 'you cannot ban other admins'
+            return 'You can\'t ban an admin.'
         ban_result = db.update_dj_status(username, 'banned', True)
         if ban_result is not None:
-            return '{} is now banned'.format(username)
-    return '{} doesn\'t exist'.format(username)
+            return '{} is now banned.'.format(username)
+    return '{} doesn\'t exist.'.format(username)
 
 
 @app.route("/admin/unban/<username>")
@@ -518,8 +518,8 @@ def unban_user(username=None):
     if username is not None:
         ban_result = db.update_dj_status(username, 'banned', False)
         if ban_result is not None:
-            return '{} is now unbanned'.format(username)
-    return '{} doesn\'t exist'.format(username)
+            return '{} is now unbanned.'.format(username)
+    return '{} doesn\'t exist.'.format(username)
 
 
 # only the superadmin account can make other people admins
@@ -531,8 +531,8 @@ def promote_user(username=None):
     if username is not None:
         admin_result = db.update_dj_status(username, 'admin', True)
         if admin_result is not None:
-            return '{} is now an admin'.format(username)
-    return '{} doesn\'t exist'.format(username)
+            return '{} is now an admin.'.format(username)
+    return '{} doesn\'t exist.'.format(username)
 
 
 @app.route("/admin/demote/<username>")
@@ -542,11 +542,11 @@ def demote_user(username=None):
         return redirect("/")
     if username is not None:
         if username == current_user.id:
-            return 'pls don\'t remove your admin privileges'
+            return 'You can\'t revoke your own admin privileges.'
         admin_result = db.update_dj_status(username, 'admin', False)
         if admin_result is not None:
-            return '{} is no longer an admin'.format(username)
-    return '{} doesn\'t exist'.format(username)
+            return '{} is no longer an admin.'.format(username)
+    return '{} doesn\'t exist.'.format(username)
 
 
 @app.route("/admin/reset_password/<username>")
@@ -558,11 +558,11 @@ def password_reset(username=None):
         if current_user.id != 'superadmin':
             check_user = db.DJUser.get(username)
             if check_user.is_admin and check_user.id != current_user.id:
-                return 'you cannot reset another admin\'s password'
+                return 'You can\'t reset another admin\'s password.'
         new_pass = db.change_password(username)
         if new_pass is not None:
-            return '{}\'s new password is {}'.format(username, new_pass)
-    return '{} doesn\'t exist'.format(username)
+            return '{}\'s new password is "{}".'.format(username, new_pass)
+    return '{} doesn\'t exist.'.format(username)
 
 
 if __name__ == "__main__":
