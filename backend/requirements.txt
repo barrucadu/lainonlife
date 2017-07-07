@@ -4,3 +4,4 @@ python-mpd2 >= 0.5.5
 flask-login
 tinydb
 apscheduler
+requests
