@@ -18,7 +18,7 @@
     {% else %} no one is streaming right now <br> <a href="/dj/start_streaming">start streaming</a>
     {% endif %}
     <br> <br> <a href="/dj/logout">logout</a> <a href="/dj/password_change_form">change password</a>
-    {% if current_user.id == 'admin' %} <br> <br> <a href="/admin">admin panel</a> {% endif %}
+    {% if current_user.is_admin %} <br> <br> <a href="/admin">admin panel</a> {% endif %}
     </div>
     <div id="dj_info">
         your dj info <a href="/dj/edit_dj_info">(edit)</a>

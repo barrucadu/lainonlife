@@ -257,6 +257,18 @@ table .dur {
   border-right: 0;
 }
 
+#sched_header, #sched_explanation{
+  line-height:200%;
+}
+
+#sched_day {
+  width: 20%;
+}
+
+#sched_text{
+  width: 75%;
+}
+
 /* fake queue */
 
 #dj_pic {
