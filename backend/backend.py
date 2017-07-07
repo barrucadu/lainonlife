@@ -316,7 +316,7 @@ def webm():
   <head>
     <title>{0}</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/webm.css">
+    <link rel="stylesheet" type="text/css" href="/css/webm.css">
   </head>
   <body>
     <a href="/webms/{1}">
