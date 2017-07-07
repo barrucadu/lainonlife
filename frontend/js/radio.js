@@ -55,7 +55,7 @@ function check_status() {
             // are disjoint and just add them.  Bigger numbers are
             // better, right?
             if (source.server_name !== undefined){
-                let sname = source.server_name.substr(0, source.server_name - 6);
+                let sname = source.server_name.substr(0, source.server_name.length - 6);
                 if(sname == channel || sname == "[mpd] " + channel) {
                     listeners     += source.listeners;
                     listenersPeak += source.listener_peak;

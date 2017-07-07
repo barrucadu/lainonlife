@@ -114,12 +114,13 @@ def get_playlist_info(client, beforeNum=5, afterNum=5):
 
 
 def update_mpd_info(channel):
+    global channels
     try:
         channels[channel]["client"].ping()
     except:
         try:
             channels[channel]["client"] = MPDClient()
-            channels[channel]["client"].connect(args["--mpd-host"], channels[channel]["port"])
+            channels[channel]["client"].connect(channels[channel]["mpdHost"], channels[channel]["mpdPort"])
             channels[channel]["client"].ping()
         except Exception as e:
             print(e)
@@ -560,6 +561,7 @@ if __name__ == "__main__":
                 for c in channels.keys():
                     if "mpdHost" in channels[c] and "mpdPort" in channels[c]:
                         channels[c]["client"] = None
+                        channels[c]["cache"] = ("Not connected to MPD yet.", 500)
                     else:
                         del channels[c]
         except:
