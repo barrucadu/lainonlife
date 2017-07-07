@@ -1,7 +1,6 @@
 import os
 import pickle
 import random
-import re
 
 from tinydb import TinyDB, Query
 
@@ -30,44 +29,36 @@ def load_pickle(default):
 # our tinydb
 THE_DB = TinyDB(os.path.join(SAVEDATA_PATH, 'db.json'))
 
-# for url checking
-# slightly modified from https://stackoverflow.com/a/7160778
-url_regex = re.compile(r'^(?:http)s?://'  # http:// or https://
-                       r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
-                       r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
-                       r'(?::\d+)?'  # optional port
-                       r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
-
-def validate_url(url):
-    if len(url) == 0:
-        return True
-    return url_regex.match(url) is not None
-
-
-def get_ban_list():
+def get_a_list(of_what):
+    if not isinstance(of_what, list):
+        of_what = [of_what]
     all_user_info = THE_DB.all()
     tor = []
     for user in all_user_info:
-        if user['id'] != 'admin':
-            banned = False
-            if 'banned' in user:
-                banned = user['banned']
-            tor.append((user['id'], banned))
+        insrt_row = []
+        for w in of_what:
+            found_what = False
+            if w in user:
+                found_what = user[w]
+            insrt_row.append(found_what)
+        tor.append((user['id'], insrt_row))
 
     return tor
 
 
-def make_user(username):
+def make_user(username, admin=False):
     check_query = Query()
     check_if_user_exists = THE_DB.search(check_query.id == username)
-    if (len(check_if_user_exists) > 0):
+    if len(check_if_user_exists) > 0:
         return
+    # generates a random 32 hex digit password
     password = "%032x" % random.getrandbits(128)
     new_user = {
         'id': username,
         'password': password,
         'banned': False,
+        'admin': admin,
         'dj_name': username,
         'dj_pic': '',
         'stream_title': '',
@@ -81,7 +72,7 @@ def make_user(username):
 def get_dj_info(username):
     check_query = Query()
     check_if_user_exists = THE_DB.search(check_query.id == username)
-    if (len(check_if_user_exists) == 0):
+    if len(check_if_user_exists) == 0:
         return
     return check_if_user_exists[0]
 
@@ -89,34 +80,37 @@ def get_dj_info(username):
 def update_dj_info(username, form_dict):
     check_query = Query()
     check_if_user_exists = THE_DB.search(check_query.id == username)
-    if (len(check_if_user_exists) == 0):
+    if len(check_if_user_exists) == 0:
         return False
-    # only put in proper picture urls
-    if 'dj_pic' in form_dict:
-        if not validate_url(form_dict['dj_pic']):
-            del form_dict['dj_pic']
+    # trust no one, even if someone modified their response we don't want them to
+    # most of these require different levels of permission
+    dont_touch = ['admin', 'banned', 'id', 'password']
+    for k in dont_touch:
+        if k in form_dict:
+            del form_dict[k]
     THE_DB.update(form_dict, check_query.id == username)
     return True
+
+
+def update_dj_status(username, status_key, new_status):
+    check_query = Query()
+    check_if_user_exists = THE_DB.search(check_query.id == username)
+    if len(check_if_user_exists) == 0:
+        return
+    THE_DB.update({status_key: new_status}, check_query.id == username)
+    return new_status
 
 
 def change_password(username, new_pass=None):
     check_query = Query()
     check_if_user_exists = THE_DB.search(check_query.id == username)
-    if (len(check_if_user_exists) == 0):
+    if len(check_if_user_exists) == 0:
         return
     if new_pass is None:
+        # generates a random 32 hex digit password
         new_pass = "%032x" % random.getrandbits(128)
     THE_DB.update({'password': new_pass}, check_query.id == username)
     return new_pass
-
-
-def ban_user(username, new_ban_status):
-    check_query = Query()
-    check_if_user_exists = THE_DB.search(check_query.id == username)
-    if (len(check_if_user_exists) == 0):
-        return
-    THE_DB.update({'banned': new_ban_status}, check_query.id == username)
-    return new_ban_status
 
 
 class DJUser(object):
@@ -124,16 +118,22 @@ class DJUser(object):
         self.id = username
         self.password = password
 
+    def check_state(self, what_state):
+        check = Query()
+        check_res = THE_DB.search(check.id == self.id)
+        if len(check_res) == 0:
+            return False
+        if what_state not in check_res[0]:
+            return False
+        return check_res[0][what_state]
+
     @property
     def is_active(self):
-        # check ban status
-        check_ban = Query()
-        check_ban_res = THE_DB.search(check_ban.id == self.id)
-        if len(check_ban_res) == 0:
-            return False
-        if 'banned' not in check_ban_res[0]:
-            return True
-        return not check_ban_res[0]['banned']
+        return not self.check_state('banned')
+
+    @property
+    def is_admin(self):
+        return self.check_state('admin')
 
     @property
     def is_authenticated(self):
@@ -147,18 +147,9 @@ class DJUser(object):
         return str(self.id)
 
     def __eq__(self, other):
-        '''
-        Checks the equality of two `DJUser` objects using `get_id`.
-        '''
         if isinstance(other, DJUser):
             return self.get_id() == other.get_id()
         return False
-
-    def __ne__(self, other):
-        '''
-        Checks the inequality of two `DJUser` objects using `get_id`.
-        '''
-        return not self.__eq__(other)
 
     @classmethod
     def get(cls, u_id):
@@ -172,11 +163,11 @@ class DJUser(object):
 
 
 if __name__ == '__main__':
-    new_admin = make_user('admin')
+    new_admin = make_user('superadmin', True)
     if new_admin is not None:
-        print('your admin account is now setup')
+        print('your superadmin account is now set up')
         print('user', new_admin[0])
         print('pass', new_admin[1])
     else:
-        new_pass = change_password('admin')
-        print('resetting admin password\nit is now', new_pass)
+        new_pass = change_password('superadmin')
+        print('resetting superadmin password\nit is now', new_pass)
