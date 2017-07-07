@@ -3,12 +3,12 @@
 """Backend Services.
 
 Usage:
-  backend.py [--http-dir=PATH] [--mpd-host=HOST] PORT
+  backend.py [--http-dir=PATH] [--channels=FILE] PORT
   backend.py (-h | --help)
 
 Options:
-  --http-dir=PATH   Path of the web files   [default: /srv/http]
-  --mpd-host=HOST   Hostname of MPD         [default: localhost]
+  --http-dir=PATH   Path of the web files       [default: /srv/http]
+  --channels=FILE   Channel configuration file  [default: channels.json]
   -h --help         Show this text
 
 """
@@ -45,12 +45,7 @@ atexit.register(lambda: bg_scheduler.shutdown())
 
 # List of channels, populated with MPD client instances as playlists
 # are requested and storage of cached playlist responses.
-channels = {
-            "everything": {"port": 6600, "client": None, "cache": None},
-            "cyberia":    {"port": 6601, "client": None, "cache": None},
-            "swing":      {"port": 6602, "client": None, "cache": None},
-            "cafe":       {"port": 6603, "client": None, "cache": None}
-            }
+channels = {}
 
 # needed for cookie generation
 app.config["SECRET_KEY"] = "YouShouldProbablyChangeThis"
@@ -216,7 +211,7 @@ def update_livestream_info():
 
 
 def playlist_info_update_task():
-    global playlist_update_counter
+    global channels, playlist_update_counter
     for channel in channels:
         if LIVESTREAM_INFO['active'] and channel == LIVESTREAM_INFO['CHANNEL']:
             playlist_update_counter = (playlist_update_counter + 1) % 5
@@ -559,6 +554,17 @@ def password_reset(username=None):
 
 if __name__ == "__main__":
     try:
+        try:
+            with open(args["--channels"], "r") as f:
+                channels = json.loads(f.read())
+                for c in channels.keys():
+                    if "mpdHost" in channels[c] and "mpdPort" in channels[c]:
+                        channels[c]["client"] = None
+                    else:
+                        del channels[c]
+        except:
+            raise Exception("--channels must be a channel configuration file")
+
         try:
             args["PORT"] = int(args["PORT"])
         except:
