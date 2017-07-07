@@ -366,24 +366,14 @@ def schedule():
     return resp
 
 
-def start_streaming():
-    LIVESTREAM_INFO['active'] = True
-    LIVESTREAM_INFO['last_played'] = []
-
-
-def stop_streaming():
-    LIVESTREAM_INFO['active'] = False
-    LIVESTREAM_INFO['last_played'] = []
-    LIVESTREAM_INFO['current_dj'] = None
-
-
 @app.route("/dj/start_streaming")
 @login_required
 def streaming_page():
     if LIVESTREAM_INFO['current_dj'] is None:
         LIVESTREAM_INFO['current_dj'] = current_user.id
-        start_streaming()
-        return "stream started"
+        LIVESTREAM_INFO['active'] = True
+        LIVESTREAM_INFO['last_played'] = []
+        return 'stream started'
     return 'someone else is already streaming..'
 
 
@@ -391,7 +381,9 @@ def streaming_page():
 @login_required
 def streaming_over_page():
     if LIVESTREAM_INFO['current_dj'] == current_user.id or current_user.is_admin:
-        stop_streaming()
+        LIVESTREAM_INFO['active'] = False
+        LIVESTREAM_INFO['last_played'] = []
+        LIVESTREAM_INFO['current_dj'] = None
         return 'stream ended'
     return 'can\'t let you do that'
 
