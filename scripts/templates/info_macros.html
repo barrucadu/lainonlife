@@ -1,0 +1,6 @@
+{% macro dj_info(info_dict, var_names, disabled=False) -%}
+    {% for input_desc, var_name in var_names %}
+        <p>{{ input_desc }} <br>
+        <input type="text" id="{{ var_name }}" name="{{ var_name }}" value="{{ info_dict[var_name] }}" {% if disabled %} disabled {% endif %}></p>
+    {% endfor %}
+{%- endmacro %}

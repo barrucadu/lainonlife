@@ -2,6 +2,7 @@
 var channel = "everything";
 let playlistPoll;
 let statusPoll;
+let schedulePoll;
 
 function ajax_with_json(url, func) {
     let httpRequest = new XMLHttpRequest();
@@ -53,11 +54,13 @@ function check_status() {
             // Assume that the listeners of the ogg and mp3 streams
             // are disjoint and just add them.  Bigger numbers are
             // better, right?
-            let sname = source.server_name.substr(0, source.server_name - 6);
-            if(sname == channel || sname == "[mpd] " + channel) {
-                listeners     += source.listeners;
-                listenersPeak += source.listener_peak;
-                description    = source.server_description;
+            if (source.server_name !== undefined){
+                let sname = source.server_name.substr(0, source.server_name.length - 6);
+                if(sname == channel || sname == "[mpd] " + channel) {
+                    listeners     += source.listeners;
+                    listenersPeak += source.listener_peak;
+                    description    = source.server_description;
+                }                
             }
         }
 
@@ -71,7 +74,7 @@ function check_status() {
 
 function check_playlist() {
     function format_track(track){
-        return track.artist + " - " + track.title;
+        return (track.artist) ? (track.artist + " - " + track.title) : track.title;
     }
 
     function add_track_to_tbody(tbody, track, acc, ago) {
@@ -118,17 +121,47 @@ function check_playlist() {
         document.getElementById("nowplaying").innerText = format_track(response.current);
         document.getElementById("nowalbum").innerText = response.current.album;
 
-        // Update the "queue"
-        let new_queue = document.createElement("tbody");
-        let until     = parseFloat(response.current.time) - parseFloat(response.elapsed);
-        for(i in response.after) {
-            until = add_track_to_tbody(new_queue, response.after[i], until, false);
+        // check for livestream
+        var queue_header = document.getElementById('queue_header');
+
+        if (response.stream_data !== undefined && response.stream_data.live){
+
+            queue_header.innerText = 'Current DJ: ' + response.stream_data.dj_name;
+
+            let fake_queue = document.createElement("tbody");
+            let fake_row = fake_queue.insertRow(0);
+
+            let stream_desc_cell = fake_row.insertCell(0);
+            stream_desc_cell.innerText = (response.stream_data.stream_desc || '');
+            stream_desc_cell.style.width = "66%";
+            stream_desc_cell.style.textAlign = "left";
+
+            let dj_pic_cell = fake_row.insertCell(1);
+            dj_pic_cell.style.width = "33%";
+
+            let dj_pic_img = document.createElement("img");
+            dj_pic_img.id = 'dj_pic';
+            dj_pic_img.src = (response.stream_data.dj_pic || '');
+            dj_pic_cell.appendChild(dj_pic_img)
+
+            swap_tbody("queue_body", fake_queue);
+        } else {
+            // Update the "queue"
+            queue_header.innerText = 'Queue';
+
+            let new_queue = document.createElement("tbody");
+            let until     = parseFloat(response.current.time) - parseFloat(response.elapsed);
+            for(i in response.after) {
+                until = add_track_to_tbody(new_queue, response.after[i], until, false);
+            }
+            swap_tbody("queue_body", new_queue);            
         }
-        swap_tbody("queue_body", new_queue);
+
 
         LainPlayer.updateProgress({
             length: response.current.time,
-            elapsed: response.elapsed
+            elapsed: response.elapsed,
+            live: response.stream_data.live
         });
     });
 }
@@ -157,6 +190,61 @@ function change_channel(e) {
     playlistPoll = setInterval(check_playlist, 15000);
 }
 
+function populate_schedule() {
+    ajax_with_json("/schedule.json", function(response) {
+        let schedule_div = document.getElementById("schedule_div");
+        schedule_div.innerText = "";
+        schedule_div.innerHTML = "";
+
+        if (response.week_of !== undefined){
+            let sched_header = document.createElement("h1");
+            sched_header.id = "sched_header";
+            sched_header.innerHTML = "Scheduled Events for the Week of " + response.week_of;
+            schedule_div.appendChild(sched_header);
+        }
+
+        let tbl   = document.createElement("table");
+        let tbody = document.createElement("tbody");
+        
+        var scheduled_events = [];
+        for (var i = 0; i < 7; i++) {
+            scheduled_events.push('None');
+        }
+
+        if (response.dailies !== undefined){
+            for (var j = 0; j < response.dailies.length; j++) {
+                if (response.dailies[j].length > 0){
+                    scheduled_events[j] = response.dailies[j];
+                }
+            }
+        }
+
+        var days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        for (var i = 0; i < 7; i++) {
+            let row = tbody.insertRow(tbody.rows.length);
+            let day_cell = row.insertCell(0);
+            day_cell.id = "sched_day";
+            day_cell.innerText = days_of_week[i];
+
+            let sched_cell = row.insertCell(1);
+            sched_cell.id = "sched_text";
+            sched_cell.innerText = scheduled_events[i];
+
+            tbody.appendChild(row);
+        }
+
+        tbl.appendChild(tbody);
+        schedule_div.appendChild(tbl);
+
+        let explanation = document.createElement("h2");
+        explanation.id = "sched_explanation"
+        explanation.innerHTML = "All times are in UTC";
+        schedule_div.appendChild(explanation);
+
+    });
+}
+
 window.onload = () => {
     // Show and hide things
     let show = document.getElementsByClassName("withscript");
@@ -182,4 +270,8 @@ window.onload = () => {
     // Get the initial playlist and set a timer to regularly update it.
     check_playlist();
     playlistPoll = setInterval(check_playlist, 15000);
+
+    // refresh the schedule every 30 minutes
+    populate_schedule();
+    schedulePoll = setInterval(populate_schedule, 1800000);
 }

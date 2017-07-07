@@ -53,7 +53,7 @@ player_js: true
   <div class="withscript playbox">
     <div class="flex">
       <header class="col left">Last Played</header>
-      <header class="col right">Queue</header>
+      <header class="col right" id="queue_header">Queue</header>
       <div class="col left" id="lastplayed">
         <table>
           <tbody id="lastplayed_body"></tbody>
@@ -84,6 +84,15 @@ player_js: true
   <p>Like the radio?  <a href="/donate.html">Donate!</a></p>
 </div>
 
+<div id="schedule" class="overlay">
+  <a class="cancel_popup" href="#"></a>
+  <div class="popup">
+    <div class="content" id="schedule_div">
+      <a href="/schedule.json">click here to see the raw json since you don't have javascript enabled</a>
+    </div>
+  </div>
+</div>
+
 <footer>
   [
   <a href="/graphs/dashboard/db/lainon-life">graphs</a>
@@ -91,5 +100,7 @@ player_js: true
   <a href="/webm.html">webm</a>
   /
   <a href="https://github.com/barrucadu/lainonlife">git</a>
+  /
+  <a href="#schedule">schedule</a>
   ]
 </footer>
