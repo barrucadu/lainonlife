@@ -13,26 +13,26 @@ Options:
 
 """
 
-from docopt import docopt
-from flask import Flask, make_response, redirect, request, send_file, render_template
-from mpd import MPDClient
-import json, os, random, time
-
-import requests as make_requests
-from collections import namedtuple
-from datetime import datetime, timedelta
-import atexit
-
-# new requirements, also tinydb in database.py
-from flask_login import LoginManager, login_required, login_user, logout_user, current_user
-# don't run flask in debug mode!!
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from collections import namedtuple
+from datetime import datetime, timedelta
+from docopt import docopt
+from flask import Flask, make_response, redirect, request, send_file, render_template
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from mpd import MPDClient
+
+import atexit
+import json
+import os
+import random
+import requests as make_requests
+import time
 
 import database as db
 
 
-app  = Flask(__name__)
+app = Flask(__name__)
 args = docopt(__doc__)
 
 bg_scheduler = BackgroundScheduler()
@@ -88,18 +88,24 @@ def random_file_from(dname, cont=None):
 
     fname = random.choice(files)
     if not cont:
-        return send_file(os.path.join(dname, fname), cache_timeout = 0)
+        return send_file(os.path.join(dname, fname), cache_timeout=0)
 
     return cont(fname)
 
 
 def get_playlist_info(client, beforeNum=5, afterNum=5):
     status = client.status()
-    song   = int(status["song"])
-    pllen  = int(status["playlistlength"])
+    song = int(status["song"])
+    pllen = int(status["playlistlength"])
 
-    songsIn  = lambda fromPos, toPos: client.playlistinfo("{}:{}".format(max(0, min(pllen, fromPos)), max(0, min(pllen, toPos))))
-    sanitise = lambda song: {t: song[t] for t in ["artist", "albumartist", "album", "track", "time", "date", "title"] if t in song}
+    def songsIn(fromPos, toPos):
+        minId = max(0, min(pllen, fromPos))
+        maxId = max(0, min(pllen, toPos))
+        return client.playlistinfo("{}:{}".format(minId, maxId))
+
+    def sanitise(song):
+        good_fields = ["artist", "albumartist", "album", "track", "time", "date", "title"]
+        return {t: song[t] for t in good_fields if t in song}
 
     pinfo = {
         "before":  list(map(sanitise, songsIn(song-beforeNum, song))),
@@ -120,7 +126,8 @@ def update_mpd_info(channel):
     except:
         try:
             channels[channel]["client"] = MPDClient()
-            channels[channel]["client"].connect(channels[channel]["mpdHost"], channels[channel]["mpdPort"])
+            channels[channel]["client"].connect(channels[channel]["mpdHost"],
+                                                channels[channel]["mpdPort"])
             channels[channel]["client"].ping()
         except Exception as e:
             print(e)
@@ -140,7 +147,7 @@ def update_livestream_info():
         req_info = json.loads(make_requests.get(req_url).content.decode('utf-8'))
     except Exception as e:
         print(e)
-        channels[LIVESTREAM_INFO['CHANNEL']]["cache"] = ("Could not connect to icecast stream.", 500)
+        channels[LIVESTREAM_INFO['CHANNEL']]["cache"] = ("Could not connect to stream.", 500)
         return
 
     status_metadata = {
@@ -170,8 +177,9 @@ def update_livestream_info():
     sources = req_info['icestats']['source']
     for source in sources:
         if LIVESTREAM_INFO['CHANNEL'] in source['listenurl']:
-            # if no server_type then fallback is active, if we're streaming the server_type starts with audio
-            # a regular mpd source's type is application/ogg
+            # if no server_type then fallback is active, if we're
+            # streaming the server_type starts with audio a regular
+            # mpd source's type is application/ogg
             if 'server_type' in source and 'audio' in source['server_type']:
                 for k in status_metadata:
                     if k in source:
@@ -179,8 +187,11 @@ def update_livestream_info():
                 break
 
     # if no last track or it's not the same as the last track append
-    if len(LIVESTREAM_INFO['last_played']) == 0 or LIVESTREAM_INFO['last_played'][-1].title != status_metadata['title']:
-        newest_track = LivestreamTrack(status_metadata['artist'], status_metadata['title'], time.time() + LIVESTREAM_INFO['STREAM_DELAY'])
+    if len(LIVESTREAM_INFO['last_played']) == 0 or \
+       LIVESTREAM_INFO['last_played'][-1].title != status_metadata['title']:
+        newest_track = LivestreamTrack(status_metadata['artist'],
+                                       status_metadata['title'],
+                                       time.time() + LIVESTREAM_INFO['STREAM_DELAY'])
         LIVESTREAM_INFO['last_played'].append(newest_track)
         # we only want 5 last tracks + current
         if len(LIVESTREAM_INFO['last_played']) > 6:
@@ -280,8 +291,9 @@ def upload_bump():
 
 @app.route("/upload/request", methods=["POST"])
 def upload_request():
+    fields = ["artist", "album", "url", "notes"]
     if "artist" in request.form and "album" in request.form:
-        save_form({t: request.form[t] for t in ["artist", "album", "url", "notes"] if t in request.form}, suffix="request")
+        save_form({t: request.form[t] for t in fields if t in request.form}, suffix="request")
 
     return send_file(in_http_dir("thankyou.html"))
 
@@ -298,7 +310,7 @@ def playlist(channel):
 
 @app.route("/webm.html", methods=["GET"])
 def webm():
-    tpl= '''
+    tpl = '''
 <!DOCTYPE html>
 <html>
   <head>
@@ -437,9 +449,13 @@ def admin_page():
 @login_required
 def dj_home_page():
     dj_info = db.get_dj_info(current_user.id)
-    djin = [('your display name', 'dj_name'), ('dj pic url (optional)', 'dj_pic'), ('stream title (optional)', 'stream_title')]
+    djin = [('your display name', 'dj_name'),
+            ('dj pic url (optional)', 'dj_pic'),
+            ('stream title (optional)', 'stream_title')]
+
     if dj_info is None:
-        return 'an error that shouldn\'t have happened occured, it seems you no longer exist'
+        return 'Whoops, your account no longer exists!'
+
     return render_template("dj_page.html", livestream_info=LIVESTREAM_INFO,
                            dj_info_dict=dj_info, dj_info_names=djin,
                            current_desc=dj_info['stream_desc'])
@@ -450,9 +466,13 @@ def dj_home_page():
 def dj_edit_page():
     if request.method == 'GET':
         dj_info = db.get_dj_info(current_user.id)
-        djin = [('your display name', 'dj_name'), ('dj pic url (optional)', 'dj_pic'), ('edit your stream title (optional)', 'stream_title')]
+        djin = [('your display name', 'dj_name'),
+                ('dj pic url (optional)', 'dj_pic'),
+                ('edit your stream title (optional)', 'stream_title')]
+
         if dj_info is None:
-            return 'an error that shouldn\'t have happened occured, it seems you no longer exist'
+            return 'Whoops, your account no longer exists!'
+
         return render_template("dj_page_edit.html", livestream_info=LIVESTREAM_INFO,
                                dj_info_dict=dj_info, dj_info_names=djin,
                                current_desc=dj_info['stream_desc'])
@@ -461,7 +481,7 @@ def dj_edit_page():
         if did_it_work:
             return redirect('/dj')
         else:
-            return 'in between the time you got to the edit page and submitted your changes you may have been b&'
+            return 'You have been B&.'
 
 
 @app.route("/dj/password_change_form", methods=['GET', 'POST'])

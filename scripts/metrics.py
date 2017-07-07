@@ -3,7 +3,13 @@
 """Radio and server metrics, for pretty graphs at https://lainon.life/graphs/.
 
 Usage:
-  metrics.py [--icecast-host=HOST] [--icecast-port=PORT] [--influxdb-host=HOST] [--influxdb-port=PORT] [--influxdb-user=USER] [--influxdb-pass=PASS] [--influxdb-name=NAME]
+  metrics.py [--icecast-host=HOST]
+             [--icecast-port=PORT]
+             [--influxdb-host=HOST]
+             [--influxdb-port=PORT]
+             [--influxdb-user=USER]
+             [--influxdb-pass=PASS]
+             [--influxdb-name=NAME]
   metrics.py (-h | --help)
 
 Options:
@@ -22,7 +28,13 @@ Options:
 from datetime import datetime
 from docopt import docopt
 from influxdb import InfluxDBClient
-import json, os, psutil, time, subprocess, urllib
+
+import json
+import os
+import psutil
+import subprocess
+import time
+import urllib
 
 
 def snapshot_icecast(host, port):
@@ -40,7 +52,7 @@ def snapshot_icecast(host, port):
                 "listeners": src["listeners"]
             })
 
-    formats  = {stream["format"]  for stream in snapshot}
+    formats = {stream["format"] for stream in snapshot}
     channels = {stream["channel"] for stream in snapshot}
 
     return snapshot, formats, channels
@@ -56,10 +68,16 @@ def icecast_metrics_list(now, host, port):
 
     return [
         {"measurement": "format_listeners", "time": now, "fields": {
-            fmt: sum([stream["listeners"] for stream in snapshot if stream["format"] == fmt]) for fmt in formats
+            fmt: sum([stream["listeners"]
+                      for stream in snapshot
+                      if stream["format"] == fmt])
+            for fmt in formats
         }},
         {"measurement": "channel_listeners", "time": now, "fields": {
-            ch: sum([stream["listeners"] for stream in snapshot if stream["channel"] == ch]) for ch in channels
+            ch: sum([stream["listeners"]
+                     for stream in snapshot
+                     if stream["channel"] == ch])
+            for ch in channels
         }}
     ]
 
@@ -70,7 +88,9 @@ def network_metrics():
     psinfo = psutil.net_io_counters(pernic=True)
 
     return {
-        "{}_{}".format(iface, way): ifinfo[n] for iface, ifinfo in psinfo.items() for way, n in {"up": 0, "down": 1}.items()
+        "{}_{}".format(iface, way): ifinfo[n]
+        for iface, ifinfo in psinfo.items()
+        for way, n in {"up": 0, "down": 1}.items()
     }
 
 
@@ -99,7 +119,7 @@ def disk_metrics():
     # Per-directory disk usage
     dirs = ["/home", "/nix", "/srv", "/tmp", "/var"]
     argv = ["du", "-s", "-b"]
-    argv.extend(dirs) # why doesn't python have an expression variant of this!?
+    argv.extend(dirs)  # why doesn't python have an expression variant of this!?
     dus = subprocess.check_output(argv).split()
     for dname in dirs:
         add_usage(metrics, dus, dname)
