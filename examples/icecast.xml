@@ -1,0 +1,64 @@
+<icecast>
+  <hostname>lainon.life</hostname>
+
+  <authentication>
+    <admin-user>admin</admin-user>
+    <admin-password>password for admins</admin-password>
+  </authentication>
+
+  <paths>
+    <logdir>/var/log/icecast</logdir>
+    <adminroot>/usr/share/icecast/admin</adminroot>
+    <webroot>/usr/share/icecast/web</webroot>
+    <alias source="/" dest="/status.xsl"/>
+  </paths>
+
+  <listen-socket>
+    <port>8000</port>
+    <bind-address>::</bind-address>
+  </listen-socket>
+
+  <security>
+    <chroot>0</chroot>
+    <changeowner>
+      <user>nobody</user>
+      <group>nogroup</group>
+    </changeowner>
+  </security>
+
+  <mount>
+    <mount-name>/cyberia.mp3</mount-name>
+    <password>password for livestreamers</password>
+    <fallback-mount>/mpd-cyberia.mp3</fallback-mount>
+    <fallback-override>1</fallback-override>
+    <stream-name>cyberia (mp3</stream-name>
+    <stream-description>classic lainchan radio: electronic, chiptune, weeb</stream-description>
+    <public>1</public>
+  </mount>
+
+  <mount>
+    <mount-name>/mpd-cyberia.mp3</mount-name>
+    <password>password for mpd</password>
+    <stream-name>[mpd] cyberia (mp3)</stream-name>
+    <stream-description>classic lainchan radio: electronic, chiptune, weeb</stream-description>
+    <public>0</public>
+  </mount>
+
+  <mount>
+    <mount-name>/cyberia.ogg</mount-name>
+    <password>password for livestreamers</password>
+    <fallback-mount>/mpd-cyberia.ogg</fallback-mount>
+    <fallback-override>1</fallback-override>
+    <stream-name>cyberia (ogg</stream-name>
+    <stream-description>classic lainchan radio: electronic, chiptune, weeb</stream-description>
+    <public>1</public>
+  </mount>
+
+  <mount>
+    <mount-name>/mpd-cyberia.ogg</mount-name>
+    <password>password for mpd</password>
+    <stream-name>[mpd] cyberia (ogg)</stream-name>
+    <stream-description>classic lainchan radio: electronic, chiptune, weeb</stream-description>
+    <public>0</public>
+  </mount>
+</icecast>

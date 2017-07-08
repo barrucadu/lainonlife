@@ -1,5 +1,5 @@
-lainon.life
-===========
+[lainon.life][]
+===============
 
 Online radio for lainons.
 
@@ -10,50 +10,40 @@ There are some assumptions in the code you might have to fix before
 deploying for real elsewhere:
 
 - `backend.py` assumes that it has write access to the `upload` directory.
-- `backend.py` assumes that there are four [MPD](https://www.musicpd.org/) instances running on ports 6600 to 6603.
 - `metrics.py` probably assumes a lot about permissions.
-- `radio.js` assumes [Icecast](http://icecast.org/) is accessible at /radio/.
+- `radio.js` assumes [Icecast][] is accessible at /radio/.
 - `schedule.py` assumes that bumps are in the album "Lainchan Radio Transitions".
 
 These shouldn't really matter for development.  Some things might not
 work properly, that's it.
+
+Configuration
+-------------
+
+There are three files you might reasonably want to edit if you deploy
+this code:
+
+- `channels.json`, the list of channels and [MPD][] details.
+- `frontend/static/schedule.json`, the live broadcast schedule.
+- `frontend/pages/donate.html`, which contains the amount donates do
+  far.
+
+The [lainon.life][] server is running [NixOS][], and the entire system
+configuration (sans passwords) [is on github][nixfiles].
+
+For those who don't read Nix, the `examples/` directory contains
+sample configuration for [nginx][], [Icecast][], and [MPD][].
 
 Usage
 -----
 
 0. Configure your webserver.
 
-    You'll need to configure it to both serve static files (probably
-    from some directory under `/srv/http` or `/var/www`) and proxy
-    unknown requests to the backend (which will be running on some
-    port you choose now).
-
-    Here's an example for [nginx](https://www.nginx.com/),
-    serving files from `/srv/http` and using port 5000 for the backend.
-
-    ```
-    server {
-      listen 80 default_server;
-      listen [::]:80 default_server;
-
-      root /srv/http;
-
-      location / {
-        try_files $uri $uri/ @script;
-      }
-
-      location @script {
-        proxy_pass http://localhost:5000;
-      }
-    }
-    ```
+    See the `examples/` directory for help.
 
 1. Build the frontend assets.
 
-    You need [stack](https://www.haskellstack.org/); or
-    [hpack](https://github.com/sol/hpack),
-    [cabal-install](https://www.haskell.org/cabal/), and
-    [GHC](https://www.haskell.org/ghc/).
+    You need [stack][]; or [hpack][], [cabal-install][], and [GHC][].
 
     ```
     $ cd frontend
@@ -91,3 +81,15 @@ I want to help!
 ---------------
 
 Great!  See the open issues.  You can also find me on irc.lainchan.org.
+
+
+[Icecast]:       http://icecast.org/
+[MPD]:           https://www.musicpd.org/
+[lainon.life]:   https://lainon.life/
+[NixOS]:         https://nixos.org/
+[nixfiles]:      https://github.com/barrucadu/nixfiles
+[nginx]:         https://www.nginx.com/
+[stack]:         https://www.haskellstack.org/
+[hpack]:         https://github.com/sol/hpack
+[cabal-install]: https://www.haskell.org/cabal/
+[GHC]:           https://www.haskell.org/ghc/
