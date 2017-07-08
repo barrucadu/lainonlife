@@ -34,7 +34,6 @@ main = hakyllWith defaultConfiguration $ do
     route (dropPat "pages/")
     compile $ getResourceBody
       >>= loadAndApplyTemplate "templates/wrapper.html" (bodyField "body" `mappend` metadataField)
-      >>= relativizeUrls
 
 
 -------------------------------------------------------------------------------
