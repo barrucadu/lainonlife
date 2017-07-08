@@ -1,5 +1,5 @@
 { "everything": { "mpdHost": "localhost", "mpdPort": 6600, "description": "all the music, all the time" }
 , "cyberia":    { "mpdHost": "localhost", "mpdPort": 6601, "description": "classic lainchan radio: electronic, chiptune, weeb" }
 , "swing":      { "mpdHost": "localhost", "mpdPort": 6602, "description": "swing, electroswing, and jazz" }
-, "cafe":       { "mpdHost": "localhost", "mpdPort": 6602, "description": "music to drink tea to" }
+, "cafe":       { "mpdHost": "localhost", "mpdPort": 6603, "description": "music to drink tea to" }
 }
