@@ -192,56 +192,15 @@ function change_channel(e) {
 
 function populate_schedule() {
     ajax_with_json("/schedule.json", function(response) {
-        let schedule_div = document.getElementById("schedule_div");
-        schedule_div.innerText = "";
-        schedule_div.innerHTML = "";
-
-        if (response.week_of !== undefined){
-            let sched_header = document.createElement("h1");
-            sched_header.id = "sched_header";
-            sched_header.innerHTML = "Scheduled Events for the Week of " + response.week_of;
-            schedule_div.appendChild(sched_header);
+        for(let i = 0; i < 7; i++) {
+            document.getElementById('sched_' + i).innerText = 'None';
         }
 
-        let tbl   = document.createElement("table");
-        let tbody = document.createElement("tbody");
-        
-        var scheduled_events = [];
-        for (var i = 0; i < 7; i++) {
-            scheduled_events.push('None');
-        }
-
-        if (response.dailies !== undefined){
-            for (var j = 0; j < response.dailies.length; j++) {
-                if (response.dailies[j].length > 0){
-                    scheduled_events[j] = response.dailies[j];
-                }
+        for(let i = 0; i < response.length; i++) {
+            if(response[i].length > 0) {
+                document.getElementById('sched_' + i).innerText = response[i];
             }
         }
-
-        var days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-        for (var i = 0; i < 7; i++) {
-            let row = tbody.insertRow(tbody.rows.length);
-            let day_cell = row.insertCell(0);
-            day_cell.id = "sched_day";
-            day_cell.innerText = days_of_week[i];
-
-            let sched_cell = row.insertCell(1);
-            sched_cell.id = "sched_text";
-            sched_cell.innerText = scheduled_events[i];
-
-            tbody.appendChild(row);
-        }
-
-        tbl.appendChild(tbody);
-        schedule_div.appendChild(tbl);
-
-        let explanation = document.createElement("h2");
-        explanation.id = "sched_explanation"
-        explanation.innerHTML = "All times are in UTC";
-        schedule_div.appendChild(explanation);
-
     });
 }
 
@@ -250,7 +209,7 @@ window.onload = () => {
     let show = document.getElementsByClassName("withscript");
     let hide = document.getElementsByClassName("noscript");
     for(let i = 0; i < show.length; i++) {
-        if(show[i].tagName == "DIV" || show[i].tagName == "HEADER") {
+        if(show[i].tagName == "DIV" || show[i].tagName == "HEADER" || show[i].tagName == "TABLE") {
             show[i].style.display = "block";
         } else if(show[i].tagName == "TD") {
             show[i].style.display = "table-cell";
