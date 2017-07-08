@@ -16,7 +16,6 @@ Options:
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from collections import namedtuple
-from datetime import datetime, timedelta
 from docopt import docopt
 from flask import Flask, make_response, redirect, request, send_file, render_template
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
@@ -341,29 +340,6 @@ def redirect_radio():
 @app.errorhandler(404)
 def page_not_found(error):
     return send_file(in_http_dir("404.html"))
-
-
-@app.route("/schedule.json", methods=["GET"])
-def schedule():
-    dt = datetime.today()
-    # first we want to know the dates for monday through sunday
-    start = dt - timedelta(days=dt.weekday())
-    end = start + timedelta(days=6)
-    week_of = "{} - {}".format(start.strftime('%b %d'), end.strftime('%b %d'))
-    sched_info = {'week_of': week_of}  # this shows up as ie "Week of Jul 03 - Jul 09"
-
-    # now we check for a schedule file
-    # each line (that isn't commented out) has the events for that day
-    sched_path = os.path.join(db.SAVEDATA_PATH, 'schedule.txt')
-    if os.path.exists(sched_path):
-        with open(sched_path, 'r', encoding='utf-8') as sched_file:
-            sched_lines = sched_file.read()
-            sched_lines = sched_lines.split('\n')
-            sched_lines = [line for line in sched_lines if not line.startswith('//')]
-            sched_info['dailies'] = sched_lines
-    resp = make_response(json.dumps(sched_info), 200)
-    resp.headers["Content-Type"] = "application/json"
-    return resp
 
 
 @app.route("/dj/start_streaming")
