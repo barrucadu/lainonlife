@@ -300,7 +300,7 @@ def upload_bump():
 
 @app.route("/upload/request", methods=["POST"])
 def upload_request():
-    fields = ["artist", "album", "url", "notes"]
+    fields = ["artist", "album", "url", "notes", "channel"]
     if "artist" in request.form and "album" in request.form:
         save_form({t: request.form[t] for t in fields if t in request.form}, suffix="request")
 
