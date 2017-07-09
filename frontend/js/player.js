@@ -92,18 +92,18 @@ const LainPlayer = (() => {
                 sec = "0" + sec;
             }
 
-            return `${prefix}${min}:${sec}`;
+            return `$${prefix}$${min}:$${sec}`;
         }
 
         function setProgressTo(elapsed) {
             let realElapsed = Math.min(elapsed, prgs.length);
             let progress    = Math.round(realElapsed/prgs.length*100);
-            timeLabel.innerText = `${getCurrentTime(realElapsed)} / ${getCurrentTime(prgs.length)}`;
-            bar.style.width = `${progress}%`;
+            timeLabel.innerText = `$${getCurrentTime(realElapsed)} / $${getCurrentTime(prgs.length)}`;
+            bar.style.width = `$${progress}%`;
         }
 
         function setLiveProgressTo(elapsed) {
-            timeLabel.innerText = `${getCurrentTime(elapsed)} / ??:??`;
+            timeLabel.innerText = `$${getCurrentTime(elapsed)} / ??:??`;
             bar.style.width = `0%`;
         }
 
