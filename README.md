@@ -24,11 +24,7 @@ There are a few files you might reasonably want to edit if you deploy
 this code:
 
 - `channels.json`, the list of channels and [MPD][] details.
-- `frontend/js/radio.js`, the `DEFAULT_CHANNEL` constant.
-- `frontend/pages/donate.html`, which contains the amount donated so
-  far.
-- `frontend/pages/index.html`, which has a bunch of references to
-  cyberia (the default channel).
+- `frontend/Main.hs`, the `config` value at the top of the file.
 - `frontend/static/schedule.json`, the live broadcast schedule.
 
 The [lainon.life][] server is running [NixOS][], and the entire system

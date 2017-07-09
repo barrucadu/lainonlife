@@ -1,5 +1,5 @@
 // The default channel
-const DEFAULT_CHANNEL = "cyberia";
+const DEFAULT_CHANNEL = "$default_channel$";
 
 // The initial channel
 var channel = DEFAULT_CHANNEL;

@@ -3,4 +3,5 @@ executables:
     main: Main.hs
     dependencies:
       - base
+      - aeson
       - hakyll
