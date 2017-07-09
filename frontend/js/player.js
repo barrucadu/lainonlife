@@ -83,7 +83,7 @@ const LainPlayer = (() => {
 
             if (time < 0){
                 time *= -1;
-                prefix = "-"
+                prefix = "-";
             }
             const min = Math.floor(time / 60);
             let sec = Math.round(time - min * 60);
@@ -96,7 +96,7 @@ const LainPlayer = (() => {
         }
 
         function setProgressTo(elapsed) {
-            let realElapsed = Math.min(elapsed, prgs.length)
+            let realElapsed = Math.min(elapsed, prgs.length);
             let progress    = Math.round(realElapsed/prgs.length*100);
             timeLabel.innerText = `${getCurrentTime(realElapsed)} / ${getCurrentTime(prgs.length)}`;
             bar.style.width = `${progress}%`;
@@ -126,5 +126,5 @@ const LainPlayer = (() => {
         changeChannel: (channel) => changeSource(channel),
         cycleVolume: () => cycleVolume(),
         updateProgress: (progressObject) => updateProgress(progressObject),
-    }
+    };
 })();

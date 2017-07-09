@@ -15,7 +15,7 @@ function ajax_with_json(url, func) {
         if(httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
             let response = JSON.parse(httpRequest.responseText);
             func(response);
-        };
+        }
     };
 
     httpRequest.open("GET", url);
@@ -26,7 +26,7 @@ function populate_channel_list() {
     ajax_with_json("/radio/status-json.xsl", function(response) {
         // Get the list of channels, the default.
         let channels = [];
-        for(id in response.icestats.source) {
+        for(let id in response.icestats.source) {
             let source = response.icestats.source[id];
             let sname = source.server_name;
             if(sname !== undefined && sname.startsWith("[mpd] ") && sname.endsWith(" (ogg)")) {
@@ -39,7 +39,7 @@ function populate_channel_list() {
 
         // Add to the selector drop-down.
         let dropdown = document.getElementById("channel");
-        for(id in channels) {
+        for(let id in channels) {
             let channel = channels[id];
             dropdown.options[dropdown.options.length] = new Option(channel, channel, channel == DEFAULT_CHANNEL, channel == DEFAULT_CHANNEL);
         }
@@ -53,7 +53,7 @@ function check_status() {
         let description = "";
 
         // Find the stats for the appropriate output.
-        for(id in response.icestats.source) {
+        for(let id in response.icestats.source) {
             let source = response.icestats.source[id];
 
             // Assume that the listeners of the ogg and mp3 streams
@@ -65,7 +65,7 @@ function check_status() {
                     listeners     += source.listeners;
                     listenersPeak += source.listener_peak;
                     description    = source.server_description;
-                }                
+                }
             }
         }
 
@@ -117,7 +117,7 @@ function check_playlist() {
         // Update the "last played"
         let new_lastplayed = document.createElement("tbody");
         let ago            = parseFloat(response.elapsed);
-        for(i in response.before) {
+        for(let i in response.before) {
             ago = add_track_to_tbody(new_lastplayed, response.before[i], ago, true);
         }
         swap_tbody("lastplayed_body", new_lastplayed);
@@ -127,7 +127,7 @@ function check_playlist() {
         document.getElementById("nowalbum").innerText = response.current.album;
 
         // check for livestream
-        var queue_header = document.getElementById('queue_header');
+        let queue_header = document.getElementById('queue_header');
 
         if (response.stream_data !== undefined && response.stream_data.live){
 
@@ -147,7 +147,7 @@ function check_playlist() {
             let dj_pic_img = document.createElement("img");
             dj_pic_img.id = 'dj_pic';
             dj_pic_img.src = (response.stream_data.dj_pic || '');
-            dj_pic_cell.appendChild(dj_pic_img)
+            dj_pic_cell.appendChild(dj_pic_img);
 
             swap_tbody("queue_body", fake_queue);
         } else {
@@ -156,10 +156,10 @@ function check_playlist() {
 
             let new_queue = document.createElement("tbody");
             let until     = parseFloat(response.current.time) - parseFloat(response.elapsed);
-            for(i in response.after) {
+            for(let i in response.after) {
                 until = add_track_to_tbody(new_queue, response.after[i], until, false);
             }
-            swap_tbody("queue_body", new_queue);            
+            swap_tbody("queue_body", new_queue);
         }
 
 
@@ -238,4 +238,4 @@ window.onload = () => {
     // refresh the schedule every 30 minutes
     populate_schedule();
     schedulePoll = setInterval(populate_schedule, 1800000);
-}
+};
