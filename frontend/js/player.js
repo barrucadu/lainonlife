@@ -108,7 +108,7 @@ const LainPlayer = (() => {
         }
 
         var progressFun = (prgs.live) ? setLiveProgressTo : setProgressTo;
-        
+
         progressFun(prgs.elapsed);
 
         // smooth progressbar update
