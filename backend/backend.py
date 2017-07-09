@@ -370,7 +370,7 @@ def streaming_over_page():
         LIVESTREAM_INFO['active'] = False
         LIVESTREAM_INFO['last_played'] = []
         LIVESTREAM_INFO['current_dj'] = None
-        return 'Switchec back to regular programming.'
+        return 'Switched back to regular programming.'
     return 'You are not streaming!'
 
 
