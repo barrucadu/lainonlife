@@ -580,7 +580,7 @@ if __name__ == "__main__":
     elif args['newuser']:
         new_user = db.make_user(args['USER'])
         if new_user is None:
-            print('User "{}" already exists!'.format(username))
+            print('User "{}" already exists!'.format(args['USER']))
             exit(1)
 
         print('User "{}" created with password "{}".'.format(*new_user))
