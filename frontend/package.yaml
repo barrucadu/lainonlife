@@ -4,4 +4,3 @@ executables:
     dependencies:
       - base
       - hakyll
-      - language-javascript

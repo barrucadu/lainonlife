@@ -1,8 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import           Hakyll
-import qualified Language.JavaScript.Parser         as JS
-import qualified Language.JavaScript.Process.Minify as JS
 
 main :: IO ()
 main = hakyllWith defaultConfiguration $ do
@@ -18,7 +16,7 @@ main = hakyllWith defaultConfiguration $ do
   -- Minify javascript
   match "js/*.js" $ do
     route idRoute
-    compile compressJsCompiler
+    compile copyFileCompiler
 
   -- Copy static files
   match "static/**" $ do
@@ -37,15 +35,6 @@ main = hakyllWith defaultConfiguration $ do
 
 
 -------------------------------------------------------------------------------
-
--- | A JavaScript compiler that minifies the content
-compressJsCompiler :: Compiler (Item String)
-compressJsCompiler = do
-  let minifyJS i = case JS.parse (itemBody i) "" of
-        Right ast -> JS.renderToString (JS.minifyJS ast)
-        Left  _   -> itemBody i
-  s <- getResourceString
-  return $ itemSetBody (minifyJS s) s
 
 -- | Remove some portion of the route
 dropPat :: String -> Routes
