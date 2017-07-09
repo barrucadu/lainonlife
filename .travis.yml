@@ -2,6 +2,8 @@ language: python
 
 before_script:
   - pip install flake8
+  - npm install -g jshint
 
 script:
   - flake8 .
+  - jshint -c .jshint frontend/js/
