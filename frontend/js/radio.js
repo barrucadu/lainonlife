@@ -1,5 +1,10 @@
+// The default channel
+const DEFAULT_CHANNEL = "cyberia";
+
 // The initial channel
-var channel = "everything";
+var channel = DEFAULT_CHANNEL;
+
+// Recurring timers
 let playlistPoll;
 let statusPoll;
 let schedulePoll;
@@ -19,12 +24,12 @@ function ajax_with_json(url, func) {
 
 function populate_channel_list() {
     ajax_with_json("/radio/status-json.xsl", function(response) {
-        // Get the list of channels, excluding "everything".
+        // Get the list of channels, the default.
         let channels = [];
         for(id in response.icestats.source) {
             let source = response.icestats.source[id];
             let sname = source.server_name;
-            if(sname !== undefined && sname.startsWith("[mpd] ") && sname.endsWith(" (ogg)") && sname.substr(6, sname.length-12) != "everything") {
+            if(sname !== undefined && sname.startsWith("[mpd] ") && sname.endsWith(" (ogg)")) {
                 channels.push(sname.substr(6, sname.length-12));
             }
         }
@@ -36,7 +41,7 @@ function populate_channel_list() {
         let dropdown = document.getElementById("channel");
         for(id in channels) {
             let channel = channels[id];
-            dropdown.options[dropdown.options.length] = new Option(channel, channel);
+            dropdown.options[dropdown.options.length] = new Option(channel, channel, channel == DEFAULT_CHANNEL, channel == DEFAULT_CHANNEL);
         }
     });
 }

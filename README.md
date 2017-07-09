@@ -20,13 +20,16 @@ work properly, that's it.
 Configuration
 -------------
 
-There are three files you might reasonably want to edit if you deploy
+There are a few files you might reasonably want to edit if you deploy
 this code:
 
 - `channels.json`, the list of channels and [MPD][] details.
-- `frontend/static/schedule.json`, the live broadcast schedule.
+- `frontend/js/radio.js`, the `DEFAULT_CHANNEL` constant.
 - `frontend/pages/donate.html`, which contains the amount donates do
   far.
+- `frontend/pages/index.html`, which has a bunch of references to
+  cyberia (the default channel).
+- `frontend/static/schedule.json`, the live broadcast schedule.
 
 The [lainon.life][] server is running [NixOS][], and the entire system
 configuration (sans passwords) [is on github][nixfiles].
