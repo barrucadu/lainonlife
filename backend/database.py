@@ -47,6 +47,12 @@ def get_a_list(of_what):
     return tor
 
 
+def make_superadmin():
+    new_admin = make_user('superadmin', True)
+    if new_admin is not None:
+        print('User "superadmin" created with password "{}".'.format(new_admin[1]))
+
+
 def make_user(username, admin=False):
     check_query = Query()
     check_if_user_exists = THE_DB.search(check_query.id == username)
@@ -160,14 +166,3 @@ class DJUser(object):
         else:
             found_user = None
         return found_user
-
-
-if __name__ == '__main__':
-    new_admin = make_user('superadmin', True)
-    if new_admin is not None:
-        print('your superadmin account is now set up')
-        print('user', new_admin[0])
-        print('pass', new_admin[1])
-    else:
-        new_pass = change_password('superadmin')
-        print('resetting superadmin password\nit is now', new_pass)
