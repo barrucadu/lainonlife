@@ -1,5 +1,7 @@
 [flake8]
 max-line-length = 100
 
-# flake8 thinks "nonlocal" is a syntax error...
-ignore = E999
+# E221 and E241, multiple spaces: alignment really helps readability!
+# E226, missing spaces: sometimes an operator reads better with no spaces.
+# E999, syntax errors: flake8 thinks "nonlocal" is a syntax error...
+ignore = E221, E241, E226, E999
