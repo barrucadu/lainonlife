@@ -1,2 +1,5 @@
 [flake8]
 max-line-length = 100
+
+# flake8 thinks "nonlocal" is a syntax error...
+ignore = E999
