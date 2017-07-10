@@ -3,5 +3,4 @@ max-line-length = 100
 
 # E221 and E241, multiple spaces: alignment really helps readability!
 # E226, missing spaces: sometimes an operator reads better with no spaces.
-# E999, syntax errors: flake8 thinks "nonlocal" is a syntax error...
-ignore = E221, E241, E226, E999
+ignore = E221, E241, E226
