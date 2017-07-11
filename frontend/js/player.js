@@ -8,9 +8,9 @@ const LainPlayer = (() => {
         const paused = audioTag.paused;
         // Use either the ogg or mp3 stream, depending on what the current one is.
         if(audioTag.currentSrc.endsWith("ogg")) {
-            audioTag.src = "/radio/" + source + ".ogg";
+            audioTag.src = "$icecast_stream_url_base$/" + source + ".ogg";
         } else {
-            audioTag.src = "/radio/" + source + ".mp3";
+            audioTag.src = "$icecast_stream_url_base$/" + source + ".mp3";
         }
 
         // Load the new audio stream.

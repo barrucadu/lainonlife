@@ -10,7 +10,9 @@ import           Numeric      (showFFloatAlt)
 -- | Template variables.  At some point, these will be in a config file.
 config :: Config
 config = Config
-  { defaultChannel  = "cyberia"
+  { defaultChannel = "cyberia"
+  , icecastStatusURL = "/radio/status-json.xsl"
+  , icecastStreamURLBase = "http://lainon.life:8000"
   , serverCost      = 20.39
   , thisMonthAmount = 0
   , carriedOver     = 0
@@ -66,6 +68,10 @@ main = hakyllWith defaultConfiguration $ do
 data Config = Config
   { defaultChannel :: String
   -- ^ The channel to start playing.
+  , icecastStatusURL :: String
+  -- ^ The public URL of the status-json.xsl file.
+  , icecastStreamURLBase :: String
+  -- ^ The public URL base of the streams.
   , serverCost :: Double
   -- ^ The monthly cost of the server.
   , thisMonthAmount :: Double
@@ -81,7 +87,9 @@ instance FromJSON Config
 -- | Turn the configuration into a Hakyll context.
 cfgContext :: Config -> Context String
 cfgContext conf = mconcat . map (uncurry constField) $
-    [ ("default_channel",     defaultChannel conf)
+    [ ("default_channel",  defaultChannel conf)
+    , ("icecast_status_url",      icecastStatusURL     conf)
+    , ("icecast_stream_url_base", icecastStreamURLBase conf)
     , ("server_cost",         showAmount (serverCost conf))
     , ("this_month_amount",   showAmount (thisMonthAmount conf))
     , ("this_month_progress", show (percent balance (serverCost conf)))

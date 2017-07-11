@@ -23,7 +23,7 @@ function ajax_with_json(url, func) {
 }
 
 function populate_channel_list() {
-    ajax_with_json("/radio/status-json.xsl", function(response) {
+    ajax_with_json("$icecast_status_url$", function(response) {
         // Get the list of channels, the default.
         let channels = [];
         for(let id in response.icestats.source) {
@@ -47,7 +47,7 @@ function populate_channel_list() {
 }
 
 function check_status() {
-    ajax_with_json("/radio/status-json.xsl", function(response) {
+    ajax_with_json("$icecast_status_url$", function(response) {
         let listeners = 0;
         let listenersPeak = 0;
         let description = "";
@@ -176,8 +176,8 @@ function change_channel(e) {
     LainPlayer.changeChannel(channel);
 
     // Update the stream links.
-    document.getElementById("ogglink").href = "/radio/" + channel + ".ogg.m3u";
-    document.getElementById("mp3link").href = "/radio/" + channel + ".mp3.m3u";
+    document.getElementById("ogglink").href = "$icecast_stream_url_base$/" + channel + ".ogg.m3u";
+    document.getElementById("mp3link").href = "$icecast_stream_url_base$/" + channel + ".mp3.m3u";
 
     // Update the file list link.
     document.getElementById("fileslink").href = "/file-list/" + channel + ".html";

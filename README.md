@@ -11,11 +11,10 @@ deploying for real elsewhere:
 
 - `backend.py` assumes that it has write access to the `upload` directory.
 - `metrics.py` probably assumes a lot about permissions.
-- `radio.js` assumes [Icecast][] is accessible at /radio/.
 - `schedule.py` assumes that bumps are in the album "Lainchan Radio Transitions".
 
 These shouldn't really matter for development.  Some things might not
-work properly, that's it.
+work properly, that's it.  There might be more things.
 
 Configuration
 -------------
