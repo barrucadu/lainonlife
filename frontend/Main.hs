@@ -7,6 +7,7 @@ import qualified Data.Aeson            as A
 import qualified Data.Aeson.Types      as A
 import qualified Data.ByteString       as BS
 import           Data.Char             (toLower)
+import qualified Data.HashMap.Lazy     as H
 import           Data.List             (stripPrefix)
 import           GHC.Generics          (Generic)
 import           Hakyll
@@ -27,7 +28,7 @@ Usage:
 
 Options:
   --verbose        Run in verbose mode
-  --config=FILE    Path to the configuration file  [default: frontend.json]
+  --config=FILE    Path to the configuration file  [default: config.json]
   --host=HOST      Host to listen on               [default: localhost]
   --port=PORT      Port to listen on               [default: 3000]
 
@@ -47,11 +48,17 @@ main = do
 
   case hakyllOptsFor args of
     Just hakyllOpts -> do
-      let configFile = D.getArgWithDefault args "frontend.json" (D.longOption "config")
-      configBytes <- BS.readFile configFile `catchIOError` \_ -> die "cannot read config file"
-      case A.decodeStrict configBytes of
+      let configFile = D.getArgWithDefault args "config.json" (D.longOption "config")
+      configBytes <- BS.readFile configFile `catchIOError` \_ -> die "--config must be a site configuration file"
+      let config = do
+            -- accepted config is json in the form { "template": config_obj, ... }
+            A.Object o  <- A.decodeStrict configBytes
+            val         <- H.lookup "template" o
+            A.Success c <- pure (A.fromJSON val)
+            pure c
+      case config of
         Just config -> hakyllWithArgs defaultConfiguration hakyllOpts (renderSite config)
-        Nothing -> die "cannot decode config file"
+        Nothing     -> die "--config must be a site configuration file"
     Nothing -> die "cannot understand command-line arguments"
 
 -- | Turn the command-line arguments into Hakyll options.

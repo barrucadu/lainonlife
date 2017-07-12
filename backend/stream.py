@@ -20,7 +20,7 @@ def start_stream_monitor(channelsjson):
     # Cached channel data
     channels = {}
     for c in channelsjson.keys():
-        if "mpdHost" in channelsjson[c] and "mpdPort" in channelsjson[c]:
+        if "mpd_host" in channelsjson[c] and "mpd_port" in channelsjson[c]:
             channels[c] = channelsjson[c]
             channels[c]["client"] = None
             channels[c]["cache"]  = ("Not connected to MPD yet.", 500)
@@ -102,7 +102,7 @@ def update_mpd_info(channel):
     except:
         try:
             channel["client"] = MPDClient()
-            channel["client"].connect(channel["mpdHost"], channel["mpdPort"])
+            channel["client"].connect(channel["mpd_host"], channel["mpd_port"])
             channel["client"].ping()
         except Exception as e:
             print(e)

@@ -7,3 +7,4 @@ executables:
       - bytestring
       - docopt
       - hakyll
+      - unordered-containers

@@ -3,7 +3,7 @@
 """Backend Services.
 
 Usage:
-  backend.py serve   [--http-dir=PATH] [--channels=FILE] PORT
+  backend.py serve   [--http-dir=PATH] [--config=FILE] PORT
   backend.py newuser USER
   backend.py newpass USER
   backend.py ban     USER
@@ -13,8 +13,8 @@ Usage:
   backend (-h | --help)
 
 Options:
-  --http-dir=PATH   Path of the web files       [default: /srv/http]
-  --channels=FILE   Channel configuration file  [default: channels.json]
+  --http-dir=PATH   Path of the web files    [default: /srv/http]
+  --config=FILE     Site configuration file  [default: config.json]
   -h --help         Show this text
 
 Warning: TinyDB does not support concurrent access from multiple
@@ -39,10 +39,10 @@ def command_serve(args):
 
     try:
         try:
-            with open(args["--channels"], "r") as f:
-                channelsjson = json.loads(f.read())
+            with open(args["--config"], "r") as f:
+                channelsjson = json.loads(f.read())["channels"]
         except:
-            raise Exception("--channels must be a channel configuration file")
+            raise Exception("--config must be a site configuration file")
         try:
             args["PORT"] = int(args["PORT"])
         except:

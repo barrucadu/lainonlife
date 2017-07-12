@@ -22,8 +22,8 @@ Configuration
 There are a few files you might reasonably want to edit if you deploy
 this code:
 
-- `channels.json`, the list of channels and [MPD][] details.
-- `frontend.json`, the configuration for the static assets.
+- `config.json`, the list of channels, [MPD][] details, and frontend
+  asset template details.
 - `frontend/static/schedule.json`, the live broadcast schedule.
 
 The [lainon.life][] server is running [NixOS][], and the entire system

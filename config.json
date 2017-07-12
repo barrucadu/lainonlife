@@ -1,0 +1,17 @@
+{ "channels":
+  { "everything": { "mpd_host": "localhost", "mpd_port": 6600, "description": "all the music, all the time" }
+  , "cyberia":    { "mpd_host": "localhost", "mpd_port": 6601, "description": "classic lainchan radio: electronic, chiptune, weeb" }
+  , "swing":      { "mpd_host": "localhost", "mpd_port": 6602, "description": "swing, electroswing, and jazz" }
+  , "cafe":       { "mpd_host": "localhost", "mpd_port": 6603, "description": "music to drink tea to" }
+  }
+
+, "template":
+  { "default_channel": "cyberia"
+  , "icecast_status_url": "/radio/status-json.xsl"
+  , "icecast_stream_url_base": "https://lainon.life/radio"
+  , "server_cost": 20.39
+  , "this_month_amount": 0
+  , "carried_over": 0
+  , "currency_symbol": "€"
+  }
+}
