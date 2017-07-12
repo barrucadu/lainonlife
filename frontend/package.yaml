@@ -4,4 +4,6 @@ executables:
     dependencies:
       - base
       - aeson
+      - bytestring
+      - docopt
       - hakyll

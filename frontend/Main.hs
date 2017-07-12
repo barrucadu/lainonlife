@@ -1,30 +1,76 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
-import           Data.Aeson   (FromJSON)
-import           Data.List    (stripPrefix)
-import           GHC.Generics (Generic)
+import qualified Data.Aeson            as A
+import qualified Data.Aeson.Types      as A
+import qualified Data.ByteString       as BS
+import           Data.Char             (toLower)
+import           Data.List             (stripPrefix)
+import           GHC.Generics          (Generic)
 import           Hakyll
-import           Numeric      (showFFloatAlt)
+import           Numeric               (showFFloatAlt)
+import qualified System.Console.Docopt as D
+import           System.Environment    (getArgs)
+import           System.Exit           (exitFailure)
+import           System.IO.Error       (catchIOError)
+import           Text.Read             (readMaybe)
 
--- | Template variables.  At some point, these will be in a config file.
-config :: Config
-config = Config
-  { defaultChannel = "cyberia"
-  , icecastStatusURL = "/radio/status-json.xsl"
-  , icecastStreamURLBase = "http://lainon.life:8000"
-  , serverCost      = 20.39
-  , thisMonthAmount = 0
-  , carriedOver     = 0
-  , currencySymbol  = "€"
-  }
+-- | Command-line arguments
+usage :: D.Docopt
+usage = [D.docopt|
+frontend - generate the lainon.life static assets
 
+Usage:
+  frontend (build | clean | rebuild | watch [--host=HOST] [--port=PORT]) [--verbose] [--config=FILE]
+
+Options:
+  --verbose        Run in verbose mode
+  --config=FILE    Path to the configuration file  [default: frontend.json]
+  --host=HOST      Host to listen on               [default: localhost]
+  --port=PORT      Port to listen on               [default: 3000]
+
+Commands:
+  build            Generate the site
+  clean            Clean up and remove cache
+  rebuild          Clean and build again
+  watch            Autocompile on changes and start a preview server.
+|]
+
+-- | Parse the command-line arguments and build (or whatever) the site.
+main :: IO ()
+main = do
+  args <- D.parseArgsOrExit usage =<< getArgs
+
+  let die s = putStrLn s >> exitFailure
+
+  case hakyllOptsFor args of
+    Just hakyllOpts -> do
+      let configFile = D.getArgWithDefault args "frontend.json" (D.longOption "config")
+      configBytes <- BS.readFile configFile `catchIOError` \_ -> die "cannot read config file"
+      case A.decodeStrict configBytes of
+        Just config -> hakyllWithArgs defaultConfiguration hakyllOpts (renderSite config)
+        Nothing -> die "cannot decode config file"
+    Nothing -> die "cannot understand command-line arguments"
+
+-- | Turn the command-line arguments into Hakyll options.
+hakyllOptsFor :: D.Arguments -> Maybe Options
+hakyllOptsFor args = Options (args `D.isPresent` D.longOption "verbose")
+  <$> (if | args `D.isPresent` D.command "build"   -> Just Build
+          | args `D.isPresent` D.command "clean"   -> Just Clean
+          | args `D.isPresent` D.command "rebuild" -> Just Rebuild
+          | args `D.isPresent` D.command "watch"   ->
+            let host = D.getArgWithDefault args "localhost" (D.longOption "host")
+                port = D.getArgWithDefault args "3000" (D.longOption "port")
+            in (\p -> Watch host p False) <$> readMaybe port)
 
 -------------------------------------------------------------------------------
 -- Site generator
 
-main :: IO ()
-main = hakyllWith defaultConfiguration $ do
+-- | Build (or whatever) the site.
+renderSite :: Config -> Rules ()
+renderSite config = do
   let cfg = cfgContext config
 
   -- Templates
@@ -82,7 +128,8 @@ data Config = Config
   -- ^ The currency symbol for the server bill.
   } deriving Generic
 
-instance FromJSON Config
+instance A.FromJSON Config where
+  parseJSON = A.genericParseJSON A.defaultOptions { A.fieldLabelModifier = map toLower . A.camelTo2 '_' }
 
 -- | Turn the configuration into a Hakyll context.
 cfgContext :: Config -> Context String

@@ -23,7 +23,7 @@ There are a few files you might reasonably want to edit if you deploy
 this code:
 
 - `channels.json`, the list of channels and [MPD][] details.
-- `frontend/Main.hs`, the `config` value at the top of the file.
+- `frontend.json`, the configuration for the static assets.
 - `frontend/static/schedule.json`, the live broadcast schedule.
 
 The [lainon.life][] server is running [NixOS][], and the entire system
