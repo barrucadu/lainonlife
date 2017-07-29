@@ -5,3 +5,4 @@ flask-login
 tinydb
 apscheduler
 requests
+influxdb

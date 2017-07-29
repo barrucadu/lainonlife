@@ -40,7 +40,7 @@ def command_serve(args):
     try:
         try:
             with open(args["--config"], "r") as f:
-                channelsjson = json.loads(f.read())["channels"]
+                config = json.loads(f.read())
         except:
             raise Exception("--config must be a site configuration file")
         try:
@@ -57,7 +57,7 @@ def command_serve(args):
 
     try:
         db.make_superadmin()
-        channels, livestream = stream.start_stream_monitor(channelsjson)
+        channels, livestream = stream.start_stream_monitor(config["channels"], config["influxdb"])
         web.serve(port=args["PORT"],
                   httpdir=args["--http-dir"],
                   channels=channels,

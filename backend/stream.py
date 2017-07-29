@@ -4,6 +4,8 @@ from collections import namedtuple
 from mpd import MPDClient
 
 import atexit
+import datetime
+import influxdb
 import json
 import requests as make_requests
 import time
@@ -14,7 +16,7 @@ import database as db
 LivestreamTrack = namedtuple('LivestreamTrack', ['artist', 'title', 'first_seen'])
 
 
-def start_stream_monitor(channelsjson):
+def start_stream_monitor(channelsjson, influxdbcfg):
     """Start monitoring the streams."""
 
     # Cached channel data
@@ -40,8 +42,15 @@ def start_stream_monitor(channelsjson):
 
     playlist_update_counter = 0
 
+    influx_client = influxdb.InfluxDBClient(
+        host=influxdbcfg["host"],
+        port=influxdbcfg["port"],
+        username=influxdbcfg["user"],
+        password=influxdbcfg["pass"],
+        database=influxdbcfg["db"])
+
     def playlist_info_update_task():
-        nonlocal channels, livestream, playlist_update_counter
+        nonlocal channels, livestream, playlist_update_counter, influx_client
 
         for channel in channels:
             if livestream['active'] and channel == livestream['CHANNEL']:
@@ -51,7 +60,7 @@ def start_stream_monitor(channelsjson):
                 else:
                     continue
             else:
-                update_mpd_info(channels[channel])
+                update_mpd_info(channel, channels[channel], influx_client)
 
     bg_scheduler.add_job(func=playlist_info_update_task,
                          trigger=IntervalTrigger(seconds=1),
@@ -89,29 +98,46 @@ def get_playlist_info(client, beforeNum=5, afterNum=5):
         "current": list(map(sanitise, client.playlistinfo(song)))[0],
         "after":   list(map(sanitise, songsIn(song + 1, song + afterNum + 1))),
         "elapsed": status["elapsed"],
-        "stream_data": {"live": False}
     }
     pinfo["before"].reverse()
 
     return pinfo
 
 
-def update_mpd_info(channel):
+def get_channel_listeners(channel, client):
+    startTime = (datetime.datetime.now() - datetime.timedelta(hours=12)).replace(microsecond=0)
+
+    max_res  = client.query(
+        'select max({}) from channel_listeners where time >= \'{}Z\''
+        .format(channel, startTime.isoformat()))
+    last_res = client.query(
+        'select {} as last from channel_listeners order by time desc limit 1'
+        .format(channel))
+
+    return {
+        "peak":    max_res.get_points().__next__()['max'],
+        "current": last_res.get_points().__next__()['last']
+    }
+
+
+def update_mpd_info(channel, mpd, influx_client):
     try:
-        channel["client"].ping()
+        mpd["client"].ping()
     except:
         try:
-            channel["client"] = MPDClient()
-            channel["client"].connect(channel["mpd_host"], channel["mpd_port"])
-            channel["client"].ping()
+            mpd["client"] = MPDClient()
+            mpd["client"].connect(mpd["mpd_host"], mpd["mpd_port"])
+            mpd["client"].ping()
         except Exception as e:
             print(e)
-            channel["cache"] = ("Could not connect to MPD.", 500)
-            return
+            mpd['cache'] = ("Could not connect to MPD.", 500)
 
     # okay, client (re-)connected
-    p_info = get_playlist_info(channel["client"])
-    channel["cache"] = (p_info, 200)
+    report = get_playlist_info(mpd["client"])
+    report["stream_data"] = {"live": False}
+    report["listeners"] = get_channel_listeners(channel, influx_client)
+
+    mpd['cache'] = (report, 200)
 
 
 ###############################################################################
@@ -130,7 +156,10 @@ def update_livestream_info(channels, livestream):
     status_metadata = {
         'artist': '',
         'title': '',
-        'album': '🎵 L I V E S T R E A M 🎵'
+        'album': '🎵 L I V E S T R E A M 🎵',
+        'listeners': {
+            'current': 0
+        }
     }
 
     stream_data = {
@@ -139,6 +168,8 @@ def update_livestream_info(channels, livestream):
         'stream_desc': '',
         'live': livestream['active']
     }
+
+    current_listeners = 0
 
     # fill in with streamer info
     if stream_data['live']:
@@ -158,7 +189,8 @@ def update_livestream_info(channels, livestream):
             # streaming the server_type starts with audio a regular
             # mpd source's type is application/ogg
             if 'server_type' in source and 'audio' in source['server_type']:
-                for k in status_metadata:
+                current_listeners += int(source['listeners'].strip())
+                for k in ['artist', 'album', 'title']:
                     if k in source:
                         status_metadata[k] = source[k].strip()
                 break
@@ -180,7 +212,8 @@ def update_livestream_info(channels, livestream):
         'current': status_metadata,
         'elapsed': int(time_now - livestream['last_played'][-1].first_seen),
         'before': [],
-        'stream_data': stream_data
+        'stream_data': stream_data,
+        'listeners': {'current': current_listeners}
     }
 
     # populate before, radio expects tracks in most recent to oldest order

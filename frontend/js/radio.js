@@ -46,37 +46,6 @@ function populate_channel_list() {
     });
 }
 
-function check_status() {
-    ajax_with_json("$icecast_status_url$", function(response) {
-        let listeners = 0;
-        let listenersPeak = 0;
-        let description = "";
-
-        // Find the stats for the appropriate output.
-        for(let id in response.icestats.source) {
-            let source = response.icestats.source[id];
-
-            // Assume that the listeners of the ogg and mp3 streams
-            // are disjoint and just add them.  Bigger numbers are
-            // better, right?
-            if (source.server_name !== undefined){
-                let sname = source.server_name.substr(0, source.server_name.length - 6);
-                if(sname == channel || sname == "[mpd] " + channel) {
-                    listeners     += source.listeners;
-                    listenersPeak += source.listener_peak;
-                    description    = source.server_description;
-                }
-            }
-        }
-
-        // Update the stats on the page.
-        document.getElementById("listeners").innerText = "listeners: " + listeners + " (peak: " + listenersPeak + ")";
-
-        // Update the channel description, in case it's changed.
-        // document.getElementById("description").innerText = description;
-    });
-}
-
 function check_playlist() {
     function format_track(track){
         return (track.artist) ? (track.artist + " - " + track.title) : track.title;
@@ -162,12 +131,17 @@ function check_playlist() {
             swap_tbody("queue_body", new_queue);
         }
 
-
         LainPlayer.updateProgress({
             length: response.current.time,
             elapsed: response.elapsed,
             live: response.stream_data.live
         });
+
+        // Update the current/peak listeners counts
+        document.getElementById("listeners").innerText = `listeners: $${response.listeners.current}`;
+        if ('peak' in response.listeners) {
+            document.getElementById("listeners").innerText += ` (peak: $${response.listeners.peak})`;
+        }
     });
 }
 
@@ -187,10 +161,7 @@ function change_channel(e) {
     clearInterval(statusPoll);
     clearInterval(playlistPoll);
 
-    // Update the status and playlist.
-    // and reset the Intervals
-    check_status();
-    statusPoll = setInterval(check_status, 15000);
+    // Update the playlist and reset the Intervals
     check_playlist();
     playlistPoll = setInterval(check_playlist, 15000);
 }
@@ -226,10 +197,6 @@ window.onload = () => {
 
     // Populate the channel list.
     populate_channel_list();
-
-    // Get the initial status and set a timer to regularly update it.
-    check_status();
-    statusPoll = setInterval(check_status, 15000);
 
     // Get the initial playlist and set a timer to regularly update it.
     check_playlist();

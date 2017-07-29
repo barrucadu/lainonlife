@@ -5,6 +5,14 @@
   , "cafe":       { "mpd_host": "localhost", "mpd_port": 6603, "description": "music to drink tea to" }
   }
 
+, "influxdb":
+  { "host": "localhost"
+  , "port": 8086
+  , "user": "root"
+  , "pass": "root"
+  , "db":   "lainon.life"
+  }
+
 , "template":
   { "default_channel": "cyberia"
   , "icecast_status_url": "/radio/status-json.xsl"
