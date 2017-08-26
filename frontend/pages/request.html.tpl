@@ -1,7 +1,8 @@
----
-title: music requests
----
+{% extends "wrapper.tpl" %}
 
+{% block title %}music requests{% endblock %}
+
+{% block body %}
 <div class="box">
   <header>
     <h1>Is something <strong>missing?</strong></h1>
@@ -24,10 +25,9 @@ title: music requests
           <label for="channel">Channel <span class="alert">*</span></label>
           <!-- this is a hard-coded channel list so the page works for non-javascript people -->
           <select name="channel" id="channel">
-            <option value="cafe">cafe</option>
-            <option value="cyberia">cyberia</option>
-            <option value="swing">swing</option>
-            <option value="misc">misc</option>
+            {% for channel in channels %}
+              <option value="{{ channel }}">{{ channel }}</option>
+            {% endfor %}
           </select>
         </li>
         <li>
@@ -45,3 +45,4 @@ title: music requests
     </fieldset>
   </form>
 </div>
+{% endblock %}

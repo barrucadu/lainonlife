@@ -41,18 +41,13 @@ Usage
 
 1. Build the frontend assets.
 
-    You need [stack][]; or [hpack][], [cabal-install][], and [GHC][].
-
     ```
     $ cd frontend
-    $ stack build
-    $ stack exec frontend build
+    $ ./run.sh ../config.json
     ```
 
-    If all goes well, the directory `_site` now contains all the frontend assets.
-
-    This will take a while the first time because GHC is slow and
-    Haskell things pull in a lot of dependencies.
+    If all goes well, the directory `_site` now contains all the
+    frontend assets.
 
 2. Put the frontend assets where you told the server they would be.
 
@@ -63,16 +58,9 @@ Usage
 3. Start the backend on the port you told the server it would be.
 
     ```
-    $ ./misc/backend.py --http-dir=/srv/http 5000
+    $ cd backend
+    $ ./run.sh --config=../config.json --http-dir=/srv/http 5000
     ```
-
-
-Bash, Haskell, AND Python?
---------------------------
-
-I like bash and Python for small things, where bash beats Python into
-the ground for things which don't really require any logic.  I like
-Haskell for everything else.
 
 
 I want to help!
@@ -81,13 +69,9 @@ I want to help!
 Great!  See the open issues.  You can also find me on irc.lainchan.org.
 
 
-[Icecast]:       http://icecast.org/
-[MPD]:           https://www.musicpd.org/
-[lainon.life]:   https://lainon.life/
-[NixOS]:         https://nixos.org/
-[nixfiles]:      https://github.com/barrucadu/nixfiles
-[nginx]:         https://www.nginx.com/
-[stack]:         https://www.haskellstack.org/
-[hpack]:         https://github.com/sol/hpack
-[cabal-install]: https://www.haskell.org/cabal/
-[GHC]:           https://www.haskell.org/ghc/
+[Icecast]:     http://icecast.org/
+[MPD]:         https://www.musicpd.org/
+[lainon.life]: https://lainon.life/
+[NixOS]:       https://nixos.org/
+[nixfiles]:    https://github.com/barrucadu/nixfiles
+[nginx]:       https://www.nginx.com/

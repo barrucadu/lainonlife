@@ -1,7 +1,11 @@
----
-player_js: true
----
+{% extends "wrapper.tpl" %}
 
+{% block head %}
+<script defer src="/js/player.js" type="text/javascript"></script>
+<script defer src="/js/radio.js"  type="text/javascript"></script>
+{% endblock %}
+
+{% block body %}
 <div class="box">
   <div class="controls">
     <!-- Table for layout because I am not very good with CSS. Feel free to fix. -->
@@ -23,8 +27,8 @@ player_js: true
       <tr>
         <td>
           <audio controls preload="none" id="audio" class="noscript">
-            <source src="$icecast_stream_url_base$/$default_channel$.ogg" type="audio/ogg"/>
-            <source src="$icecast_stream_url_base$/$default_channel$.mp3" type="audio/mpeg"/>
+            <source src="{{ icecast_stream_url_base }}/{{ default_channel }}.ogg" type="audio/ogg"/>
+            <source src="{{ icecast_stream_url_base }}/{{ default_channel }}.mp3" type="audio/mpeg"/>
             <em>Your browser lacks support for OGG Vorbis files. Please open the M3U file or XSPF file in a multimedia player.</em>
           </audio>
           <div class="progressbar withscript">
@@ -38,12 +42,12 @@ player_js: true
     </table>
 
     [ <span class="inlineheading">channel:</span>
-      <span class="noscript">$default_channel$</span>
+      <span class="noscript">{{ default_channel }}</span>
       <select class="withscript" id="channel" onchange="change_channel(this)"></select>
     ]
 
-    [ <span class="inlineheading">m3u:</span>   <a id="ogglink" href="$icecast_stream_url_base$/$default_channel$.ogg.m3u">ogg</a> / <a id="mp3link" href="$icecast_stream_url_base$/$default_channel$.mp3.m3u">mp3</a> ]
-    [ <span class="inlineheading">files:</span> <a id="fileslink" href="/file-list/$default_channel$.html">list</a> ]
+    [ <span class="inlineheading">m3u:</span>   <a id="ogglink" href="{{ icecast_stream_url_base }}/{{ default_channel }}.ogg.m3u">ogg</a> / <a id="mp3link" href="{{ icecast_stream_url_base }}/{{ default_channel }}.mp3.m3u">mp3</a> ]
+    [ <span class="inlineheading">files:</span> <a id="fileslink" href="/file-list/{{ default_channel }}.html">list</a> ]
   </div>
 
   <hr/>
@@ -116,3 +120,4 @@ player_js: true
   <a href="/donate.html">donate</a>
   ]
 </footer>
+{% endblock %}

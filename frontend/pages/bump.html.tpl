@@ -1,7 +1,8 @@
----
-title: radio bumps
----
+{% extends "wrapper.tpl" %}
 
+{% block title %}radio bumps{% endblock %}
+
+{% block body %}
 <div class="box">
   <header>
     <h1>Do you want to hear <strong>your work</strong> on the radio?</h1>
@@ -80,3 +81,4 @@ title: radio bumps
     </fieldset>
   </form>
 </div>
+{% endblock %}

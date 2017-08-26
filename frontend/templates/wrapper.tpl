@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>lainon.life$if(title)$ $title$$endif$</title>
+    <title>lainon.life {% block title %}{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="theme-color" content="#1e1a1c">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -11,12 +11,10 @@
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f0546a">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/cyber.css">
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">$if(player_js)$
-    <script defer src="/js/player.js" type="text/javascript"></script>
-    <script defer src="/js/radio.js" type="text/javascript"></script>$endif$$if(extra_css)$
-    <style type="text/css">$extra_css$</style>$endif$
+    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+    {% block head %}{% endblock %}
   </head>
   <body>
-    $body$
+    {% block body %}{% endblock %}
   </body>
 </html>

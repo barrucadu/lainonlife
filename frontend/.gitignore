@@ -1,4 +1,3 @@
-.stack-work
-_cache
+__pycache__
+__venv__
 _site
-frontend.cabal
