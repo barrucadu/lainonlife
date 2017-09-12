@@ -123,7 +123,7 @@ def get_channel_listeners(channel, client):
         # If there's an error just say there's only one listener (ie,
         # the current one)
         print("error: {} {}".format(max_res, last_res))
-        return { "peak": 1, "current": 1 }
+        return {"peak": 1, "current": 1}
 
 
 def update_mpd_info(channel, mpd, influx_client):
