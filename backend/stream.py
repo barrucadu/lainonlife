@@ -114,10 +114,16 @@ def get_channel_listeners(channel, client):
         'select {} as last from channel_listeners order by time desc limit 1'
         .format(channel))
 
-    return {
-        "peak":    max_res.get_points().__next__()['max'],
-        "current": last_res.get_points().__next__()['last']
-    }
+    try:
+        return {
+            "peak":    max_res.get_points().__next__()['max'],
+            "current": last_res.get_points().__next__()['last']
+        }
+    except:
+        # If there's an error just say there's only one listener (ie,
+        # the current one)
+        print("error: {} {}".format(max_res, last_res))
+        return { "peak": 1, "current": 1 }
 
 
 def update_mpd_info(channel, mpd, influx_client):
