@@ -12,4 +12,4 @@ source "$ENV_DIR/bin/activate"
 
 pip install -r requirements.txt
 
-python3 backend.py $*
+python3 build.py $*
