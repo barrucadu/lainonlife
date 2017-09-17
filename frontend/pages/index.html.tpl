@@ -113,8 +113,6 @@
   /
   <a href="https://github.com/barrucadu/lainonlife">git</a>
   /
-  <a href="#schedule">schedule</a>
-  /
   <a href="/donate.html">donate</a>
   ]
 </footer>
