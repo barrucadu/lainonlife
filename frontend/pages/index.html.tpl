@@ -111,8 +111,6 @@
   [
   <a href="/graphs/dashboard/db/lainon-life">graphs</a>
   /
-  <a href="/webm.html">webm</a>
-  /
   <a href="https://github.com/barrucadu/lainonlife">git</a>
   /
   <a href="#schedule">schedule</a>

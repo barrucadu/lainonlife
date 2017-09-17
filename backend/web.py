@@ -79,28 +79,6 @@ def playlist(channel):
     return send_file(in_http_dir("404.html")), 404
 
 
-@blueprint.route("/webm.html", methods=["GET"])
-def webm():
-    tpl = '''
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{0}</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/css/webm.css">
-  </head>
-  <body>
-    <a href="/webms/{1}">
-      <video autoplay loop src="/webms/{1}">
-        Your browser does not support HTML5 video.
-      </video>
-    </a>
-  </body>
-</html>
-        '''
-    return random_file_from(in_http_dir("webms"), lambda webm: tpl.format(webm[:-5], webm))
-
-
 ###############################################################################
 # The DJ pages
 
