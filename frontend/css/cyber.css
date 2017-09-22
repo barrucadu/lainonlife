@@ -75,18 +75,21 @@ thead {
   color: #F0546A;
 }
 
-#lastplayed, #queue {
-  background-color: #1B1719;
-  border: 10px solid #1B1719;
-  border-radius: 5px;
+#playlist {
+  color: #999;
 }
 
-.playbox header {
+.current_track {
   font-weight: bold;
 }
 
-.playbox footer {
-  font-size: 0.8em;
+.track.current_track {
+  color: #46C0AB;
+}
+
+.dur.current_track {
+  color: #F0546A;
+  padding-right: 1em;
 }
 
 #lainplayer i {

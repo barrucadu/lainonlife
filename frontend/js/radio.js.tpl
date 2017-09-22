@@ -53,24 +53,34 @@ function check_playlist() {
 
     function add_track_to_tbody(tbody, track, acc, ago) {
         // Create row and cells
-        let row   = tbody.insertRow(tbody.rows.length);
+        let row   = tbody.insertRow((ago === true) ? 0 : tbody.rows.length);
         let dcell = row.insertCell(0);
-        let tcell = row.insertCell(ago ? 1 : 0);
+        let tcell = row.insertCell(0);
         dcell.className = "dur";
         tcell.className = "track";
 
         // The track
         tcell.innerText = format_track(track);
 
-        // The duration
-        let time = "";
-        if(acc < 60) {
-            time = "under a min";
+        if(acc == undefined) {
+            dcell.classList.add("current_track");
+            tcell.classList.add("current_track");
+
+            let arrow = document.createElement("i");
+            arrow.classList.add("fa");
+            arrow.classList.add("fa-arrow-circle-o-left");
+            dcell.appendChild(arrow);
         } else {
-            time = Math.round(acc / 60);
-            time += " min" + ((time==1) ? "" : "s");
+            // The duration
+            let time = "";
+            if(acc < 60) {
+                time = "under a min";
+            } else {
+                time = Math.round(acc / 60);
+                time += " min" + ((time==1) ? "" : "s");
+            }
+            dcell.innerText = ago ? time + " ago" : "in " + time;
         }
-        dcell.innerText = ago ? time + " ago" : "in " + time;
 
         // New accumulator
         return acc + parseFloat(track.time);
@@ -83,14 +93,6 @@ function check_playlist() {
     }
 
     ajax_with_json("/playlist/" + channel + ".json", function(response) {
-        // Update the "last played"
-        let new_lastplayed = document.createElement("tbody");
-        let ago            = parseFloat(response.elapsed);
-        for(let i in response.before) {
-            ago = add_track_to_tbody(new_lastplayed, response.before[i], ago, true);
-        }
-        swap_tbody("lastplayed_body", new_lastplayed);
-
         // Update the "now playing"
         document.getElementById("nowplaying").innerText = format_track(response.current);
         document.getElementById("nowalbum").innerText = response.current.album;
@@ -119,12 +121,17 @@ function check_playlist() {
 
             swap_tbody("queue_body", fake_queue);
         } else {
-            let new_queue = document.createElement("tbody");
-            let until     = parseFloat(response.current.time) - parseFloat(response.elapsed);
-            for(let i in response.after) {
-                until = add_track_to_tbody(new_queue, response.after[i], until, false);
+            let new_playlist = document.createElement("tbody");
+            let until = parseFloat(response.current.time) - parseFloat(response.elapsed);
+            let ago   = parseFloat(response.elapsed);
+            for(let i in response.before) {
+                ago = add_track_to_tbody(new_playlist, response.before[i], ago, true);
             }
-            swap_tbody("queue_body", new_queue);
+            add_track_to_tbody(new_playlist, response.current, undefined, false);
+            for(let i in response.after) {
+                until = add_track_to_tbody(new_playlist, response.after[i], until, false);
+            }
+            swap_tbody("playlist_body", new_playlist);
         }
 
         LainPlayer.updateProgress({

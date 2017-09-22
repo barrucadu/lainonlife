@@ -54,21 +54,10 @@
 
   <hr/>
 
-  <div class="withscript playbox">
-    <div class="flex">
-      <header class="col left">Last Played</header>
-      <header class="col right" id="queue_header">Queue</header>
-      <div class="col left" id="lastplayed">
-        <table>
-          <tbody id="lastplayed_body"></tbody>
-        </table>
-      </div>
-      <div class="col right" id="queue">
-        <table>
-          <tbody id="queue_body"></tbody>
-        </table>
-      </div>
-    </div>
+  <div class="withscript">
+    <table id="playlist">
+      <tbody id="playlist_body"></tbody>
+    </table>
   </div>
 
   <div class="alert noscript">

@@ -149,6 +149,7 @@ table {
 
 table .dur {
   width: 10em;
+  text-align: right;
 }
 
 #lainplayer {
