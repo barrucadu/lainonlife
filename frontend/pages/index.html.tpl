@@ -48,6 +48,8 @@
 
     [ <span class="inlineheading">m3u:</span>   <a id="ogglink" href="{{ icecast_stream_url_base }}/{{ default_channel }}.ogg.m3u">ogg</a> / <a id="mp3link" href="{{ icecast_stream_url_base }}/{{ default_channel }}.mp3.m3u">mp3</a> ]
     [ <span class="inlineheading">files:</span> <a id="fileslink" href="/file-list/{{ default_channel }}.html">list</a> ]
+
+    <span class="withscript">[ <span class="inlineheading">listeners:</span> <span id="listeners"></span> ]</span>
   </div>
 
   <hr/>
@@ -67,7 +69,6 @@
         </table>
       </div>
     </div>
-    <footer id="listeners"></footer>
   </div>
 
   <div class="alert noscript">
