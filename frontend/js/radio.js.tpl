@@ -96,12 +96,7 @@ function check_playlist() {
         document.getElementById("nowalbum").innerText = response.current.album;
 
         // check for livestream
-        let queue_header = document.getElementById('queue_header');
-
         if (response.stream_data !== undefined && response.stream_data.live){
-
-            queue_header.innerText = 'Current DJ: ' + response.stream_data.dj_name;
-
             let fake_queue = document.createElement("tbody");
             let fake_row = fake_queue.insertRow(0);
 
@@ -118,11 +113,12 @@ function check_playlist() {
             dj_pic_img.src = (response.stream_data.dj_pic || '');
             dj_pic_cell.appendChild(dj_pic_img);
 
+            let dj_name = document.createElement("span");
+            dj_name.innerText = 'Current DJ: ' + response.stream_data.dj_name;
+            dj_pic_cell.appendChild(dj_name);
+
             swap_tbody("queue_body", fake_queue);
         } else {
-            // Update the "queue"
-            queue_header.innerText = 'Queue';
-
             let new_queue = document.createElement("tbody");
             let until     = parseFloat(response.current.time) - parseFloat(response.elapsed);
             for(let i in response.after) {
