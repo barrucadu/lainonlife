@@ -96,6 +96,12 @@ const LainPlayer = (() => {
         }
 
         function setProgressTo(elapsed) {
+            // trigger an immediate playlist update if at the end of
+            // the song
+            if (elapsed >= prgs.length) {
+                check_playlist();
+            }
+
             let realElapsed = Math.min(elapsed, prgs.length);
             let progress    = Math.round(realElapsed/prgs.length*100);
             timeLabel.innerText = `${getCurrentTime(realElapsed)} / ${getCurrentTime(prgs.length)}`;
