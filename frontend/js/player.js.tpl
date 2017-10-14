@@ -73,7 +73,10 @@ const LainPlayer = (() => {
 
     function updateProgress(prgs) {
         // expects an object as the parameter that looks like this:
-        //      {length: value, elapsed: value, live: boolean value}
+        //      {length: string, elapsed: string, live: boolean}
+
+        prgs.length  = parseInt(prgs.length,  10);
+        prgs.elapsed = parseInt(prgs.elapsed, 10);
 
         const bar       = document.getElementById('track-progress');
         const timeLabel = document.getElementById('time-label');
