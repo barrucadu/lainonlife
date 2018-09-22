@@ -103,6 +103,8 @@
   /
   <a href="https://github.com/barrucadu/lainonlife">git</a>
   /
+  <a href="https://social.lainon.life">pleroma</a>
+  /
   <a href="/donate.html">donate</a>
   ]
 </footer>
