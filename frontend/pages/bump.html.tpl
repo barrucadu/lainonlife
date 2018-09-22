@@ -20,8 +20,8 @@
     <dt>208.67.222.222</dt>
     <dd>
       <audio controls preload="none" id="audio">
-        <source src="/bumps/208.67.222.222.mp3" type="audio/mpeg"/>
-        <em>Your browser lacks support for MPEG files. Sucks to be you.</em>
+        <source src="/bumps/208.67.222.222.ogg" type="audio/ogg"/>
+        <em>Your browser lacks support for Vorbis files. Sucks to be you.</em>
       </audio>
     </dd>
     <dt>Jazz//Data</dt>
