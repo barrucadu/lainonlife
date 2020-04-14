@@ -10,6 +10,8 @@ Jinja2 = "*"
 watchdog = "*"
 pyyaml = "*"
 argh = "*"
+flask = "*"
+requests = "*"
 
 [scripts]
 build = "python3 build.py ../config.json.example"

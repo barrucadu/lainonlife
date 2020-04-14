@@ -2,4 +2,6 @@
 
 trap 'kill $(jobs -p)' EXIT
 ./watch.sh &
-python -m http.server --directory ./_site
+
+# running with python to ensure pipenv's python will be used 
+python3 ./devserver.py
