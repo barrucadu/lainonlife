@@ -1,6 +1,11 @@
 {% extends "wrapper.tpl" %}
 
 {% block head %}
+<script type="text/javascript">
+const ICECAST_STREAM_URL_BASE = "{{ icecast_stream_url_base }}";
+const DEFAULT_CHANNEL = "{{ default_channel }}"; 
+const ICECAST_STATUS_URL = "{{ icecast_status_url }}"; 
+</script>
 <script defer src="/js/player.js" type="text/javascript"></script>
 <script defer src="/js/radio.js"  type="text/javascript"></script>
 {% endblock %}

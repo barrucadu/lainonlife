@@ -1,8 +1,5 @@
-// The default channel
-const DEFAULT_CHANNEL = "{{ default_channel }}";
-
 // The initial channel
-var channel = DEFAULT_CHANNEL;
+let channel = DEFAULT_CHANNEL;
 
 // Recurring timers
 let playlistPoll;
@@ -23,7 +20,7 @@ function ajax_with_json(url, func) {
 }
 
 function populate_channel_list() {
-    ajax_with_json("{{ icecast_status_url }}", function(response) {
+    ajax_with_json(ICECAST_STATUS_URL, function(response) {
         // Get the list of channels, the default.
         let channels = [];
         for(let id in response.icestats.source) {
@@ -92,7 +89,7 @@ function check_playlist() {
         tbody.id = id;
     }
 
-    ajax_with_json("/playlist/" + channel + ".json", function(response) {
+    ajax_with_json(`/playlist/${channel}.json`, function(response) {
         // Update the "now playing"
         document.getElementById("nowplaying").innerText = format_track(response.current);
         document.getElementById("nowalbum").innerText = response.current.album;
@@ -153,8 +150,8 @@ function change_channel(e) {
     LainPlayer.changeChannel(channel);
 
     // Update the stream links.
-    document.getElementById("ogglink").href = "{{ icecast_stream_url_base }}/" + channel + ".ogg.m3u";
-    document.getElementById("mp3link").href = "{{ icecast_stream_url_base }}/" + channel + ".mp3.m3u";
+    document.getElementById("ogglink").href = `${ICECAST_STREAM_URL_BASE}/${channel}.ogg.m3u`;
+    document.getElementById("mp3link").href = `${ICECAST_STREAM_URL_BASE}/${channel}.mp3.m3u`;
 
     // Update the file list link.
     document.getElementById("fileslink").href = "/file-list/" + channel + ".html";
