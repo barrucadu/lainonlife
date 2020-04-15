@@ -6,7 +6,7 @@ body {
 }
 
 div.box {
-  width: 960px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 1em;
 }
@@ -143,35 +143,49 @@ table {
   margin-right: 0;
 }
 
-table {
-  width: 100%;
+/* controls / lainplayer */
+
+.controls {
+  display: flex;
+  flex-direction: column;
 }
 
-table .dur {
-  width: 10em;
-  text-align: right;
-}
-
-#lainplayer {
-  margin: 0 auto;
-}
-
-#lainplayer td {
-  margin: 0;
-  padding: 0;
-}
-
-#lainplayer td.button {
-  padding: 0 20px;
-  width: 30px;
-}
-
-.button:hover {
-  cursor:pointer;
-}
-
-#lainplayer i {
+.lainplayer i {
   font-size: 30px;
+}
+
+.lainplayer-row {
+  display: flex;
+}
+
+.lainplayer-row {
+  flex-direction: row;
+}
+
+.lainplayer .current-track {
+  flex-basis: 0;
+  flex-grow: 7;
+}
+
+.lainplayer .playback-buttons {
+  flex-basis: 0;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.lainplayer .inner-player {
+  flex-basis: 0;
+  flex-grow: 7;
+}
+
+.lainplayer .progress-label {
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
+.lainplayer .progress-label span {
+  white-space: nowrap;
 }
 
 .progressbar {
@@ -192,6 +206,14 @@ table .dur {
 #time-label{
   text-align:center;
 }
+
+.channel-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+
 
 /* schedule additions */
 
@@ -270,4 +292,20 @@ table .dur {
 
 #dj_pic {
   width: 95%;
+}
+
+/* mobile overwrites */
+@media only screen and (max-width: 768px) {
+  .lainplayer .lainplayer-row {
+    flex-direction: column;
+  }
+
+  .lainplayer .progress-label span {
+    display: none;
+  }
+
+  body > footer {
+    position: relative;
+    margin-top: 30px;
+  }
 }
