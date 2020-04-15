@@ -10,7 +10,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f0546a">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/css/cyber.css">
+    <link rel="stylesheet" type="text/css" href="/css/themes/cyber.css">
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
     {% block head %}{% endblock %}
   </head>
