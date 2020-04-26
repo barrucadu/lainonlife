@@ -14,9 +14,6 @@ flask = "*"
 requests = "*"
 
 [scripts]
-build = "python3 build.py ../config.json.example"
-# you can pass a config file to build-prod 
-# like: pipenv run build-prod ./config.json 
-build-prod = "python3 build.py"
+build = "bash build.sh"
 watch = "bash watch.sh"
 serve = "bash serve.sh"
