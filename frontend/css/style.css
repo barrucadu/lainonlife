@@ -177,9 +177,12 @@ table {
   align-items: center;
 }
 
+.lainplayer .playback-buttons .button-section {
+    margin-left: 1em;
+}
+
 .lainplayer .playback-buttons .button {
     display: inline-block;
-    padding: 0 1em;
 }
 
 .lainplayer .inner-player {

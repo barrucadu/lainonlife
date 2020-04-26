@@ -42,6 +42,12 @@ const LainPlayer = ((STREAM_URL_BASE) => {
         updatePlayButton();
     }
 
+    function stop() {
+        audioTag.pause();
+        audioTag.currentTime = 0;
+        updatePlayButton();
+    }
+
     function updateVolumeButton() {
         // Updates the volume button icon accoring to the volume
         volumebtn = document.getElementById("volume-button");
@@ -131,6 +137,7 @@ const LainPlayer = ((STREAM_URL_BASE) => {
     }
 
     return {
+        stop,
         togglePlay: () => togglePlay(),
         changeChannel: (channel) => changeSource(channel),
         cycleVolume: () => cycleVolume(),

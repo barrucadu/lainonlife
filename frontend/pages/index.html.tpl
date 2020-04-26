@@ -22,8 +22,14 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
           </header>
         </div>
         <div class="button-group playback-buttons">
-          <div class="withscript button inline" onclick="LainPlayer.togglePlay()">
-            <i id="play-toggle" class="fa fa-play" aria-hidden="true"></i>
+          <div class="button-section">
+              <div class="withscript button inline" onclick="LainPlayer.stop()">
+                <i id="stop-button" class="fa fa-stop" aria-hidden="true"></i>
+              </div>
+
+              <div class="withscript button inline" onclick="LainPlayer.togglePlay()">
+                <i id="play-toggle" class="fa fa-play" aria-hidden="true"></i>
+              </div>
           </div>
           <div class="withscript button inline" onclick="LainPlayer.cycleVolume()">
             <i id="volume-button" class="fa fa-volume-down" aria-hidden="true"></i>
