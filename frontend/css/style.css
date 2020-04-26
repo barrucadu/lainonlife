@@ -246,7 +246,7 @@ table {
   padding: 20px;
   background: #1E1A1C;
   border: 1px solid #764C61;
-  width: 660px;
+  max-width: 660px;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
   position: relative;
 }
