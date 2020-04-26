@@ -13,7 +13,6 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
 {% block body %}
 <div class="box">
   <div class="controls">
-    <!-- Table for layout because I am not very good with CSS. Feel free to fix. -->
     <div class="lainplayer" id="lainplayer">
       <div class="lainplayer-row">
         <div class="withscript current-track">
@@ -23,15 +22,15 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
           </header>
         </div>
         <div class="button-group playback-buttons">
-          <div class="withscript button" style="text-align:right;" onclick="LainPlayer.togglePlay()">
+          <div class="withscript button inline" onclick="LainPlayer.togglePlay()">
             <i id="play-toggle" class="fa fa-play" aria-hidden="true"></i>
           </div>
-          <div class="withscript button" style="text-align:left;" onclick="LainPlayer.cycleVolume()">
+          <div class="withscript button inline" onclick="LainPlayer.cycleVolume()">
             <i id="volume-button" class="fa fa-volume-down" aria-hidden="true"></i>
           </div>
         </div>
       </div>
-      <div class="lainplayer-row">
+      <div class="lainplayer-row progress">
         <div class="inner-player">
           <audio controls preload="none" id="audio" class="noscript">
             <source src="{{ icecast_stream_url_base }}/{{ default_channel }}.ogg" type="audio/ogg"/>
@@ -73,7 +72,7 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
   <hr/>
 
   <div class="withscript">
-    <table id="playlist">
+    <table id="playlist" class="playlist">
       <tbody id="playlist_body"></tbody>
     </table>
   </div>

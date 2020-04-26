@@ -155,11 +155,13 @@ table {
 }
 
 .lainplayer-row {
+  flex-direction: row;
   display: flex;
 }
 
-.lainplayer-row {
-  flex-direction: row;
+.lainplayer-row.progress {
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 .lainplayer .current-track {
@@ -172,6 +174,12 @@ table {
   flex-grow: 1;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.lainplayer .playback-buttons .button {
+    display: inline-block;
+    padding: 0 1em;
 }
 
 .lainplayer .inner-player {
@@ -182,6 +190,7 @@ table {
 .lainplayer .progress-label {
   flex-basis: 0;
   flex-grow: 1;
+  text-align: right;
 }
 
 .lainplayer .progress-label span {
@@ -212,10 +221,15 @@ table {
   flex-wrap: wrap;
 }
 
+.playlist {
+  width: 100%;
+}
 
+.playlist .dur {
+  text-align: right;  
+}
 
-
-/* schedule additions */
+/* schedule */
 
 .overlay {
   position: absolute;
@@ -302,6 +316,10 @@ table {
 
   .lainplayer .progress-label span {
     display: none;
+  }
+
+  .lainplayer .playback-buttons .button {
+      padding: 0;
   }
 
   body > footer {
