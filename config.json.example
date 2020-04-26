@@ -18,8 +18,6 @@
   , "icecast_status_url": "/radio/status-json.xsl"
   , "icecast_stream_url_base": "https://lainon.life/radio"
   , "server_cost": 20.39
-  , "this_month_amount": 0
-  , "carried_over": 0
   , "currency_symbol": "€"
   }
 }
