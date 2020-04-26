@@ -62,6 +62,18 @@ Usage
     $ ./run.sh --config=../config.json --http-dir=/srv/http 5000
     ```
 
+Frontend development
+--------------------
+
+Frontend development is setup with [pipenv](https://pipenv.pypa.io).
+Initially you have to run `pipenv install` in the `frontend` subdirectory.
+
+There are 3 essential scripts for development:
+- build: builds the static site, its out put can be found in `frontend/_site`
+- watch: watches the source files for changes and rebuilds
+- serve: watches the source files and also run a local webserver on localhost
+
+You can run these scripts like so: `pipenv run build`
 
 I want to help!
 ---------------

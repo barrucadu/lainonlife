@@ -6,7 +6,7 @@ body {
 }
 
 div.box {
-  width: 960px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 1em;
 }
@@ -143,35 +143,61 @@ table {
   margin-right: 0;
 }
 
-table {
-  width: 100%;
+/* controls / lainplayer */
+
+.controls {
+  display: flex;
+  flex-direction: column;
 }
 
-table .dur {
-  width: 10em;
+.lainplayer i {
+  font-size: 30px;
+}
+
+.lainplayer-row {
+  flex-direction: row;
+  display: flex;
+}
+
+.lainplayer-row.progress {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.lainplayer .current-track {
+  flex-basis: 0;
+  flex-grow: 7;
+}
+
+.lainplayer .playback-buttons {
+  flex-basis: 0;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lainplayer .playback-buttons .button-section {
+    margin-left: 1em;
+}
+
+.lainplayer .playback-buttons .button {
+    display: inline-block;
+}
+
+.lainplayer .inner-player {
+  flex-basis: 0;
+  flex-grow: 7;
+}
+
+.lainplayer .progress-label {
+  flex-basis: 0;
+  flex-grow: 1;
   text-align: right;
 }
 
-#lainplayer {
-  margin: 0 auto;
-}
-
-#lainplayer td {
-  margin: 0;
-  padding: 0;
-}
-
-#lainplayer td.button {
-  padding: 0 20px;
-  width: 30px;
-}
-
-.button:hover {
-  cursor:pointer;
-}
-
-#lainplayer i {
-  font-size: 30px;
+.lainplayer .progress-label span {
+  white-space: nowrap;
 }
 
 .progressbar {
@@ -193,7 +219,20 @@ table .dur {
   text-align:center;
 }
 
-/* schedule additions */
+.channel-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.playlist {
+  width: 100%;
+}
+
+.playlist .dur {
+  text-align: right;  
+}
+
+/* schedule */
 
 .overlay {
   position: absolute;
@@ -224,7 +263,7 @@ table .dur {
   padding: 20px;
   background: #1E1A1C;
   border: 1px solid #764C61;
-  width: 660px;
+  max-width: 660px;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
   position: relative;
 }
@@ -270,4 +309,24 @@ table .dur {
 
 #dj_pic {
   width: 95%;
+}
+
+/* mobile overwrites */
+@media only screen and (max-width: 768px) {
+  .lainplayer .lainplayer-row {
+    flex-direction: column;
+  }
+
+  .lainplayer .progress-label span {
+    display: none;
+  }
+
+  .lainplayer .playback-buttons .button {
+      padding: 0;
+  }
+
+  body > footer {
+    position: relative;
+    margin-top: 30px;
+  }
 }

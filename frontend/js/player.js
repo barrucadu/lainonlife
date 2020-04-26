@@ -1,4 +1,4 @@
-const LainPlayer = (() => {
+const LainPlayer = ((STREAM_URL_BASE) => {
     const audioContext = new window.AudioContext();
     const audioTag = document.getElementById("audio");
     audioTag.volume = 0.51;
@@ -8,9 +8,9 @@ const LainPlayer = (() => {
         const paused = audioTag.paused;
         // Use either the ogg or mp3 stream, depending on what the current one is.
         if(audioTag.currentSrc.endsWith("ogg")) {
-            audioTag.src = "{{ icecast_stream_url_base }}/" + source + ".ogg";
+            audioTag.src = `${STREAM_URL_BASE}/${source}.ogg`;
         } else {
-            audioTag.src = "{{ icecast_stream_url_base }}/" + source + ".mp3";
+            audioTag.src = `${STREAM_URL_BASE}/${source}.mp3`;
         }
 
         // Load the new audio stream.
@@ -39,6 +39,12 @@ const LainPlayer = (() => {
         } else {
             audioTag.pause();
         }
+        updatePlayButton();
+    }
+
+    function stop() {
+        audioTag.pause();
+        audioTag.currentTime = 0;
         updatePlayButton();
     }
 
@@ -131,9 +137,10 @@ const LainPlayer = (() => {
     }
 
     return {
+        stop,
         togglePlay: () => togglePlay(),
         changeChannel: (channel) => changeSource(channel),
         cycleVolume: () => cycleVolume(),
         updateProgress: (progressObject) => updateProgress(progressObject),
     };
-})();
+})(ICECAST_STREAM_URL_BASE);
