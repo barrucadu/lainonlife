@@ -107,14 +107,14 @@ def get_playlist_info(client, beforeNum=5, afterNum=5):
 def get_channel_listeners(channel, client):
     startTime = (datetime.datetime.now() - datetime.timedelta(hours=12)).replace(microsecond=0)
 
-    max_res  = client.query(
-        'select max({}) from channel_listeners where time >= \'{}Z\''
-        .format(channel, startTime.isoformat()))
-    last_res = client.query(
-        'select {} as last from channel_listeners order by time desc limit 1'
-        .format(channel))
-
     try:
+        max_res  = client.query(
+            'select max({}) from channel_listeners where time >= \'{}Z\''
+            .format(channel, startTime.isoformat()))
+        last_res = client.query(
+            'select {} as last from channel_listeners order by time desc limit 1'
+            .format(channel))
+
         return {
             "peak":    max_res.get_points().__next__()['max'],
             "current": last_res.get_points().__next__()['last']
@@ -122,7 +122,7 @@ def get_channel_listeners(channel, client):
     except:
         # If there's an error just say there's only one listener (ie,
         # the current one)
-        print("error: {} {}".format(max_res, last_res))
+        print("error talking to influxdb")
         return {"peak": 1, "current": 1}
 
 
