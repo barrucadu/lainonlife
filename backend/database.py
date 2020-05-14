@@ -6,28 +6,28 @@ from tinydb import TinyDB, Query
 
 # save/load livestream related data
 
-SAVEDATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'savedata')
+SAVEDATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "savedata")
 if not os.path.exists(SAVEDATA_PATH):
     os.mkdir(SAVEDATA_PATH)
 
 
 def save_pickle(savedata):
-    pickle_path = os.path.join(SAVEDATA_PATH, 'livestream_save.pickle')
-    with open(pickle_path, 'wb') as file_handle:
+    pickle_path = os.path.join(SAVEDATA_PATH, "livestream_save.pickle")
+    with open(pickle_path, "wb") as file_handle:
         pickle.dump(savedata, file_handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def load_pickle(default):
-    pickle_path = os.path.join(SAVEDATA_PATH, 'livestream_save.pickle')
+    pickle_path = os.path.join(SAVEDATA_PATH, "livestream_save.pickle")
     if not os.path.exists(pickle_path):
         return default
     else:
-        with open(pickle_path, 'rb') as file_handle:
+        with open(pickle_path, "rb") as file_handle:
             return pickle.load(file_handle)
 
 
 # our tinydb
-THE_DB = TinyDB(os.path.join(SAVEDATA_PATH, 'db.json'))
+THE_DB = TinyDB(os.path.join(SAVEDATA_PATH, "db.json"))
 
 
 def get_a_list(of_what):
@@ -42,13 +42,13 @@ def get_a_list(of_what):
             if w in user:
                 found_what = user[w]
             insrt_row.append(found_what)
-        tor.append((user['id'], insrt_row))
+        tor.append((user["id"], insrt_row))
 
     return tor
 
 
 def make_superadmin():
-    new_admin = make_user('superadmin', True)
+    new_admin = make_user("superadmin", True)
     if new_admin is not None:
         print('User "superadmin" created with password "{}".'.format(new_admin[1]))
 
@@ -61,14 +61,14 @@ def make_user(username, admin=False):
     # generates a random 32 hex digit password
     password = "%032x" % random.getrandbits(128)
     new_user = {
-        'id': username,
-        'password': password,
-        'banned': False,
-        'admin': admin,
-        'dj_name': username,
-        'dj_pic': '',
-        'stream_title': '',
-        'stream_desc': '',
+        "id": username,
+        "password": password,
+        "banned": False,
+        "admin": admin,
+        "dj_name": username,
+        "dj_pic": "",
+        "stream_title": "",
+        "stream_desc": "",
     }
 
     THE_DB.insert(new_user)
@@ -90,7 +90,7 @@ def update_dj_info(username, form_dict):
         return False
     # trust no one, even if someone modified their response we don't want them to
     # most of these require different levels of permission
-    dont_touch = ['admin', 'banned', 'id', 'password']
+    dont_touch = ["admin", "banned", "id", "password"]
     for k in dont_touch:
         if k in form_dict:
             del form_dict[k]
@@ -115,7 +115,7 @@ def change_password(username, new_pass=None):
     if new_pass is None:
         # generates a random 32 hex digit password
         new_pass = "%032x" % random.getrandbits(128)
-    THE_DB.update({'password': new_pass}, check_query.id == username)
+    THE_DB.update({"password": new_pass}, check_query.id == username)
     return new_pass
 
 
@@ -135,11 +135,11 @@ class DJUser(object):
 
     @property
     def is_active(self):
-        return not self.check_state('banned')
+        return not self.check_state("banned")
 
     @property
     def is_admin(self):
-        return self.check_state('admin')
+        return self.check_state("admin")
 
     @property
     def is_authenticated(self):
@@ -162,7 +162,7 @@ class DJUser(object):
         user_query = Query()
         db_res = THE_DB.search(user_query.id == u_id)
         if len(db_res) > 0:
-            found_user = DJUser(db_res[0]['id'], db_res[0]['password'])
+            found_user = DJUser(db_res[0]["id"], db_res[0]["password"])
         else:
             found_user = None
         return found_user

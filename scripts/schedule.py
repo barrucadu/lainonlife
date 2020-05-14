@@ -59,7 +59,9 @@ def album_sticker_set(client, album, sticker, val):
 def pick_transition(client):
     """Picks a transition track."""
 
-    all_transitions = list(filter(lambda t: "directory" not in t, client.listall("transitions")))
+    all_transitions = list(
+        filter(lambda t: "directory" not in t, client.listall("transitions"))
+    )
 
     shuffle(all_transitions)
 
@@ -74,7 +76,9 @@ def pick_album(client, dur):
 
     # Get all albums
     albums = client.list("album")
-    all_albums = list(filter(lambda a: a not in ["", "Lainchan Radio Transitions"], albums))
+    all_albums = list(
+        filter(lambda a: a not in ["", "Lainchan Radio Transitions"], albums)
+    )
 
     # Group albums by when they were last scheduled
     albums_by_last_scheduled = {}
@@ -83,7 +87,7 @@ def pick_album(client, dur):
         # Get the last scheduled time, defaulting to 0
         try:
             last_scheduled = int(album_sticker_get(client, album, "last_scheduled"))
-        except:
+        except ValueError:
             last_scheduled = 0
 
         # Put the album into the appropriate bucket
@@ -130,16 +134,17 @@ def pick_tracks(client, chosen_album, dur):
     for t in all_tracks:
         album = client.list("album", "file", t)[0]
         duration = int(client.count("file", t)["playtime"])
-        if album in [chosen_album, "Lainchan Radio Transitions"] or duration > remaining:
+        if album in [chosen_album, "Lainchan Radio Transitions"]:
             continue
-        else:
-            chosen.append(t)
-            remaining = remaining - duration
+        if duration > remaining:
+            continue
+        chosen.append(t)
+        remaining = remaining - duration
 
     return chosen, dur - remaining
 
 
-def schedule_radio(client, target_dur=3*60*60):
+def schedule_radio(client, target_dur=3 * 60 * 60):
     """Schedule music.
 
     Keyword arguments:
@@ -190,15 +195,15 @@ if __name__ == "__main__":
 
     try:
         args["PORT"] = int(args["PORT"])
-    except:
+    except ValueError:
         print("PORT must be an integer")
         exit(1)
 
     try:
         client = MPDClient()
         client.connect(args["--host"], args["PORT"])
-    except:
-        print("could not connect to MPD")
+    except Exception as e:
+        print(f"could not connect to MPD: {e.args[0]}")
         exit(2)
 
     client.update()

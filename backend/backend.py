@@ -41,11 +41,13 @@ def command_serve(args):
         try:
             with open(args["--config"], "r") as f:
                 config = json.loads(f.read())
-        except:
+        except FileNotFoundError:
+            raise Exception("--config must be a site configuration file")
+        except json.decoder.JSONDecodeError:
             raise Exception("--config must be a site configuration file")
         try:
             args["PORT"] = int(args["PORT"])
-        except:
+        except ValueError:
             raise Exception("PORT must be an integer between 1 and 65535")
         if args["PORT"] < 1 or args["PORT"] > 65535:
             raise Exception("PORT must be an integer between 1 and 65535")
@@ -57,22 +59,26 @@ def command_serve(args):
 
     try:
         db.make_superadmin()
-        channels, livestream = stream.start_stream_monitor(config["channels"], config["influxdb"])
-        web.serve(port=args["PORT"],
-                  httpdir=args["--http-dir"],
-                  channels=channels,
-                  livestream=livestream)
-    except:
-        print("could not bind to port")
+        channels, livestream = stream.start_stream_monitor(
+            config["channels"], config["influxdb"]
+        )
+        web.serve(
+            port=args["PORT"],
+            httpdir=args["--http-dir"],
+            channels=channels,
+            livestream=livestream,
+        )
+    except Exception as e:
+        print(f"could not bind to port: {e.args[0]}")
         exit(2)
 
 
 def command_newuser(args):
     """Create a new user."""
 
-    new_user = db.make_user(args['USER'])
+    new_user = db.make_user(args["USER"])
     if new_user is None:
-        print('User "{}" already exists!'.format(args['USER']))
+        print('User "{}" already exists!'.format(args["USER"]))
         exit(1)
 
     print('User "{}" created with password "{}".'.format(*new_user))
@@ -81,64 +87,64 @@ def command_newuser(args):
 def command_newpass(args):
     """Change the password of a user."""
 
-    new_pass = db.change_password(args['USER'])
+    new_pass = db.change_password(args["USER"])
     print('Changed password to "{}".'.format(new_pass))
 
 
 def command_ban(args):
     """Ban a user."""
 
-    if args['USER'] == 'superadmin':
-        print('Cannot ban the superadmin!')
+    if args["USER"] == "superadmin":
+        print("Cannot ban the superadmin!")
         exit(1)
 
-    res = db.update_dj_status(args['USER'], 'banned', True)
+    res = db.update_dj_status(args["USER"], "banned", True)
     if res is not None:
-        print('User "{}" is now banned.'.format(args['USER']))
+        print('User "{}" is now banned.'.format(args["USER"]))
 
 
 def command_unban(args):
     """Unban a user."""
 
-    res = db.update_dj_status(args['USER'], 'banned', False)
+    res = db.update_dj_status(args["USER"], "banned", False)
     if res is not None:
-        print('User "{}" is now unbanned.'.format(args['USER']))
+        print('User "{}" is now unbanned.'.format(args["USER"]))
 
 
 def command_promote(args):
     """Promote a user to admin."""
 
-    res = db.update_dj_status(args['USER'], 'admin', True)
+    res = db.update_dj_status(args["USER"], "admin", True)
     if res is not None:
-        print('User "{}" is now an admin.'.format(args['USER']))
+        print('User "{}" is now an admin.'.format(args["USER"]))
 
 
 def command_demote(args):
     """Demote an admin to user."""
 
-    if args['USER'] == 'superadmin':
-        print('Cannot demote the superadmin!')
+    if args["USER"] == "superadmin":
+        print("Cannot demote the superadmin!")
         exit(1)
 
-    res = db.update_dj_status(args['USER'], 'admin', False)
+    res = db.update_dj_status(args["USER"], "admin", False)
     if res is not None:
-        print('User "{}" is no longer an admin.'.format(args['USER']))
+        print('User "{}" is no longer an admin.'.format(args["USER"]))
 
 
 if __name__ == "__main__":
     args = docopt(__doc__)
 
-    if args['serve']:
+    if args["serve"]:
         command_serve(args)
-    elif args['newuser']:
+    elif args["newuser"]:
         command_newuser(args)
-    elif args['newpass']:
+    elif args["newpass"]:
         command_newpass(args)
-    elif args['ban']:
+    elif args["ban"]:
         command_ban(args)
-    elif args['unban']:
+    elif args["unban"]:
         command_unban(args)
-    elif args['promote']:
+    elif args["promote"]:
         command_promote(args)
-    elif args['demote']:
+    elif args["demote"]:
         command_demote(args)

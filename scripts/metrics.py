@@ -46,11 +46,13 @@ def snapshot_icecast(host, port):
     snapshot = []
     for src in stats["icestats"]["source"]:
         if "server_name" in src and "listeners" in src:
-            snapshot.append({
-                "channel": src["server_name"][:-6].replace("[mpd] ", ""),
-                "format": src["server_name"][-4:][:-1],
-                "listeners": src["listeners"]
-            })
+            snapshot.append(
+                {
+                    "channel": src["server_name"][:-6].replace("[mpd] ", ""),
+                    "format": src["server_name"][-4:][:-1],
+                    "listeners": src["listeners"],
+                }
+            )
 
     formats = {stream["format"] for stream in snapshot}
     channels = {stream["channel"] for stream in snapshot}
@@ -63,22 +65,38 @@ def icecast_metrics_list(now, host, port):
 
     try:
         snapshot, formats, channels = snapshot_icecast(host, port)
-    except:
+    except Exception:
         return []
 
     return [
-        {"measurement": "format_listeners", "time": now, "fields": {
-            fmt: sum([stream["listeners"]
-                      for stream in snapshot
-                      if stream["format"] == fmt])
-            for fmt in formats
-        }},
-        {"measurement": "channel_listeners", "time": now, "fields": {
-            ch: sum([stream["listeners"]
-                     for stream in snapshot
-                     if stream["channel"] == ch])
-            for ch in channels
-        }}
+        {
+            "measurement": "format_listeners",
+            "time": now,
+            "fields": {
+                fmt: sum(
+                    [
+                        stream["listeners"]
+                        for stream in snapshot
+                        if stream["format"] == fmt
+                    ]
+                )
+                for fmt in formats
+            },
+        },
+        {
+            "measurement": "channel_listeners",
+            "time": now,
+            "fields": {
+                ch: sum(
+                    [
+                        stream["listeners"]
+                        for stream in snapshot
+                        if stream["channel"] == ch
+                    ]
+                )
+                for ch in channels
+            },
+        },
     ]
 
 
@@ -108,8 +126,8 @@ def disk_metrics():
         try:
             for i, val in enumerate(dus):
                 if val.decode("utf-8") == dname:
-                    ms[dname] = int(dus[i-1])
-        except:
+                    ms[dname] = int(dus[i - 1])
+        except Exception:
             pass
 
     # Overall disk usage
@@ -134,11 +152,11 @@ def memory_metrics():
     swinfo = psutil.swap_memory()
 
     return {
-        "vm_used":    vminfo[3],
+        "vm_used": vminfo[3],
         "vm_buffers": vminfo[7],
-        "vm_cached":  vminfo[8],
-        "swap_used":  swinfo[1],
-        "vm_used_no_buffers_cache": vminfo[3] - vminfo[7] - vminfo[8]
+        "vm_cached": vminfo[8],
+        "swap_used": swinfo[1],
+        "vm_used_no_buffers_cache": vminfo[3] - vminfo[7] - vminfo[8],
     }
 
 
@@ -146,12 +164,14 @@ def gather_metrics(now, icecastHost, icecastPort):
     """Gather metrics to send to InfluxDB."""
 
     metrics = icecast_metrics_list(now, icecastHost, icecastPort)
-    metrics.extend([
-        {"measurement": "network", "time": now, "fields": network_metrics()},
-        {"measurement": "disk",    "time": now, "fields": disk_metrics()},
-        {"measurement": "cpu",     "time": now, "fields": cpu_metrics()},
-        {"measurement": "memory",  "time": now, "fields": memory_metrics()}
-    ])
+    metrics.extend(
+        [
+            {"measurement": "network", "time": now, "fields": network_metrics()},
+            {"measurement": "disk", "time": now, "fields": disk_metrics()},
+            {"measurement": "cpu", "time": now, "fields": cpu_metrics()},
+            {"measurement": "memory", "time": now, "fields": memory_metrics()},
+        ]
+    )
 
     return metrics
 
@@ -162,20 +182,22 @@ if __name__ == "__main__":
     try:
         try:
             args["--icecast-port"] = int(args["--icecast-port"])
-        except:
+        except ValueError:
             raise Exception("--icecast-port must be an integer")
         try:
             args["--influxdb-port"] = int(args["--influxdb-port"])
-        except:
+        except ValueError:
             raise Exception("--influxdb-port must be an integer")
     except Exception as e:
         print(e.args[0])
         exit(1)
 
-    client = InfluxDBClient(host=args["--influxdb-host"],
-                            port=args["--influxdb-port"],
-                            username=args["--influxdb-user"],
-                            password=args["--influxdb-pass"])
+    client = InfluxDBClient(
+        host=args["--influxdb-host"],
+        port=args["--influxdb-port"],
+        username=args["--influxdb-user"],
+        password=args["--influxdb-pass"],
+    )
 
     # Ensure the database exists
     client.create_database(args["--influxdb-name"])

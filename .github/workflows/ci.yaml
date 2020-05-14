@@ -1,0 +1,21 @@
+name: Run tests
+
+on: pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Setup
+        run: |
+          set -ex
+          python -m pip install --upgrade pip
+          pip install flake8 black
+      - name: Lint
+        run: |
+          set -ex
+          flake8 .
+          black .
+          git diff --exit-code
