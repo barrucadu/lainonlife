@@ -41,11 +41,13 @@ def command_serve(args):
         try:
             with open(args["--config"], "r") as f:
                 config = json.loads(f.read())
-        except:
+        except FileNotFoundError:
+            raise Exception("--config must be a site configuration file")
+        except json.decoder.JSONDecodeError:
             raise Exception("--config must be a site configuration file")
         try:
             args["PORT"] = int(args["PORT"])
-        except:
+        except ValueError:
             raise Exception("PORT must be an integer between 1 and 65535")
         if args["PORT"] < 1 or args["PORT"] > 65535:
             raise Exception("PORT must be an integer between 1 and 65535")
@@ -62,8 +64,8 @@ def command_serve(args):
                   httpdir=args["--http-dir"],
                   channels=channels,
                   livestream=livestream)
-    except:
-        print("could not bind to port")
+    except Exception as e:
+        print(f"could not bind to port: {e.args[0]}")
         exit(2)
 
 

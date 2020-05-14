@@ -83,7 +83,7 @@ def pick_album(client, dur):
         # Get the last scheduled time, defaulting to 0
         try:
             last_scheduled = int(album_sticker_get(client, album, "last_scheduled"))
-        except:
+        except ValueError:
             last_scheduled = 0
 
         # Put the album into the appropriate bucket
@@ -190,15 +190,15 @@ if __name__ == "__main__":
 
     try:
         args["PORT"] = int(args["PORT"])
-    except:
+    except ValueError:
         print("PORT must be an integer")
         exit(1)
 
     try:
         client = MPDClient()
         client.connect(args["--host"], args["PORT"])
-    except:
-        print("could not connect to MPD")
+    except Exception as e:
+        print(f"could not connect to MPD: {e.args[0]}")
         exit(2)
 
     client.update()

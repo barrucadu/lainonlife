@@ -63,7 +63,7 @@ def icecast_metrics_list(now, host, port):
 
     try:
         snapshot, formats, channels = snapshot_icecast(host, port)
-    except:
+    except Exception:
         return []
 
     return [
@@ -109,7 +109,7 @@ def disk_metrics():
             for i, val in enumerate(dus):
                 if val.decode("utf-8") == dname:
                     ms[dname] = int(dus[i-1])
-        except:
+        except Exception:
             pass
 
     # Overall disk usage
@@ -162,11 +162,11 @@ if __name__ == "__main__":
     try:
         try:
             args["--icecast-port"] = int(args["--icecast-port"])
-        except:
+        except ValueError:
             raise Exception("--icecast-port must be an integer")
         try:
             args["--influxdb-port"] = int(args["--influxdb-port"])
-        except:
+        except ValueError:
             raise Exception("--influxdb-port must be an integer")
     except Exception as e:
         print(e.args[0])

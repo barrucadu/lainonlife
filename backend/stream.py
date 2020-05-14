@@ -119,17 +119,17 @@ def get_channel_listeners(channel, client):
             "peak":    max_res.get_points().__next__()['max'],
             "current": last_res.get_points().__next__()['last']
         }
-    except:
+    except Exception as e:
         # If there's an error just say there's only one listener (ie,
         # the current one)
-        print("error talking to influxdb")
+        print(f"error talking to influxdb: {e.args[0]}")
         return {"peak": 1, "current": 1}
 
 
 def update_mpd_info(channel, mpd, influx_client):
     try:
         mpd["client"].ping()
-    except:
+    except Exception:
         try:
             mpd["client"] = MPDClient()
             mpd["client"].connect(mpd["mpd_host"], mpd["mpd_port"])

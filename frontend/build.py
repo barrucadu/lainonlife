@@ -75,7 +75,7 @@ if __name__ == "__main__":
     try:
         with open(sys.argv[1], "r") as f:
             config = json.loads(f.read())
-    except:
+    except FileNotFoundError:
         print("usage: build.py <config.json>")
         exit(1)
 

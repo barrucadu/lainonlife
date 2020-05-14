@@ -29,18 +29,6 @@ def album_sticker_get(client, album, sticker):
     return client.sticker_get("song", tracks[0]["file"], "album_" + sticker)
 
 
-def album_sticker_set(client, album, sticker, val):
-    """Sets a sticker associated with an album."""
-
-    # I am pretty sure that MPD only implements stickers for songs, so
-    # the sticker gets attached to the first song in the album.
-    tracks = client.find("album", album)
-    if len(tracks) == 0:
-        return
-
-    return client.sticker_set("song", tracks[0]["file"], "album_" + sticker, val)
-
-
 def list_albums(client):
     """Lists albums sorted by last play timestamp."""
 
@@ -55,7 +43,7 @@ def list_albums(client):
         # Get the last scheduled time, defaulting to 0
         try:
             last_scheduled = int(album_sticker_get(client, album, "last_scheduled"))
-        except:
+        except ValueError:
             last_scheduled = 0
 
         # Put the album into the appropriate bucket
@@ -78,15 +66,15 @@ if __name__ == "__main__":
 
     try:
         args["PORT"] = int(args["PORT"])
-    except:
+    except ValueError:
         print("PORT must be an integer")
         exit(1)
 
     try:
         client = MPDClient()
         client.connect(args["--host"], args["PORT"])
-    except:
-        print("could not connect to MPD")
+    except Exception as e:
+        print(f"could not connect to MPD: {e.args[0]}")
         exit(2)
 
     list_albums(client)
