@@ -134,14 +134,12 @@ def pick_tracks(client, chosen_album, dur):
     for t in all_tracks:
         album = client.list("album", "file", t)[0]
         duration = int(client.count("file", t)["playtime"])
-        if (
-            album in [chosen_album, "Lainchan Radio Transitions"]
-            or duration > remaining
-        ):
+        if album in [chosen_album, "Lainchan Radio Transitions"]:
             continue
-        else:
-            chosen.append(t)
-            remaining = remaining - duration
+        if duration > remaining:
+            continue
+        chosen.append(t)
+        remaining = remaining - duration
 
     return chosen, dur - remaining
 

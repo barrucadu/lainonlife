@@ -29,7 +29,7 @@ def start_stream_monitor(channelsjson, influxdbcfg):
 
     # Cached livestream data
     livestream = db.load_pickle(
-        {"active": False, "current_dj": None, "last_played": [], "CHANNEL": "cyberia",}
+        {"active": False, "current_dj": None, "last_played": [], "CHANNEL": "cyberia"}
     )
     livestream["STREAM_DELAY"] = 7
 
@@ -216,10 +216,8 @@ def update_livestream_info(channels, livestream):
                 break
 
     # if no last track or it's not the same as the last track append
-    if (
-        len(livestream["last_played"]) == 0
-        or livestream["last_played"][-1].title != status_metadata["title"]
-    ):
+    last_played = livestream["last_played"]
+    if len(last_played) == 0 or last_played[-1].title != status_metadata["title"]:
         newest_track = LivestreamTrack(
             status_metadata["artist"],
             status_metadata["title"],

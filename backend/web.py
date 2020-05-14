@@ -137,10 +137,8 @@ def streaming_page():
 @blueprint.route("/dj/stop_streaming")
 @login_required
 def streaming_over_page():
-    if (
-        current_app.config["livestream"]["current_dj"] == current_user.id
-        or current_user.is_admin
-    ):
+    current_dj = current_app.config["livestream"]["current_dj"]
+    if current_dj == current_user.id or current_user.is_admin:
         current_app.config["livestream"]["active"] = False
         current_app.config["livestream"]["last_played"] = []
         current_app.config["livestream"]["current_dj"] = None
