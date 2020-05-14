@@ -34,7 +34,9 @@ def list_albums(client):
 
     # Get all albums
     albums = client.list("album")
-    all_albums = list(filter(lambda a: a not in ["", "Lainchan Radio Transitions"], albums))
+    all_albums = list(
+        filter(lambda a: a not in ["", "Lainchan Radio Transitions"], albums)
+    )
 
     # Group albums by when they were last scheduled
     albums_by_last_scheduled = {}
@@ -58,7 +60,7 @@ def list_albums(client):
     for last_scheduled in last_scheduled_times:
         dt = datetime.utcfromtimestamp(last_scheduled)
         albums = albums_by_last_scheduled[last_scheduled]
-        print("{}: {}".format(dt.strftime('%Y-%m-%d %H:%M:%S'), albums))
+        print("{}: {}".format(dt.strftime("%Y-%m-%d %H:%M:%S"), albums))
 
 
 if __name__ == "__main__":

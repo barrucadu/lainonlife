@@ -27,10 +27,7 @@ def rules_with_config(channels, config, out_dir="_site/", tpl_dir="templates/"):
         "default_channel": config["default_channel"],
         "icecast_status_url": config["icecast_status_url"],
         "icecast_stream_url_base": config["icecast_stream_url_base"],
-        "server_cost": amount(
-            config["currency_symbol"],
-            config["server_cost"]
-        ),
+        "server_cost": amount(config["currency_symbol"], config["server_cost"]),
     }
 
     def jinja2_for_dir(dir_name):
@@ -38,7 +35,7 @@ def rules_with_config(channels, config, out_dir="_site/", tpl_dir="templates/"):
             loader=jinja2.FileSystemLoader([dir_name, tpl_dir], followlinks=True),
             autoescape=True,
             trim_blocks=True,
-            lstrip_blocks=True
+            lstrip_blocks=True,
         )
         env.globals = tpl_global_vars
         return env
@@ -53,8 +50,8 @@ def rules_with_config(channels, config, out_dir="_site/", tpl_dir="templates/"):
             if fname[0] == ".":
                 continue
             if fname[-4:] == ".tpl":
-                env  = jinja2_for_dir(dir_name)
-                tpl  = env.get_template(fname0)
+                env = jinja2_for_dir(dir_name)
+                tpl = env.get_template(fname0)
                 dest = out_dir + "/" + router(fname[:-4])
                 mkdirp(dest)
                 tpl.stream().dump(dest)
