@@ -88,11 +88,6 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
 
     <p class="plain">Or don't, I'm not your mom.</p>
   </div>
-
-  <hr/>
-
-  <p>Want to be a radio star?  <a href="/bump.html">Submit a bump today!</a></p>
-  <p>Think the radio is missing something?  <a href="/request.html">Submit a request!</a></p>
 </div>
 
 <footer>

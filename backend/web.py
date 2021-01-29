@@ -2,14 +2,12 @@ from flask import Blueprint, Flask
 from flask import (
     current_app,
     make_response,
-    request,
     send_file,
 )
 
 import json
 import os
 import random
-import time
 
 blueprint = Blueprint("site", __name__)
 
@@ -40,28 +38,6 @@ def serve(port=3000, httpdir="/srv/http", channels={}):
 @blueprint.route("/background", methods=["GET"])
 def background():
     return random_file_from(in_http_dir("backgrounds"))
-
-
-@blueprint.route("/upload/bump", methods=["POST"])
-def upload_bump():
-    if "file" in request.files:
-        save_file(request.files["file"])
-
-    if "url" in request.form:
-        save_form({"url": request.form["url"]}, suffix="url")
-
-    return send_file(in_http_dir("thankyou.html"))
-
-
-@blueprint.route("/upload/request", methods=["POST"])
-def upload_request():
-    fields = ["artist", "album", "url", "notes", "channel"]
-    if "artist" in request.form and "album" in request.form:
-        save_form(
-            {t: request.form[t] for t in fields if t in request.form}, suffix="request"
-        )
-
-    return send_file(in_http_dir("thankyou.html"))
 
 
 @blueprint.route("/playlist/<channel>.json", methods=["GET"])
@@ -105,24 +81,3 @@ def playlist_for(channel):
     resp = make_response(json.dumps(pinfo[0]), pinfo[1])
     resp.headers["Content-Type"] = "application/json"
     return resp
-
-
-def save_file(fp, suffix="file"):
-    """Save a file to the uploads directory."""
-
-    fname = str(time.time())
-    if fp and fp.filename:
-        fp.save(os.path.join(in_http_dir("upload"), "{}-{}".format(fname, suffix)))
-
-
-def save_form(fm, suffix="form"):
-    """Save a form to the uploads directory."""
-
-    fname = str(time.time())
-    if fm:
-        with open(
-            os.path.join(in_http_dir("upload"), "{}-{}".format(fname, suffix)), "w"
-        ) as f:
-            for k, v in fm.items():
-                if v:
-                    f.write("{}: {}\n".format(k, v))
