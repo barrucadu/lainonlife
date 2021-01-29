@@ -58,7 +58,7 @@ Usage
 
     ```
     $ cd backend
-    $ ./run.sh --config=../config.json --http-dir=/srv/http 5000
+    $ CONFIG=../config.json HTTP_DIR=/srv/http PORT=5000 ./run.sh
     ```
 
 Frontend development
