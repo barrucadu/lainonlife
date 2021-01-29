@@ -88,36 +88,6 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
 
     <p class="plain">Or don't, I'm not your mom.</p>
   </div>
-
-  <hr/>
-
-  <p>Want to be a radio star?  <a href="/bump.html">Submit a bump today!</a></p>
-  <p>Think the radio is missing something?  <a href="/request.html">Submit a request!</a></p>
-</div>
-
-<div id="schedule" class="overlay">
-  <a class="cancel_popup" href="#"></a>
-  <div class="popup">
-    <div class="content" id="schedule_div">
-      <h1>Scheduled Events</h1>
-
-      <table class="withscript">
-        <tbody>
-          <tr><td>Monday</td><td id="sched_0"></td></tr>
-          <tr><td>Tuesday</td><td id="sched_1"></td></tr>
-          <tr><td>Wednesday</td><td id="sched_2"></td></tr>
-          <tr><td>Thursday</td><td id="sched_3"></td></tr>
-          <tr><td>Friday</td><td id="sched_4"></td></tr>
-          <tr><td>Saturday</td><td id="sched_5"></td></tr>
-          <tr><td>Sunday</td><td id="sched_6"></td></tr>
-        </tbody>
-      </table>
-
-      <p class="withscript"><strong>All times are in UTC</strong></p>
-
-      <p class="noscript"><a href="/schedule.json">click here to see the raw json since you don't have javascript enabled</a></p>
-    </div>
-  </div>
 </div>
 
 <footer>

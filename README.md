@@ -24,7 +24,6 @@ this code:
 
 - `config.json`, the list of channels, [MPD][] details, and frontend
   asset template details.
-- `frontend/static/schedule.json`, the live broadcast schedule.
 
 The [lainon.life][] server is running [NixOS][], and the entire system
 configuration (sans passwords) [is on github][nixfiles].
@@ -59,7 +58,7 @@ Usage
 
     ```
     $ cd backend
-    $ ./run.sh --config=../config.json --http-dir=/srv/http 5000
+    $ CONFIG=../config.json HTTP_DIR=/srv/http PORT=5000 ./run.sh
     ```
 
 Frontend development

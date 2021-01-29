@@ -4,7 +4,6 @@ let channel = DEFAULT_CHANNEL;
 // Recurring timers
 let playlistPoll;
 let statusPoll;
-let schedulePoll;
 
 function ajax_with_json(url, func) {
     let httpRequest = new XMLHttpRequest();
@@ -94,47 +93,21 @@ function check_playlist() {
         document.getElementById("nowplaying").innerText = format_track(response.current);
         document.getElementById("nowalbum").innerText = response.current.album;
 
-        // check for livestream
-        if (response.stream_data !== undefined && response.stream_data.live){
-            let fake_queue = document.createElement("tbody");
-            let fake_row = fake_queue.insertRow(0);
-
-            let stream_desc_cell = fake_row.insertCell(0);
-            stream_desc_cell.innerText = (response.stream_data.stream_desc || '');
-            stream_desc_cell.style.width = "66%";
-            stream_desc_cell.style.textAlign = "left";
-
-            let dj_pic_cell = fake_row.insertCell(1);
-            dj_pic_cell.style.width = "33%";
-
-            let dj_pic_img = document.createElement("img");
-            dj_pic_img.id = 'dj_pic';
-            dj_pic_img.src = (response.stream_data.dj_pic || '');
-            dj_pic_cell.appendChild(dj_pic_img);
-
-            let dj_name = document.createElement("span");
-            dj_name.innerText = 'Current DJ: ' + response.stream_data.dj_name;
-            dj_pic_cell.appendChild(dj_name);
-
-            swap_tbody("queue_body", fake_queue);
-        } else {
-            let new_playlist = document.createElement("tbody");
-            let until = parseFloat(response.current.time) - parseFloat(response.elapsed);
-            let ago   = parseFloat(response.elapsed);
-            for(let i in response.before) {
-                ago = add_track_to_tbody(new_playlist, response.before[i], ago, true);
-            }
-            add_track_to_tbody(new_playlist, response.current, undefined, false);
-            for(let i in response.after) {
-                until = add_track_to_tbody(new_playlist, response.after[i], until, false);
-            }
-            swap_tbody("playlist_body", new_playlist);
+        let new_playlist = document.createElement("tbody");
+        let until = parseFloat(response.current.time) - parseFloat(response.elapsed);
+        let ago   = parseFloat(response.elapsed);
+        for(let i in response.before) {
+            ago = add_track_to_tbody(new_playlist, response.before[i], ago, true);
         }
+        add_track_to_tbody(new_playlist, response.current, undefined, false);
+        for(let i in response.after) {
+            until = add_track_to_tbody(new_playlist, response.after[i], until, false);
+        }
+        swap_tbody("playlist_body", new_playlist);
 
         LainPlayer.updateProgress({
             length: response.current.time,
             elapsed: response.elapsed,
-            live: response.stream_data.live
         });
 
         // Update the current/peak listeners counts
@@ -166,20 +139,6 @@ function change_channel(e) {
     playlistPoll = setInterval(check_playlist, 15000);
 }
 
-function populate_schedule() {
-    ajax_with_json("/schedule.json", function(response) {
-        for(let i = 0; i < 7; i++) {
-            document.getElementById('sched_' + i).innerText = 'None';
-        }
-
-        for(let i = 0; i < response.length; i++) {
-            if(response[i].length > 0) {
-                document.getElementById('sched_' + i).innerText = response[i];
-            }
-        }
-    });
-}
-
 window.onload = () => {
     // Show and hide things
     let show = document.getElementsByClassName("withscript");
@@ -203,10 +162,6 @@ window.onload = () => {
     // Get the initial playlist and set a timer to regularly update it.
     check_playlist();
     playlistPoll = setInterval(check_playlist, 15000);
-
-    // refresh the schedule every 30 minutes
-    populate_schedule();
-    schedulePoll = setInterval(populate_schedule, 1800000);
 
     document.addEventListener('keyup', (e) => {
         if(e.keyCode == 32){

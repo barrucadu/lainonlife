@@ -79,7 +79,7 @@ const LainPlayer = ((STREAM_URL_BASE) => {
 
     function updateProgress(prgs) {
         // expects an object as the parameter that looks like this:
-        //      {length: string, elapsed: string, live: boolean}
+        //      {length: string, elapsed: string}
 
         prgs.length  = parseInt(prgs.length,  10);
         prgs.elapsed = parseInt(prgs.elapsed, 10);
@@ -117,14 +117,7 @@ const LainPlayer = ((STREAM_URL_BASE) => {
             bar.style.width = `${progress}%`;
         }
 
-        function setLiveProgressTo(elapsed) {
-            timeLabel.innerText = `${getCurrentTime(elapsed)} / ??:??`;
-            bar.style.width = `0%`;
-        }
-
-        var progressFun = (prgs.live) ? setLiveProgressTo : setProgressTo;
-
-        progressFun(prgs.elapsed);
+        setProgressTo(prgs.elapsed);
 
         // smooth progressbar update
         clearInterval(updateInterval);
