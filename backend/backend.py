@@ -11,6 +11,7 @@ import web as web
 if __name__ == "__main__":
     http_dir = os.getenv("HTTP_DIR", "/srv/http")
     icecast = os.getenv("ICECAST", "http://localhost:8000/")
+    prometheus = os.getenv("PROMETHEUS", "http://localhost:9090/")
 
     try:
         try:
@@ -33,7 +34,7 @@ if __name__ == "__main__":
         exit(1)
 
     try:
-        channels = stream.start_stream_monitor(config["channels"], config["influxdb"])
+        channels = stream.start_stream_monitor(config["channels"], prometheus)
         web.serve(
             port=port,
             httpdir=http_dir,
