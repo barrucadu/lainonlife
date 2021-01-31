@@ -98,7 +98,7 @@ def get_listener_metrics():
     def line(channel, fmt, count):
         return f'listeners{{channel="{channel}",format="{fmt}"}} {count}'
 
-    f = requests.get(f"{current_app.config['icecast']}status-json.xsl")
+    f = requests.get(f"{current_app.config['icecast']}/status-json.xsl")
     f.raise_for_status()
     icecast_metrics = f.json()
 

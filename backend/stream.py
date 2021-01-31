@@ -87,13 +87,14 @@ def get_channel_listeners(channels, prometheus):
 
     try:
         r = requests.get(
-            f"{prometheus}api/v1/query", params={"query": "sum(listeners) by (channel)"}
+            f"{prometheus}/api/v1/query",
+            params={"query": "sum(listeners) by (channel)"},
         )
         r.raise_for_status()
         current = r.json()
 
         r = requests.get(
-            f"{prometheus}api/v1/query",
+            f"{prometheus}/api/v1/query",
             params={"query": "max_over_time(sum(listeners) by (channel)[12h:1m])"},
         )
         r.raise_for_status()

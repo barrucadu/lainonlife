@@ -10,8 +10,8 @@ import web as web
 
 if __name__ == "__main__":
     http_dir = os.getenv("HTTP_DIR", "/srv/http")
-    icecast = os.getenv("ICECAST", "http://localhost:8000/")
-    prometheus = os.getenv("PROMETHEUS", "http://localhost:9090/")
+    icecast = os.getenv("ICECAST", "http://localhost:8000")
+    prometheus = os.getenv("PROMETHEUS", "http://localhost:9090")
 
     try:
         try:
