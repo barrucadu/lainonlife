@@ -10,6 +10,7 @@ import web as web
 
 if __name__ == "__main__":
     http_dir = os.getenv("HTTP_DIR", "/srv/http")
+    icecast = os.getenv("ICECAST", "http://localhost:8000/")
 
     try:
         try:
@@ -36,6 +37,7 @@ if __name__ == "__main__":
         web.serve(
             port=port,
             httpdir=http_dir,
+            icecast=icecast,
             channels=channels,
         )
     except Exception as e:
