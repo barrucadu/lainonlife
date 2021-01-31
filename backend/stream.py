@@ -3,11 +3,10 @@ from apscheduler.triggers.interval import IntervalTrigger
 from mpd import MPDClient
 
 import atexit
-import datetime
-import influxdb
+import requests
 
 
-def start_stream_monitor(channelsjson, influxdbcfg):
+def start_stream_monitor(channelsjson, prometheus):
     """Start monitoring the streams."""
 
     # Cached channel data
@@ -24,19 +23,12 @@ def start_stream_monitor(channelsjson, influxdbcfg):
 
     playlist_update_counter = 0
 
-    influx_client = influxdb.InfluxDBClient(
-        host=influxdbcfg["host"],
-        port=influxdbcfg["port"],
-        username=influxdbcfg["user"],
-        password=influxdbcfg["pass"],
-        database=influxdbcfg["db"],
-    )
-
     def playlist_info_update_task():
-        nonlocal channels, playlist_update_counter, influx_client
+        nonlocal channels, playlist_update_counter, prometheus
 
+        listeners = get_channel_listeners(channels, prometheus)
         for channel in channels:
-            update_mpd_info(channel, channels[channel], influx_client)
+            update_mpd_info(channel, channels[channel], listeners[channel])
 
     bg_scheduler.add_job(
         func=playlist_info_update_task,
@@ -90,35 +82,38 @@ def get_playlist_info(client, beforeNum=5, afterNum=5):
     return pinfo
 
 
-def get_channel_listeners(channel, client):
-    startTime = (datetime.datetime.now() - datetime.timedelta(hours=12)).replace(
-        microsecond=0
-    )
+def get_channel_listeners(channels, prometheus):
+    out = {channel: {"peak": 1, "current": 1} for channel in channels}
 
     try:
-        max_res = client.query(
-            "select max({}) from channel_listeners where time >= '{}Z'".format(
-                channel, startTime.isoformat()
-            )
+        r = requests.get(
+            f"{prometheus}/api/v1/query",
+            params={"query": "sum(listeners) by (channel)"},
         )
-        last_res = client.query(
-            "select {} as last from channel_listeners order by time desc limit 1".format(
-                channel
-            )
-        )
+        r.raise_for_status()
+        current = r.json()
 
-        return {
-            "peak": max_res.get_points().__next__()["max"],
-            "current": last_res.get_points().__next__()["last"],
-        }
+        r = requests.get(
+            f"{prometheus}/api/v1/query",
+            params={"query": "max_over_time(sum(listeners) by (channel)[12h:1m])"},
+        )
+        r.raise_for_status()
+        peak = r.json()
+
+        for channel in channels:
+            for stat in current["data"]["result"]:
+                if stat["metric"]["channel"] == channel:
+                    out[channel]["current"] = stat["value"][1]
+            for stat in peak["data"]["result"]:
+                if stat["metric"]["channel"] == channel:
+                    out[channel]["peak"] = stat["value"][1]
     except Exception as e:
-        # If there's an error just say there's only one listener (ie,
-        # the current one)
-        print(f"error talking to influxdb: {e.args[0]}")
-        return {"peak": 1, "current": 1}
+        print(f"error talking to prometheus: {e.args[0]}")
+
+    return out
 
 
-def update_mpd_info(channel, mpd, influx_client):
+def update_mpd_info(channel, mpd, listeners):
     try:
         mpd["client"].ping()
     except Exception:
@@ -132,6 +127,6 @@ def update_mpd_info(channel, mpd, influx_client):
 
     # okay, client (re-)connected
     report = get_playlist_info(mpd["client"])
-    report["listeners"] = get_channel_listeners(channel, influx_client)
+    report["listeners"] = listeners
 
     mpd["cache"] = (report, 200)

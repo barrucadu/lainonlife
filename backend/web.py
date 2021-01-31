@@ -8,17 +8,21 @@ from flask import (
 import json
 import os
 import random
+import requests
 
 blueprint = Blueprint("site", __name__)
 
 
-def serve(port=3000, httpdir="/srv/http", channels={}):
+def serve(
+    port=3000, httpdir="/srv/http", icecast="http://localhost:8000/", channels={}
+):
     """Run the web server."""
 
     app = Flask(__name__)
 
     app.config["http_dir"] = httpdir
     app.config["channels"] = channels
+    app.config["icecast"] = icecast
 
     app.register_blueprint(blueprint)
 
@@ -46,6 +50,13 @@ def playlist(channel):
         return playlist_for(channel)
 
     return send_file(in_http_dir("404.html")), 404
+
+
+@blueprint.route("/metrics", methods=["GET"])
+def metrics():
+    response = make_response("\n".join(get_listener_metrics()), 200)
+    response.mimetype = "text/plain"
+    return response
 
 
 ###############################################################################
@@ -81,3 +92,27 @@ def playlist_for(channel):
     resp = make_response(json.dumps(pinfo[0]), pinfo[1])
     resp.headers["Content-Type"] = "application/json"
     return resp
+
+
+def get_listener_metrics():
+    def line(channel, fmt, count):
+        return f'listeners{{channel="{channel}",format="{fmt}"}} {count}'
+
+    f = requests.get(f"{current_app.config['icecast']}/status-json.xsl")
+    f.raise_for_status()
+    icecast_metrics = f.json()
+
+    prometheus_metrics = [
+        "# HELP listeners Listener count",
+        "# TYPE listeners gauge",
+    ]
+    for channel in current_app.config["channels"]:
+        for source in icecast_metrics["icestats"]["source"]:
+            if "server_name" not in source:
+                continue
+            for fmt in ["mp3", "ogg"]:
+                if source["server_name"] == f"[mpd] {channel} ({fmt})":
+                    prometheus_metrics.append(
+                        line(channel, fmt, source.get("listeners", 0))
+                    )
+    return prometheus_metrics

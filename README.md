@@ -10,7 +10,6 @@ There are some assumptions in the code you might have to fix before
 deploying for real elsewhere:
 
 - `backend.py` assumes that it has write access to the `upload` directory.
-- `metrics.py` probably assumes a lot about permissions.
 - `schedule.py` assumes that bumps are in the album "Lainchan Radio Transitions".
 
 These shouldn't really matter for development.  Some things might not

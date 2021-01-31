@@ -2,4 +2,3 @@ Flask >= 0.12.0
 python-mpd2 >= 0.5.5
 apscheduler
 requests
-influxdb
