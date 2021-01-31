@@ -30,9 +30,6 @@ from docopt import docopt
 from influxdb import InfluxDBClient
 
 import json
-import os
-import psutil
-import subprocess
 import time
 import urllib
 
@@ -60,7 +57,7 @@ def snapshot_icecast(host, port):
     return snapshot, formats, channels
 
 
-def icecast_metrics_list(now, host, port):
+def gather_metrics(now, host, port):
     """Return a list of icecast metrics, or the empty list if it fails."""
 
     try:
@@ -98,82 +95,6 @@ def icecast_metrics_list(now, host, port):
             },
         },
     ]
-
-
-def network_metrics():
-    """Get the current upload, in bytes, since last boot."""
-
-    psinfo = psutil.net_io_counters(pernic=True)
-
-    return {
-        "{}_{}".format(iface, way): ifinfo[n]
-        for iface, ifinfo in psinfo.items()
-        for way, n in {"up": 0, "down": 1}.items()
-    }
-
-
-def cpu_metrics():
-    """Get the percentage usage of every cpu."""
-
-    cpus = psutil.cpu_percent(percpu=True)
-    return {"core{}".format(n): percent for n, percent in enumerate(cpus)}
-
-
-def disk_metrics():
-    """Get the disk usage, in bytes."""
-
-    def add_usage(ms, dus, dname):
-        try:
-            for i, val in enumerate(dus):
-                if val.decode("utf-8") == dname:
-                    ms[dname] = int(dus[i - 1])
-        except Exception:
-            pass
-
-    # Overall disk usage
-    statinfo = os.statvfs("/")
-    metrics = {"used": statinfo.f_frsize * (statinfo.f_blocks - statinfo.f_bfree)}
-
-    # Per-directory disk usage
-    dirs = ["/home", "/nix", "/srv", "/tmp", "/var"]
-    argv = ["du", "-s", "-b"]
-    argv.extend(dirs)  # why doesn't python have an expression variant of this!?
-    dus = subprocess.check_output(argv).split()
-    for dname in dirs:
-        add_usage(metrics, dus, dname)
-
-    return metrics
-
-
-def memory_metrics():
-    """Get the RAM and swap usage, in bytes."""
-
-    vminfo = psutil.virtual_memory()
-    swinfo = psutil.swap_memory()
-
-    return {
-        "vm_used": vminfo[3],
-        "vm_buffers": vminfo[7],
-        "vm_cached": vminfo[8],
-        "swap_used": swinfo[1],
-        "vm_used_no_buffers_cache": vminfo[3] - vminfo[7] - vminfo[8],
-    }
-
-
-def gather_metrics(now, icecastHost, icecastPort):
-    """Gather metrics to send to InfluxDB."""
-
-    metrics = icecast_metrics_list(now, icecastHost, icecastPort)
-    metrics.extend(
-        [
-            {"measurement": "network", "time": now, "fields": network_metrics()},
-            {"measurement": "disk", "time": now, "fields": disk_metrics()},
-            {"measurement": "cpu", "time": now, "fields": cpu_metrics()},
-            {"measurement": "memory", "time": now, "fields": memory_metrics()},
-        ]
-    )
-
-    return metrics
 
 
 if __name__ == "__main__":
