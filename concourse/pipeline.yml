@@ -1,0 +1,91 @@
+resource_types:
+  - name: rsync-resource
+    type: docker-image
+    source:
+      repository: registry.barrucadu.dev/rsync-resource
+      username: registry
+      password: ((docker-registry-password))
+
+resources:
+  - name: web-git
+    type: git
+    source:
+      uri: https://github.com/barrucadu/lainonlife.git
+  - name: frontend-git
+    type: git
+    source:
+      uri: https://github.com/barrucadu/lainonlife.git
+      paths:
+        - frontend
+  - name: frontend-rsync
+    type: rsync-resource
+    source:
+      server: lainon.life
+      remote_dir: /srv/http/www
+      private_key: ((lainonlife-ssh-private-key))
+
+jobs:
+  - name: update-pipeline
+    plan:
+      - get: web-git
+        trigger: true
+      - set_pipeline: lainon-life
+        file: web-git/concourse/pipeline.yml
+
+  - name: build-and-deploy-frontend
+    serial: true
+    plan:
+      - get: frontend-git
+        trigger: true
+      - task: build-site
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: python
+              tag: 3.8
+          inputs:
+            - name: frontend-git
+          outputs:
+            - name: site
+          run:
+            dir: frontend-git/frontend
+            path: sh
+            args:
+              - -cex
+              - |
+                cat <<EOF > config.json
+                { "channels":
+                  { "everything": { "mpd_host": "localhost", "mpd_port": 6600, "description": "all the music, all the time" }
+                  , "cyberia":    { "mpd_host": "localhost", "mpd_port": 6601, "description": "classic lainchan radio: electronic, chiptune, weeb" }
+                  , "swing":      { "mpd_host": "localhost", "mpd_port": 6602, "description": "swing, electroswing, and jazz" }
+                  , "cafe":       { "mpd_host": "localhost", "mpd_port": 6603, "description": "music to drink tea to" }
+                  }
+
+                , "influxdb":
+                  { "host": "localhost"
+                  , "port": 8086
+                  , "user": "root"
+                  , "pass": "root"
+                  , "db":   "lainon.life"
+                  }
+
+                , "template":
+                  { "default_channel": "cyberia"
+                  , "icecast_status_url": "/radio/status-json.xsl"
+                  , "icecast_stream_url_base": "https://lainon.life/radio"
+                  , "server_cost": 20.39
+                  , "currency_symbol": "€"
+                  }
+                }
+                EOF
+                pip install pipenv
+                pipenv install
+                pipenv run build config.json
+                mv _site/* ../../site/
+      - put: frontend-rsync
+        params:
+          path: site
+          rsync_args:
+            - --delete
