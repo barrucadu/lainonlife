@@ -8,14 +8,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - name: Setup
-        run: |
-          set -ex
-          python -m pip install --upgrade pip
-          pip install flake8 black
       - name: Lint
         run: |
           set -ex
-          flake8 .
-          black .
+          pip install flake8 black
+          black
+          flake8
           git diff --exit-code
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Check Dependencies (backend)
+        run: |
+          cd backend
+          pip install -r requirements.txt
+      - name: Check Dependencies (frontend)
+        run: |
+          cd frontend
+          pip install pipenv
+          pipenv install
