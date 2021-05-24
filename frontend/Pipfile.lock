@@ -45,11 +45,11 @@
         },
         "flask": {
             "hashes": [
-                "sha256:168e8507792cb8a3aa06afbe5d4d431d3e07c6318bc3893ceecb81aff09f848d",
-                "sha256:1833a4b36ace08dfa1510d86f1bb6fc595d990ec1b838e03ac8dd80ac0705954"
+                "sha256:1c4c257b1892aec1398784c63791cbaa43062f1f7aeb555c4da961b20ee68f55",
+                "sha256:a6209ca15eb63fc9385f38e452704113d679511d9574d09b2cf9183ae7d20dc9"
             ],
             "index": "pypi",
-            "version": "==2.0.0"
+            "version": "==2.0.1"
         },
         "idna": {
             "hashes": [
