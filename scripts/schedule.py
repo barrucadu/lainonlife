@@ -32,6 +32,12 @@ from random import shuffle
 from time import time
 
 
+def duration_of(filterty, filterval):
+    """Get the combined duration of all tracks matching a filter."""
+
+    return int(client.count(filterty, filterval).get("playtime", "0"))
+
+
 def album_sticker_get(client, album, sticker):
     """Gets a sticker associated with an album."""
 
@@ -66,7 +72,7 @@ def pick_transition(client):
     shuffle(all_transitions)
 
     transition = all_transitions[0]["file"]
-    transition_dur = int(client.count("file", transition)["playtime"])
+    transition_dur = duration_of("file", transition)
 
     return transition, transition_dur
 
@@ -75,10 +81,11 @@ def pick_album(client, dur):
     """Picks a random album which fits in the duration."""
 
     # Get all albums
-    albums = client.list("album")
-    all_albums = list(
-        filter(lambda a: a not in ["", "Lainchan Radio Transitions"], albums)
-    )
+    all_albums = [
+        a["album"]
+        for a in client.list("album")
+        if "album" in a and a["album"] not in ["", "Lainchan Radio Transitions"]
+    ]
 
     # Group albums by when they were last scheduled
     albums_by_last_scheduled = {}
@@ -87,7 +94,7 @@ def pick_album(client, dur):
         # Get the last scheduled time, defaulting to 0
         try:
             last_scheduled = int(album_sticker_get(client, album, "last_scheduled"))
-        except ValueError:
+        except Exception:
             last_scheduled = 0
 
         # Put the album into the appropriate bucket
@@ -106,13 +113,13 @@ def pick_album(client, dur):
     # Pick the album to play out of the 10 oldest times
     shuffle(least_recently_scheduled_albums)
     for album in least_recently_scheduled_albums:
-        album_dur = int(client.count("album", album)["playtime"])
+        album_dur = duration_of("album", album)
         if album_dur <= dur:
             return album, album_dur
 
     # Really, this should never be reached.  We have enough variety in music.
     album = all_albums[0]
-    album_dur = int(client.count("album", album)["playtime"])
+    album_dur = duration_of("album", album)
     return album, album_dur
 
 
@@ -125,7 +132,11 @@ def pick_tracks(client, chosen_album, dur):
     more than once.  It uses the simple greedy algorithm, and so may exceed the limit.
     """
 
-    all_tracks = client.list("file")
+    all_tracks = [
+        t["file"]
+        for t in client.list("file")
+        if "file" in t
+    ]
 
     shuffle(all_tracks)
 
@@ -133,7 +144,7 @@ def pick_tracks(client, chosen_album, dur):
     remaining = dur
     for t in all_tracks:
         album = client.list("album", "file", t)[0]
-        duration = int(client.count("file", t)["playtime"])
+        duration = duration_of("file", track)
         if album in [chosen_album, "Lainchan Radio Transitions"]:
             continue
         if duration > remaining:
