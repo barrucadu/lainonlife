@@ -131,6 +131,9 @@ def schedule_radio(client, target_dur=3 * 60 * 60):
     client.random(0)
     client.repeat(1)
 
+    # Make sure it's playing
+    client.play()
+
     # Add tracks
     client.add(transition)
     client.findadd("album", album)
