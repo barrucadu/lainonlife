@@ -9,7 +9,9 @@ function ajax_with_json(url, func) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
         if(httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
+                //console.log(httpRequest.responseText);
             let response = JSON.parse(httpRequest.responseText);
+                //console.log(response);
             func(response);
         }
     };
@@ -22,16 +24,18 @@ function populate_channel_list() {
     ajax_with_json(ICECAST_STATUS_URL, function(response) {
         // Get the list of channels, the default.
         let channels = [];
+//      console.log(channels);
         for(let id in response.icestats.source) {
             let source = response.icestats.source[id];
             let sname = source.server_name;
-            if(sname !== undefined && sname.startsWith("[mpd] ") && sname.endsWith(" (ogg)")) {
+            if(sname !== undefined && sname.startsWith("[mpd] ") && sname.endsWith(" (mp3)")) {
                 channels.push(sname.substr(6, sname.length-12));
             }
         }
+        //console.log(channels);
 
         // Sort them.
-        channels.sort();
+        //channels.sort();
 
         // Add to the selector drop-down.
         let dropdown = document.getElementById("channel");
@@ -110,12 +114,43 @@ function check_playlist() {
             elapsed: response.elapsed,
         });
 
+        //listeners are broken RN it's all 1 peak 1 so instead we go and find it elsewhere:
         // Update the current/peak listeners counts
-        document.getElementById("listeners").innerText = `${response.listeners.current}`;
-        if ('peak' in response.listeners) {
-            document.getElementById("listeners").innerText += ` (peak ${response.listeners.peak})`;
-        }
+        //document.getElementById("listeners").innerText = `${response.listeners.current}`;
+        //if ('peak' in response.listeners) {
+         //   document.getElementById("listeners").innerText += ` (peak ${response.listeners.peak})`;
+        //}
     });
+        ajax_with_json(`/radio/status-json.xsl`, function(response) {
+                //console.log(`${channel}`);
+                //for(i=0 ; i<4 ; i++){
+                //console.log(response.icestats.source);
+                //}
+                let iceresponse = response.icestats.source
+                let currentchannel= `${channel}`
+                for(d in iceresponse){
+                        //console.log(d);
+                        let icechannel = iceresponse[d].server_name ;
+                        let listedchannel =  icechannel.substr(6, icechannel.length-12);
+                        //console.log(listedchannel);
+                        //console.log(currentchannel);
+                        if(listedchannel == currentchannel){
+                                //console.log("do the listeners!")
+                                //console.log(currentchannel);
+                                //console.log(iceresponse[d].listeners)
+                                //console.log(iceresponse[d].listener_peak)
+                                document.getElementById("listeners").innerText = `${iceresponse[d].listeners}`;
+                                document.getElementById("listeners").innerText += `  (peak ${iceresponse[d].listener_peak})`;
+                        }
+
+                        //if(reponse[i].server_name == `${channel}`){
+                        //      console.log('we gottem')
+                        //}else{
+                        //      console.log('we dont gottem')
+                        //}
+                }
+        });
+
 }
 
 function change_channel(e) {
