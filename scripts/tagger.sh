@@ -1,12 +1,9 @@
 #!/bin/bash
 
 # DISCLAIMER IF YOU WANT TO USE THIS SCRIPT:
-# PLACE IT HERE /srv/radio/music/tagger.sh
-# INTO THIS FOLDER THERE MUST BE YOUR CHANNEL FOLDERS
 #
 # /srv/radio/music/channel/album/songs.mp3
-#
-# ^ THIS IS THE REQUIRED DIRECTORY TREE
+# ^ THIS IS THE REQUIRED DIRECTORY TREE TO USE IT
 #
 # this script will help you TAG the songs.mp3 with the ALBUM album directory they are in, as well as tag their TITLE with their FILENAME.
 #
