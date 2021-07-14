@@ -1,0 +1,15 @@
+[Unit]
+Description=Icecast systemd service with config in /srv/Icecast-Server/conf/icecast.xml
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=icecast -c /srv/Icecast-Server/conf/icecast.xml
+Restart=always
+RestartSec=10
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
