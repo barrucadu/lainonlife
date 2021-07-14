@@ -123,6 +123,8 @@ const LainPlayer = ((STREAM_URL_BASE) => {
         clearInterval(updateInterval);
         let currentTimeInSeconds = prgs.elapsed;
 
+        var progressFun = (prgs.live) ? setLiveProgressTo : setProgressTo;
+        //progressFun(prgs.elapsed);
         updateInterval = setInterval(() => {
             currentTimeInSeconds++;
             progressFun(currentTimeInSeconds);
