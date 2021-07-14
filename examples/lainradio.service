@@ -1,0 +1,19 @@
+[Unit]
+Description=running the run.sh script with the correct arguements
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/lainonlife/backend/
+Environment="CONFIG=../config.json"
+Environment="HTTP_DIR=/srv/http"
+Environment="PORT=8002"
+ExecStart=/srv/lainonlife/backend/run.sh
+Restart=always
+RestartSec=10
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
