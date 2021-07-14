@@ -62,6 +62,11 @@ def pick_album(client, dur):
         if "album" in a and a["album"] not in ["", "Lainchan Radio Transitions"]
     ]
 
+    for a in client.list("album"):
+        print(a)
+        all_albums.append(a)
+
+    print(all_albums)
     shuffle(all_albums)
 
     album = all_albums[0]
@@ -78,11 +83,16 @@ def pick_tracks(client, chosen_album, dur):
     more than once.  It uses the simple greedy algorithm, and so may exceed the limit.
     """
 
-    all_tracks = [
-        t["file"]
-        for t in client.list("file")
-        if "file" in t
-    ]
+    all_tracks = []
+    for t in client.list("file"):
+            #print(t)
+            all_tracks.append(t)
+    #print(all_tracks)
+    #all_tracks = [
+    #    t["file"]
+    #    for t in client.list("file")
+    #    if "file" in t
+    #]
 
     shuffle(all_tracks)
 
@@ -101,7 +111,7 @@ def pick_tracks(client, chosen_album, dur):
     return chosen, dur - remaining
 
 
-def schedule_radio(client, target_dur=3 * 60 * 60):
+def schedule_radio(client, target_dur= 6 * 60 * 60):
     """Schedule music.
 
     Keyword arguments:
