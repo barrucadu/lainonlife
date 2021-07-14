@@ -1,0 +1,15 @@
+[Unit]
+Description=mpd systemd service with config in /root/.config/mpd/cyberia.conf
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=mpd --no-daemon /root/.config/mpd/cyberia.conf
+Restart=always
+RestartSec=10
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
