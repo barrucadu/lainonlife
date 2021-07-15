@@ -126,21 +126,28 @@ function check_playlist() {
                 //for(i=0 ; i<4 ; i++){
                 //console.log(response.icestats.source);
                 //}
-                let iceresponse = response.icestats.source
-                let currentchannel= `${channel}`
+                let iceresponse = response.icestats.source;
+                console.log(iceresponse);
+                let currentchannel= `${channel}`;
                 for(d in iceresponse){
                         //console.log(d);
-                        let icechannel = iceresponse[d].server_name ;
-                        let listedchannel =  icechannel.substr(6, icechannel.length-12);
-                        //console.log(listedchannel);
-                        //console.log(currentchannel);
-                        if(listedchannel == currentchannel){
-                                //console.log("do the listeners!")
+                        //console.log(iceresponse[d]);
+                        //CHECK IF iceresponse[d].server_name EXISTS OR NOT !!!!!!!!
+                        //that is because for some reason on the icecast status list, there are some streams like cyberia.mp3 (NOT mpd-cyberia.mp3) which dont even have the listeners tag
+                        if(typeof(iceresponse[d].server_name) != "undefined")
+                        {
+                                let icechannel = iceresponse[d].server_name ;
+                                let listedchannel =  icechannel.substr(6, icechannel.length-12);
+                                //console.log(listedchannel);
                                 //console.log(currentchannel);
-                                //console.log(iceresponse[d].listeners)
-                                //console.log(iceresponse[d].listener_peak)
-                                document.getElementById("listeners").innerText = `${iceresponse[d].listeners}`;
-                                document.getElementById("listeners").innerText += `  (peak ${iceresponse[d].listener_peak})`;
+                                if(listedchannel == currentchannel){
+                                        //console.log("do the listeners!")
+                                        //console.log(currentchannel);
+                                        //console.log(iceresponse[d].listeners)
+                                        //console.log(iceresponse[d].listener_peak)
+                                        document.getElementById("listeners").innerText = `${iceresponse[d].listeners}`;
+                                        document.getElementById("listeners").innerText += `  (peak ${iceresponse[d].listener_peak})`;
+                                }
                         }
 
                         //if(reponse[i].server_name == `${channel}`){
