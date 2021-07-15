@@ -127,7 +127,7 @@ function check_playlist() {
                 //console.log(response.icestats.source);
                 //}
                 let iceresponse = response.icestats.source;
-                console.log(iceresponse);
+                //console.log(iceresponse);
                 let currentchannel= `${channel}`;
                 for(d in iceresponse){
                         //console.log(d);
