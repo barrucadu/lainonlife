@@ -1,0 +1,6 @@
+0 */6 * * * python3 /srv/lainonlife/scripts/schedule.py --host=127.0.0.1 6601
+0 */6 * * * python3 /srv/lainonlife/scripts/schedule.py --host=127.0.0.1 6602
+0 */6 * * * python3 /srv/lainonlife/scripts/schedule.py --host=127.0.0.1 6603
+0 */6 * * * python3 /srv/lainonlife/scripts/schedule.py --host=127.0.0.1 6604
+0 */6 * * * python3 /srv/lainonlife/scripts/schedule.py --host=127.0.0.1 6605
+0 */12 * * * echo '' | tee /srv/radio/data/syslog*
