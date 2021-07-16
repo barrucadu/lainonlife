@@ -111,7 +111,8 @@ def pick_tracks(client, chosen_album, dur):
     return chosen, dur - remaining
 
 
-def schedule_radio(client, target_dur= 6 * 60 * 60): #in case you have gigantic albums
+#def schedule_radio(client, target_dur= 6 * 60 * 60): #in case you have albums with gigantic tracks
+def schedule_radio(client, target_dur= 3 * 60 * 60):
     """Schedule music.
 
     Keyword arguments:
