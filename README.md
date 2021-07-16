@@ -30,6 +30,8 @@ configuration (sans passwords) [is on github][nixfiles].
 For those who don't read Nix, the `examples/` directory contains
 sample configuration for [nginx][], [Icecast][], and [MPD][].
 
+For those that use debian 10 to host lainonlife, you can follow this [tutorial](https://blog.void.yt/servers/lainradio/index.html).
+
 Usage
 -----
 
