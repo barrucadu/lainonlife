@@ -35,7 +35,7 @@ function populate_channel_list() {
         //console.log(channels);
 
         // Sort them.
-        //channels.sort();
+        channels.sort();
 
         // Add to the selector drop-down.
         let dropdown = document.getElementById("channel");
