@@ -28,7 +28,7 @@ The [lainon.life][] server is running [NixOS][], and the entire system
 configuration (sans passwords) [is on github][nixfiles].
 
 For those who don't read Nix, the `examples/` directory contains
-sample configuration for [nginx][], [Icecast][], and [MPD][].
+sample configuration for [nginx][], [Icecast][], [MPD][], Crontab[], and Systemd[].
 
 For those that use debian 10 to host lainonlife, you can follow this [tutorial](https://blog.void.yt/servers/lainradio/index.html).
 
@@ -87,3 +87,5 @@ Great!  See the open issues.  You can also find me on irc.lainchan.org.
 [NixOS]:       https://nixos.org/
 [nixfiles]:    https://github.com/barrucadu/nixfiles
 [nginx]:       https://www.nginx.com/
+[crontab]:     https://crontab.guru/
+[systemd]:     https://wiki.debian.org/systemd/Services
