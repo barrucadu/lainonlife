@@ -165,8 +165,7 @@ function change_channel(e) {
     LainPlayer.changeChannel(channel);
 
     // Update the stream links.
-    document.getElementById("ogglink").href = `${ICECAST_STREAM_URL_BASE}/${channel}.ogg.m3u`;
-    document.getElementById("mp3link").href = `${ICECAST_STREAM_URL_BASE}/${channel}.mp3.m3u`;
+    document.getElementById("mp3link").href = `${ICECAST_STREAM_URL_BASE}/${channel}.mp3`;
 
     // Update the file list link.
     document.getElementById("fileslink").href = "/file-list/" + channel + ".html";
