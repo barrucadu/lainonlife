@@ -1,4 +1,4 @@
-[lain.void.yt](lain.void.yt)
+[lain.void.yt](https://lain.void.yt)
 ===============
 
 Online radio for lainons. Forked from [lainon.life](lainon.life) by [barrucadu](https://github.com/barrucadu/lainonlife) because i run it on a debian VM.
