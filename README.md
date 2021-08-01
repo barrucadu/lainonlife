@@ -1,7 +1,7 @@
-[lainon.life][]
+[lain.void.yt][]
 ===============
 
-Online radio for lainons.
+Online radio for lainons. Original instance [lainon.life][]
 
 Assumptions
 -----------
