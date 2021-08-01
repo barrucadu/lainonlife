@@ -1,7 +1,7 @@
 [lain.void.yt](lain.void.yt)
 ===============
 
-Online radio for lainons. Original instance: [lainon.life](lainon.life) by [barrucadu](https://github.com/barrucadu/lainonlife)
+Online radio for lainons. Forked from [lainon.life](lainon.life) by [barrucadu](https://github.com/barrucadu/lainonlife) because i run it on a debian VM.
 
 Assumptions
 -----------
@@ -24,11 +24,10 @@ this code:
 - `config.json`, the list of channels, [MPD][] details, and frontend
   asset template details.
 
-The [lainon.life][] server is running [NixOS][], and the entire system
+The original [lainon.life][] server is running [NixOS][], and the entire system
 configuration (sans passwords) [is on github][nixfiles].
 
-For those who don't read Nix, the `examples/` directory contains
-sample configuration for [nginx][], [Icecast][], [MPD][], [Crontab][], and [Systemd][].
+The `examples/` directory contains sample configuration for [nginx][], [Icecast][], [MPD][], [Crontab][], and [Systemd][].
 
 For those that use debian 10 to host lainonlife, you can follow this [tutorial](https://blog.void.yt/servers/lainradio/index.html).
 
