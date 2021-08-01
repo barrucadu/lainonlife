@@ -61,9 +61,8 @@ const ICECAST_STATUS_URL = "{{ icecast_status_url }}";
         ]
       </div>
       <div class="channel-row-block">
-        [ <span class="inlineheading">m3u:</span>   
-          <a id="ogglink" href="{{ icecast_stream_url_base }}/{{ default_channel }}.ogg.m3u">ogg</a> / 
-          <a id="mp3link" href="{{ icecast_stream_url_base }}/{{ default_channel }}.mp3.m3u">mp3</a> 
+        [ <span class="inlineheading">link:</span>   
+          <a id="mp3link" href="{{ icecast_stream_url_base }}/{{ default_channel }}.mp3">mp3</a> 
         ]
       </div>
       <div class="channel-row-block">
