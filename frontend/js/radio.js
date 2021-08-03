@@ -43,8 +43,18 @@ function populate_channel_list() {
 }
 
 function check_playlist() {
-    function format_track(track){
+    function format_track(track) {
         return (track.artist) ? (track.artist + " - " + track.title) : track.title;
+    }
+
+    function set_media_session(track) {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: track.title,
+                artist: track.artist,
+                album: track.album,
+            });
+        }	
     }
 
     function add_track_to_tbody(tbody, track, acc, ago) {
@@ -92,6 +102,7 @@ function check_playlist() {
         // Update the "now playing"
         document.getElementById("nowplaying").innerText = format_track(response.current);
         document.getElementById("nowalbum").innerText = response.current.album;
+        set_media_session(response.current);
 
         let new_playlist = document.createElement("tbody");
         let until = parseFloat(response.current.time) - parseFloat(response.elapsed);
