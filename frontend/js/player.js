@@ -125,7 +125,7 @@ const LainPlayer = ((STREAM_URL_BASE) => {
 
         updateInterval = setInterval(() => {
             currentTimeInSeconds++;
-            progressFun(currentTimeInSeconds);
+            setProgressTo(currentTimeInSeconds);
         }, 1000);
     }
 
